@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="fr"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0d1117"><meta name="apple-mobile-web-app-capable" content="yes">
-<title>Séance</title>
+<meta name="theme-color" content="#0d1117"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Lopedjo">
+<title>Lopedjo</title>
 <link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -135,7 +135,7 @@ function rec(){const m={},vs={};S.hist.forEach(h=>{vs[h.name]=Math.max(vs[h.name
  const li=o=>Object.keys(o).length?Object.entries(o).map(([k,x])=>`<div class="card row"><span>${k}</span><b>${kg(x)} kg</b></div>`).join(''):'<p class="mu">Termine une séance pour voir tes records.</p>';
  A.innerHTML=hdr('Records',"go('stats')")+'<h2>Records de charge</h2>'+li(m)+'<h2>Records de volume</h2>'+li(vs)}
 function opts(){const t=S.set;A.innerHTML=hdr('Options',"go('home')")+profileHtml()+`<h2>Séances</h2>`+S.sessions.map(s=>`<button class="btn" onclick="go('sedit',{id:'${s.id}'})">${s.name}<div class="mu">${DAYS[s.day]} · ${s.ex.length} exercices</div></button>`).join('')+`<button class="btn p" onclick="addS()">+ Ajouter une séance</button>
-<h2>Paramètres</h2><div class="card"><div class="row"><span>Sons</span><input type="checkbox" style="width:28px;height:28px" ${t.sound?'checked':''} onchange="S.set.sound=this.checked;save();beep()"></div><label>Volume des bips</label><input type="range" min="0" max="1" step=".05" value="${t.vol}" onchange="S.set.vol=+this.value;save();beep()"><label>Durée d'une répétition (s)</label><input type="number" value="${t.rep}" min="1" onchange="S.set.rep=Math.max(1,+this.value||4);save()"><label>Couleur du thème</label>${['#f2b84b','#ff7a59','#7aa2ff','#c58bff','#6ccf7f'].map(c=>`<button class="sw" style="background:${c};${c==t.ac?'border-color:#fff':''}" onclick="S.set.ac='${c}';save();render()"></button>`).join('')}</div>`}
+<h2>Paramètres</h2><div class="card"><div class="row"><span>Sons</span><input type="checkbox" style="width:28px;height:28px" ${t.sound?'checked':''} onchange="S.set.sound=this.checked;save();beep()"></div><div class="row" style="margin-top:10px"><span>Écran toujours allumé</span><input type="checkbox" style="width:28px;height:28px" ${t.awake!==false?'checked':''} onchange="S.set.awake=this.checked;save();this.checked?keepAwake():releaseAwake()"></div><button class="btn s" style="margin-top:10px" onclick="fs()">⛶ Plein écran</button><label>Volume des bips</label><input type="range" min="0" max="1" step=".05" value="${t.vol}" onchange="S.set.vol=+this.value;save();beep()"><label>Durée d'une répétition (s)</label><input type="number" value="${t.rep}" min="1" onchange="S.set.rep=Math.max(1,+this.value||4);save()"><label>Couleur du thème</label>${['#f2b84b','#ff7a59','#7aa2ff','#c58bff','#6ccf7f'].map(c=>`<button class="sw" style="background:${c};${c==t.ac?'border-color:#fff':''}" onclick="S.set.ac='${c}';save();render()"></button>`).join('')}</div>`}
 const f1=n=>(Math.round(n*10)/10).toString().replace('.',',');
 const bmiCat=b=>b<18.5?'Insuffisance pondérale':b<25?'Corpulence normale':b<30?'Surpoids':'Obésité';
 function addW(){const W=S.wl||[];form('Poids du jour',[{k:'w',l:'Poids (kg)',v:W.length?W[W.length-1].w:(S.me.weight||'')}],r=>{if(!r.w)return;S.wl=S.wl||[];const l=S.wl[S.wl.length-1];if(l&&new Date(l.t).toDateString()==new Date().toDateString())l.w=r.w;else S.wl.push({t:Date.now(),w:r.w});S.me.weight=r.w;save();render()})}
@@ -254,5 +254,13 @@ function edE(id){const s=sess(v.id),e=id?s.ex.find(a=>a.id==id):{name:'',load:20
  form(id?'Modifier l\'exercice':'Nouvel exercice',[{k:'name',l:'Nom',t:'text',v:e.name},{k:'load',l:'Charge actuelle (kg)',v:e.load},{k:'inc',l:'Incrément de progression (kg)',v:e.inc},{k:'sets',l:'Séries',v:e.sets},{k:'reps',l:'Répétitions',v:e.reps},{k:'rest',l:'Repos (secondes)',v:e.rest}],r=>{if(!r.name)return;if(id)Object.assign(e,r);else s.ex.push({id:uid(),...r});save();render()});
  if(id){const b=document.createElement('button');b.className='btn d s';b.textContent='Supprimer cet exercice';b.onclick=()=>{s.ex=s.ex.filter(a=>a.id!=id);save();document.querySelector('.ov').remove();render()};document.querySelector('.sheet').append(b)}}
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+let wk=null;
+async function keepAwake(){try{if(S.set.awake!==false&&!document.hidden&&navigator.wakeLock&&!wk){wk=await navigator.wakeLock.request('screen');wk.addEventListener('release',()=>{wk=null})}}catch(e){wk=null}}
+function releaseAwake(){try{wk&&wk.release()}catch(e){}wk=null}
+function fs(){const e=document.documentElement;try{document.fullscreenElement?document.exitFullscreen():e.requestFullscreen&&e.requestFullscreen().catch(()=>{})}catch(x){}}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)keepAwake()});
+document.addEventListener('click',keepAwake);
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+keepAwake();
 render();
 </script></body></html>
