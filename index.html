@@ -32,7 +32,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .stat{background:var(--bg2);border:4px solid var(--ink);box-shadow:inset 0 0 0 2px #4b3a5e;padding:6px 8px}
 .stat b{display:block;font:13px var(--px);margin-top:6px;font-weight:400}
-.ring{--m:#a974ff;--mc:#f1e6ff;--mgr:122,61,255;position:relative;width:min(78vw,320px);aspect-ratio:1;margin:14px auto}
+.ring{--m:#a974ff;--mc:#f1e6ff;--mgr:122,61,255;position:relative;width:min(66vw,280px);aspect-ratio:1;margin:10px auto 14px}
 .ring.rs{--m:#4fd8ff;--mc:#e4fbff;--mgr:27,155,255}
 .ring svg{width:100%;height:100%;transform:rotate(-90deg);overflow:visible;position:relative;z-index:1}
 .ring circle{fill:none;stroke-linecap:butt}
@@ -58,6 +58,21 @@ button{font:inherit;color:inherit;cursor:pointer}
 .ring .big{color:var(--mc);text-shadow:0 0 12px var(--m),0 0 3px var(--mc),2px 2px 0 var(--ink)}
 .ring.pz #arcg,.ring.pz #hd .k,.ring.pz i,.ring.pz .orb{animation-play-state:paused}
 .ring.pz #arc,.ring.pz #arcc,.ring.pz #hd{opacity:.5}
+.ring #lab{font-size:21px;letter-spacing:1px;text-transform:uppercase;color:var(--mc)}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 10px}
+.tl{background:var(--bg2);border:4px solid var(--ink);box-shadow:inset 0 0 0 2px #4b3a5e,0 3px 0 var(--ink);padding:8px 4px 6px;text-align:center;min-width:0}
+.tl span{display:block;font:8px/1.4 var(--px);color:var(--mu)}
+.tl b{display:block;font:16px/1.3 var(--px);font-weight:400;margin:8px 0 4px;color:var(--tx);text-shadow:2px 2px 0 var(--ink);white-space:nowrap}
+.tl em{display:block;font:normal 19px/1 VT323,monospace;color:var(--mu)}
+.tl.ch b{color:var(--ac)}
+.pips{display:flex;gap:4px;margin:0 0 10px}
+.pips u{flex:1;height:14px;text-decoration:none;background:#0a070e;border:3px solid var(--ink);box-shadow:inset 0 0 0 2px #3a2d49}
+.pips u.d{background:var(--ok);box-shadow:inset 0 0 0 2px #9bef9b}
+.pips u.c{background:var(--ac);box-shadow:inset 0 0 0 2px #ffe08a;animation:pb 1s steps(2) infinite}
+.pips u.n{background:var(--rest);box-shadow:inset 0 0 0 2px #b8ecff;animation:pb 1s steps(2) infinite}
+@keyframes pb{50%{opacity:.45}}
+.sidechip{display:none;text-align:center;font:10px/1.6 var(--px);color:var(--ink);background:var(--rest);border:4px solid var(--ink);box-shadow:inset 0 0 0 2px #b8ecff,0 3px 0 var(--ink);padding:6px;margin:0 0 10px}
+.sidechip.on{display:block}
 .big{font-size:34px;line-height:1.2}
 .rate{display:grid;gap:14px;margin-top:20px}
 .rate button{border:4px solid var(--ink);padding:20px;font:12px/1.6 var(--px);background:var(--bg3);box-shadow:inset 0 0 0 2px #5b4873,0 4px 0 var(--ink)}
@@ -189,13 +204,22 @@ function run(){const c=S.cur;if(!c||!c.ex||!sess(c.sid))return go('train2');cons
  if(x.ph=='rate'){A.innerHTML=hdr('Exercice terminé',"go('train2')").replace(/<button class="back".*?<\/button>/,'')+`<h2>Comment s'est déroulé l'exercice ?</h2><div class="mu">${e.name} · ${kg(e.load)} kg</div>${x.stopped?`<div class="mu">Arrêté à la série ${x.set}/${e.sets} · ${(c.log[e.id]||{}).reps||0} répétitions comptées</div>`:''}<div class="rate">${x.stopped?'':`<button onclick="rateEx('ok')">✅ Réussi<div class="mu">→ ${kg(e.load+e.inc)} kg</div></button>`}<button onclick="rateEx('mid')">⚠️ Presque réussi<div class="mu">→ ${kg(e.load)} kg</div></button><button onclick="rateEx('ko')">❌ Échec<div class="mu">→ ${kg(Math.max(0,e.load-e.inc))} kg</div></button></div>`;return}
  A.innerHTML=hdr(e.name,"backRun()")+`<div class="grid"><div class="stat"><span class="mu">Séance</span><b id="t_el"></b></div><div class="stat"><span class="mu">Volume</span><b id="t_vol"></b></div><div class="stat"><span class="mu">Reste estimé</span><b id="t_rem"></b></div><div class="stat"><span class="mu">Fin vers</span><b id="t_end"></b></div></div>
  <div class="ring"><div class="orb"></div><svg viewBox="0 0 220 220"><defs><filter id="mgb" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5"/></filter><filter id="mgs" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="3"/></filter></defs><g class="spin"><circle class="ru" cx="110" cy="110" r="117"/></g><circle class="fr" cx="110" cy="110" r="110"/><circle class="fr" cx="110" cy="110" r="89"/><circle class="tr" cx="110" cy="110" r="100"/><circle class="tm" cx="110" cy="110" r="100"/><circle id="arcg" cx="110" cy="110" r="100" stroke-dasharray="628.3" stroke-dashoffset="0" filter="url(#mgb)"/><circle id="arc" cx="110" cy="110" r="100" stroke-dasharray="628.3" stroke-dashoffset="0"/><circle id="arcc" cx="110" cy="110" r="100" stroke-dasharray="628.3" stroke-dashoffset="0"/><circle class="seg" cx="110" cy="110" r="100"/><g id="hd" transform="translate(210 110)"><circle r="11" filter="url(#mgs)"/><rect class="k" x="-4" y="-4" width="8" height="8"/></g></svg><i style="--x:32%;--d:0s"></i><i style="--x:42%;--d:0.4s"></i><i style="--x:50%;--d:0.9s"></i><i style="--x:58%;--d:1.3s"></i><i style="--x:66%;--d:1.8s"></i><i style="--x:38%;--d:2.2s"></i><i style="--x:62%;--d:2.6s"></i><i style="--x:46%;--d:0.7s"></i><div class="c"><div class="mu" id="lab"></div><div class="big" id="num"></div><div class="mu" id="sub"></div></div></div>
+ <div class="tiles"><div class="tl"><span>SÉRIE</span><b id="vS"></b><em id="sS"></em></div><div class="tl"><span>RÉPÉTITION</span><b id="vR"></b><em id="sR"></em></div><div class="tl ch"><span>CHARGE</span><b id="vC"></b><em>kg</em></div></div>
+ <div class="pips" id="pips"></div><div class="sidechip" id="sd"></div>
  <button class="btn p" id="pp"></button>${x.ph=='rest'||x.ph=='swap'?'<button class="btn s" onclick="skip()">Passer</button>':''}${x.ph=='rep'||x.ph=='rest'||x.ph=='swap'?'<button class="btn d s" onclick="stopEx()">Je n\'y arrive plus</button>':''}`}
 function upd(){const c=S.cur;if(!c)return;const s=sess(c.sid);if(!s)return;const T=(i,t)=>{const el=$('#'+i);if(el&&el.textContent!=t)el.textContent=t};
  T('t_el',fmt(c.elapsed));T('t_vol',kg(c.vol)+' kg');const r=remain();T('t_rem',fmt(r));const en=new Date(Date.now()+r*1000);T('t_end',en.getHours()+':'+String(en.getMinutes()).padStart(2,'0'));
  const x=c.ex;if(v.n=='run'&&x&&$('#arc')){const e=s.ex.find(a=>a.id==x.id),rest=x.ph=='rest',pre=x.ph=='prep',sw=x.ph=='swap',tot=Math.max(1,rest?e.rest:(pre||sw)?10:S.set.rep),L=x.ph=='ready'?tot:x.left;
   const fr=x.ph=='ready'?1:Math.max(0,Math.min(1,L/tot)),rg=$('.ring'),an=fr*6.2832;rg.classList.toggle('rs',!!(rest||sw));rg.classList.toggle('pz',!!c.paused&&x.ph!='ready');['#arc','#arcg','#arcc'].forEach(q=>$(q).setAttribute('stroke-dashoffset',628.3*(1-fr)));const hd=$('#hd');hd.setAttribute('transform','translate('+(110+100*Math.cos(an)).toFixed(1)+' '+(110+100*Math.sin(an)).toFixed(1)+')');hd.style.opacity=fr>.003?'':'0';
-  T('lab',pre?'Installe-toi':rest?'Repos':sw?'Change de côté':'Série '+x.set+'/'+e.sets+(e.uni?' · '+(x.side?'Côté gauche':'Côté droit'):''));T('num',x.ph=='ready'?'GO':(rest||pre||sw)?Math.ceil(L):x.rep);
-  T('sub',sw?"Passe de l'autre côté · "+kg(e.load)+' kg':pre?kg(e.load)+' kg · '+e.sets+'×'+e.reps:rest?'Prochaine série '+(x.set+1)+' · '+kg(e.load)+' kg':'Rép '+x.rep+'/'+e.reps+' · '+kg(e.load)+' kg');
+  const rp=x.ph=='rep',st=x.set||1,ns=rest?Math.min(st+1,e.sets):st;
+  T('lab',x.ph=='ready'?'Prêt ?':pre?'Installe-toi':rest?'Repos':sw?'Change de côté':'Répétition');
+  T('num',x.ph=='ready'?'GO':(rest||pre||sw)?Math.ceil(L):x.rep);
+  T('sub',x.ph=='ready'?'':sw?"de l'autre côté":(pre||rest)?'secondes':'sur '+e.reps);
+  T('vS',ns+'/'+e.sets);T('sS',rest?'prochaine':(rp||sw)?'en cours':'à venir');
+  T('vR',((rp||sw)?x.rep:0)+'/'+e.reps);T('sR',rp?'en cours':sw?'côté fini':'à faire');
+  T('vC',kg(e.load));
+  const pk=[x.ph,st,e.sets].join(),pe=$('#pips');if(pe&&(window._pk!==pk||pe.childElementCount!=e.sets)){window._pk=pk;let h='';for(let i=1;i<=e.sets;i++)h+='<u class="'+(rest?(i<=st?'d':i==st+1?'n':''):(i<st?'d':i==st?'c':''))+'"></u>';pe.innerHTML=h}
+  const sd=$('#sd'),sh=!!(e.uni&&(rp||sw));if(sd){sd.classList.toggle('on',sh);if(sh)T('sd',sw?'→ Côté gauche':(x.side?'Côté gauche':'Côté droit'))}
   const pp=$('#pp');const t=x.ph=='ready'?'▶ Démarrer':c.paused?'▶ Reprendre':'⏸ Pause';if(pp.textContent!=t)pp.textContent=t;
   pp.onclick=()=>{if(x.ph=='ready'){x.ph='prep';x.left=10;if(!c.started){c.started=true;c.lt=Date.now()}beep(660,.1)}c.paused=!c.paused&&x.ph!='ready'?true:false;if(c.paused===false){last=Date.now();keepAwake();}save();render()}}}
 const dfr=t=>new Date(t).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});const ICO={ok:'✅',mid:'⚠️',ko:'❌'};
