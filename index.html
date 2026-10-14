@@ -97,8 +97,8 @@ button{font:inherit;color:inherit;cursor:pointer}
 .dk .dt{font:normal clamp(13px,4vw,16px)/1 VT323,monospace;white-space:nowrap;max-width:100%;overflow:hidden}
 body.hub #app{padding-bottom:calc(var(--dh,92px) + 10px)}
 body.hub .dlg{font-size:19px;line-height:1.15;padding:8px 10px;margin:0 0 8px}
-#gytag{position:absolute;left:0;top:0;pointer-events:none;will-change:transform;line-height:1.2}
-#gymcv{display:block;margin:0 auto;image-rendering:pixelated;image-rendering:crisp-edges}
+#gytag{position:absolute;left:0;top:0;pointer-events:auto;cursor:pointer;will-change:transform;line-height:1.2}
+#gymcv{display:block;margin:0 auto;image-rendering:pixelated;image-rendering:crisp-edges;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}#gymcv:active{cursor:grabbing}
 
 .qh{display:flex;align-items:center;gap:10px;margin-bottom:6px}
 .qh .t{font:11px/1.5 var(--px);color:var(--ac);text-shadow:2px 2px 0 var(--ink)}
@@ -405,8 +405,8 @@ function updDock(){const e=$('#dock'),on=S.set.hub!==false&&v.n=='home';document
  if(on)document.documentElement.style.setProperty('--dh',e.offsetHeight+'px')}
 function updPg(){const e=$('#pg');if(!e)return;const on=S.set.hub===false&&(v.n=='home'||v.n=='gym');e.style.display=on?'flex':'none';if(on)e.innerHTML=`<i class="${v.n=='home'?'on':''}" onclick="swipeGo('home','l')"></i><i class="${v.n=='gym'?'on':''}" onclick="swipeGo('gym','r')"></i>`}
 (()=>{let t0=null;const ok=e=>S.set.hub===false&&(v.n=='home'||v.n=='gym')&&!document.querySelector('.ov')&&!(e.target.closest&&e.target.closest('input,select,textarea'));
- addEventListener('touchstart',e=>{const t=e.touches[0];t0=e.touches.length==1&&ok(e)?{x:t.clientX,y:t.clientY,t:Date.now()}:null},{passive:true});
- addEventListener('touchend',e=>{if(!t0)return;const t=e.changedTouches[0],dx=t.clientX-t0.x,dy=t.clientY-t0.y,dt=Date.now()-t0.t;t0=null;
+ addEventListener('touchstart',e=>{const t=e.touches[0];t0=e.touches.length==1&&ok(e)?{x:t.clientX,y:t.clientY,t:Date.now(),cv:!!(e.target.closest&&e.target.closest('#gymcv')),c0:G.cam}:null},{passive:true});
+ addEventListener('touchend',e=>{if(!t0)return;const t=e.changedTouches[0],dx=t.clientX-t0.x,dy=t.clientY-t0.y,dt=Date.now()-t0.t,onCv=t0.cv,c0=t0.c0;t0=null;if(onCv&&v.n=='gym'&&!(dx>0&&c0<=0))return;
   if(dt>700||Math.abs(dx)<60||Math.abs(dy)>Math.abs(dx)*.6)return;
   if(dx<0&&v.n=='home')swipeGo('gym','r');else if(dx>0&&v.n=='gym')swipeGo('home','l')},{passive:true});
  addEventListener('touchcancel',()=>{t0=null},{passive:true});
@@ -415,7 +415,7 @@ function updPg(){const e=$('#pg');if(!e)return;const on=S.set.hub===false&&(v.n=
 
 /* ===== Salle de musculation + personnage ===== */
 const CHF={"idle": ["....oooooo....", "...ohhhhhho...", "..ohhHhhhhho..", "..ohhhhhsso...", "..ohhhhsosso..", "...ohhhsssso..", "....ossssso...", "...oAAAAAAo...", "..osAAAAADso..", "..osAAAAADso..", "..oSAAAAADSo..", "...oDDDDDDo...", "...obbbbbbo...", "...obbbbbbo...", "...obb.obbo...", "...oss.osso...", "...oss.osso...", "...off.offo...", "...oFF.oFFo..."], "a": ["....oooooo....", "...ohhhhhho...", "..ohhHhhhhho..", "..ohhhhhsso...", "..ohhhhsosso..", "...ohhhsssso..", "....ossssso...", "...oAAAAAAo...", "..osAAAAADso..", "..osAAAAADso..", "..oSAAAAADSo..", "...oDDDDDDo...", "...obbbbbbo...", "...obbbbbbo...", "...obb.obbo...", "..oss...osso..", "..off...osso..", "..oFFo..offo..", ".......oFFo..."], "pass": ["....oooooo....", "...ohhhhhho...", "..ohhHhhhhho..", "..ohhhhhsso...", "..ohhhhsosso..", "...ohhhsssso..", "....ossssso...", "...oAAAAAAo...", "..osAAAAADso..", "..osAAAAADso..", "..oSAAAAADSo..", "...oDDDDDDo...", "...obbbbbbo...", "...obbbbbbo...", "...obbbbbbo...", "....osssso....", "....osssso....", "....offffo....", "....oFFFFo...."], "b": ["....oooooo....", "...ohhhhhho...", "..ohhHhhhhho..", "..ohhhhhsso...", "..ohhhhsosso..", "...ohhhsssso..", "....ossssso...", "...oAAAAAAo...", "..osAAAAADso..", "..osAAAAADso..", "..oSAAAAADSo..", "...oDDDDDDo...", "...obbbbbbo...", "...obbbbbbo...", "...obb.obbo...", "..oss...osso..", "..oss...offo..", "..off...oFFo..", "..oFFo........"], "flex": ["....oooooo....", "...ohhhhhho...", ".oohhHhhhhhoo.", "osohhhhhsso.so", "osohhhhsossoso", "os.ohhhssssoso", "os..ossssso.so", "ossoAAAAAAosso", ".oosAAAAADsoo.", "..osAAAAADso..", "..oSAAAAADSo..", "...oDDDDDDo...", "...obbbbbbo...", "...obbbbbbo...", "...obb.obbo...", "...oss.osso...", "...oss.osso...", "...off.offo...", "...oFF.oFFo..."], "front": ["....oooooo....", "...ohhhhhho...", "..ohhHhhhhho..", "..ohhsssshho..", "..ossossosso..", "...ossSSsso...", "....osssso....", "...oAAAAAAo...", "..osAAAAADso..", "..osAAAAADso..", "..oSAAAAADSo..", "...oDDDDDDo...", "...obbbbbbo...", "...obbbbbbo...", "...obboobbo...", "...ossoosso...", "...ossoosso...", "...offooffo...", "...oFFooFFo..."], "wave": ["....oooooo....", "...ohhhhhho.oo", "..ohhHhhhhhoso", "..ohhsssshhoso", "..ossossossoso", "...ossSSssooso", "....osssso.oso", "...oAAAAAAosso", "..osAAAAADDoo.", "..osAAAAADDo..", "..oSAAAAADDo..", "...oDDDDDDo...", "...obbbbbbo...", "...obbbbbbo...", "...obboobbo...", "...ossoosso...", "...ossoosso...", "...offooffo...", "...oFFooFFo..."]};
-const G={x:0,y:0,tx:0,ty:0,dir:1,mode:'idle',wait:1.2,wt:0,ft:0,since:0,raf:0,last:0,W:0,H:0,k:3,bg:null,bgk:'',spr:null,sprk:'',st:''};
+const G={cam:0,cv:0,drag:null,camT:0,VW:0,x:0,y:0,tx:0,ty:0,dir:1,mode:'idle',wait:1.2,wt:0,ft:0,since:0,raf:0,last:0,W:0,H:0,k:3,bg:null,bgk:'',spr:null,sprk:'',st:''};
 const gShade=(c,f)=>{const m=/^#([0-9a-f]{6})$/i.exec(c||'');if(!m)return'#c9780e';const n=parseInt(m[1],16);return'#'+[16,8,0].map(b=>Math.round(((n>>b)&255)*f).toString(16).padStart(2,'0')).join('')};
 function gSprites(){const ac=(S.set&&S.set.ac)||'#ffb02e';if(G.spr&&G.sprk==ac)return G.spr;
  const pal={o:'#0a070e',h:'#6b3f1d',H:'#8f5a2b',s:'#f4b98c',S:'#d98e63',A:ac,D:gShade(ac,.72),b:'#3f5fb0',B:'#2d4586',f:'#f1ecf7',F:'#8c84a0'},o={};
@@ -472,13 +472,25 @@ function gStatic(W,H,F){const key=W+'x'+H+JSON.stringify(F);if(G.bg&&G.bgk==key)
  /* toiles d'araignée */
  if(F.webs){gWeb(x,0,8,1,1,24);gWeb(x,W-1,8,-1,1,20);gWeb(x,dx+dw,dt,-1,1,9);gWeb(x,mx+mw+1,mt-1,-1,1,11);if(ww>=16)gWeb(x,wx-1,wt-1,1,1,11)}
  G.bg=c;G.bgk=key;return c}
+
+/* ===== Caméra : salle de taille fixe, plus large que l'écran ===== */
+const G_WORLD=260;
+const gCamMax=()=>Math.max(0,G.W-G.VW);
+const gCamClamp=c=>Math.max(0,Math.min(gCamMax(),c));
+function gCamStep(dt){if(G.drag||!G.cv)return;G.cam=gCamClamp(G.cam+G.cv*dt);G.cv*=Math.exp(-5*dt);if(Math.abs(G.cv)<2||G.cam<=0||G.cam>=gCamMax())G.cv=0;G.camT=performance.now()/1000}
+function gCamCenter(){G.cv=0;G.cam=gCamClamp(G.x-G.VW/2);G.camT=performance.now()/1000}
+function gCamBind(cv){G.drag=null;if(cv._cb)return;cv._cb=1;
+ cv.addEventListener('pointerdown',e=>{if(e.pointerType=='mouse'&&e.button!==0)return;G.drag={id:e.pointerId,x:e.clientX,cam:G.cam,lx:e.clientX,lt:performance.now(),v:0};G.cv=0;try{cv.setPointerCapture(e.pointerId)}catch(x){}});
+ cv.addEventListener('pointermove',e=>{const d=G.drag;if(!d||d.id!=e.pointerId)return;const now=performance.now(),dtm=Math.max(1,now-d.lt);G.cam=gCamClamp(d.cam-(e.clientX-d.x)/G.k);d.v=.7*d.v+.3*(-(e.clientX-d.lx)/G.k)/(dtm/1000);d.lx=e.clientX;d.lt=now;G.camT=now/1000});
+ const end=e=>{const d=G.drag;if(!d||d.id!=e.pointerId)return;G.drag=null;G.cv=Math.abs(d.v)>25?Math.max(-600,Math.min(600,d.v)):0;if(performance.now()-d.lt>90)G.cv=0};
+ cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end)}
 function gStep(dt){const W=G.W,H=G.H,WH=gWall(H),x0=10,x1=W-10,y0=WH+10,y1=H-4;
  G.x=Math.max(x0,Math.min(x1,G.x));G.y=Math.max(y0,Math.min(y1,G.y));G.since+=dt;
  if(G.mode=='walk'){const dx=G.tx-G.x,dy=G.ty-G.y,d=Math.hypot(dx,dy),st=26*dt;G.wt+=dt;
   if(d<=st){G.x=G.tx;G.y=G.ty;G.wt=0;if(G.since>9&&Math.random()<.4){G.mode='flex';G.wait=1.6;G.ft=0;G.since=0}else if(Math.random()<.45){G.mode='front';G.wait=2.6+Math.random()*1.6;G.ft=0;G.wave=Math.random()<.6}else{G.mode='idle';G.wait=1.5+Math.random()*3}}
   else{G.x+=dx/d*st;G.y+=dy/d*st;if(Math.abs(dx)>.5)G.dir=dx>0?1:-1}}
  else{G.wait-=dt;G.ft+=dt;if(G.wait<=0){let tx,ty,n=0;do{tx=x0+Math.random()*(x1-x0);ty=y0+Math.random()*(y1-y0)}while(Math.hypot(tx-G.x,ty-G.y)<28&&++n<12);G.tx=tx;G.ty=ty;G.mode='walk';G.wt=0}}}
-function gDraw(cv){const W=G.W,H=G.H,x=cv.getContext('2d'),WH=gWall(H),T=performance.now()/1000,F=gFlags();x.imageSmoothingEnabled=false;
+function gDraw(cv){const W=G.W,H=G.H,x=cv.getContext('2d'),WH=gWall(H),T=performance.now()/1000,F=gFlags();x.imageSmoothingEnabled=false;const cam=Math.round(G.cam||0);x.setTransform(1,0,0,1,-cam,0);
  x.drawImage(gStatic(W,H,F),0,0);
  if(!F.lit){x.fillStyle='rgba(10,5,20,.26)';x.fillRect(0,0,W,H)}
  /* fenêtre : étoiles + lune */
@@ -489,11 +501,11 @@ function gDraw(cv){const W=G.W,H=G.H,x=cv.getContext('2d'),WH=gWall(H),T=perform
  if(G.win){const w=G.win,L=Math.min(46,H-WH-4);for(let i=1;i<L;i++){const xl=Math.round(w.x-6-.85*i),l=Math.max(0,xl),r=Math.min(W,xl+w.w+4);if(r>l){x.fillStyle='rgba(150,185,255,'+(.14*(1-i/L)).toFixed(3)+')';x.fillRect(l,WH+i,r-l,1)}}}
  if(F.dirt&&G.win){const w=G.win;for(let i=0;i<16;i++){const ph=i*1.9,bx=w.x-34+((i*37)%(w.w+30)),by=WH-18+((i*53)%62);x.fillStyle='rgba(225,236,255,'+(.25+.35*Math.abs(Math.sin(T*.8+ph))).toFixed(2)+')';x.fillRect(Math.round(bx+Math.sin(T*.35+ph)*3),Math.round(by+Math.sin(T*.5+ph*1.3)*2),1,1)}}
  /* lampes suspendues (éteintes, l'une grésille parfois) */
- [13,52].forEach((lx0,i)=>{const ly=Math.min(18,WH-44);if(ly<10)return;const lx=lx0+(F.lit?0:Math.round(Math.sin(T*.9+i*2)*i)),on=F.lit||(i==1&&Math.floor(T*10)%97<2);
+ [13,52,124,226].forEach((lx0,i)=>{const ly=Math.min(18,WH-44);if(ly<10)return;const lx=lx0+(F.lit?0:Math.round(Math.sin(T*.9+i*2)*i)),on=F.lit||(i==1&&Math.floor(T*10)%97<2);
   x.fillStyle='#6b6b7a';x.fillRect(lx,7,1,ly-7);if(on){gDisk(x,lx,ly+3,13,'#ffd27a0c');gDisk(x,lx,ly+3,8,'#ffd27a14')}
   x.fillStyle='#0a070e';x.fillRect(lx-3,ly,7,1);x.fillStyle=on?'#c9a227':'#5a4a2a';x.fillRect(lx-2,ly+1,5,2);x.fillStyle=on?'#ffe9a8':'#2a2110';x.fillRect(lx-1,ly+3,3,1)});
  /* torches (éteintes : une braise reluit de temps en temps) */
- [27,77].forEach((tx,i)=>{const fy=WH-27,f=Math.floor(T*8+i*3)%2;
+ [27,77,126,214,248].forEach((tx,i)=>{const fy=WH-27,f=Math.floor(T*8+i*3)%2;
   if(F.lit){gDisk(x,tx,fy,18,'#ffaa3c0d');gDisk(x,tx,fy,12,'#ffaa3c12');gDisk(x,tx,fy,7,'#ffc86e1a')}
   x.fillStyle='#0a070e';x.fillRect(tx-2,fy+4,5,1);x.fillStyle=F.lit?'#6b4a2a':'#4a3322';x.fillRect(tx-1,fy+2,3,8);x.fillStyle='#0a070e';x.fillRect(tx-2,fy+2,1,8);x.fillRect(tx+2,fy+2,1,8);
   if(F.lit){x.fillStyle='#ff8a1f';x.fillRect(tx-1,fy-(f?3:2),3,f?5:4);x.fillStyle='#ffe066';x.fillRect(tx,fy-(f?1:0),1,f?3:2)}
@@ -509,21 +521,24 @@ function gDraw(cv){const W=G.W,H=G.H,x=cv.getContext('2d'),WH=gWall(H),T=perform
  else if(G.mode=='front'){fr=G.wave&&Math.floor(G.ft*3)%2==0?'wave':'front';up=Math.floor(T/.7)%2}
  else up=Math.floor(T/.7)%2;
  const s=sp[fr],oy=py-19+bob;x.save();
- if(G.dir<0&&fr!='front'&&fr!='wave'){x.setTransform(-1,0,0,1,px+7,0);x.drawImage(s,0,14,14,5,0,oy+14,14,5);x.drawImage(s,0,0,14,14,0,oy+up,14,14)}
+ if(G.dir<0&&fr!='front'&&fr!='wave'){x.setTransform(-1,0,0,1,px+7-cam,0);x.drawImage(s,0,14,14,5,0,oy+14,14,5);x.drawImage(s,0,0,14,14,0,oy+up,14,14)}
  else{x.drawImage(s,0,14,14,5,px-7,oy+14,14,5);x.drawImage(s,0,0,14,14,px-7,oy+up,14,14)}
  x.restore();
+ x.setTransform(1,0,0,1,0,0);
+ {const a=Math.max(0,Math.min(1,(G.camT+1.8-T)/.6));if(a>0&&W>G.VW){const bw=G.VW-12,tw=Math.max(8,Math.round(bw*G.VW/W)),tx=6+Math.round((bw-tw)*cam/(W-G.VW)),by=H-5;x.globalAlpha=a*.85;x.fillStyle='#0a070e';x.fillRect(5,by-1,bw+2,4);x.fillStyle='#4b3a5e';x.fillRect(6,by,bw,2);x.fillStyle='#ffb02e';x.fillRect(tx,by,tw,2);x.globalAlpha=1}}
  const lab=G.mode=='walk'?'Se promène dans sa salle':G.mode=='flex'?'Montre ses muscles':G.mode=='front'?(G.wave?'Te fait coucou':'Te regarde'):'Se repose un instant';
- const tg=document.getElementById('gytag');if(tg){const k=G.k,w=tg.offsetWidth,cw=cv.parentElement.clientWidth,l=Math.max(w/2+2,Math.min(cw-w/2-2,cv.offsetLeft+px*k));tg.style.transform='translate('+Math.round(l)+'px,'+Math.round(cv.offsetTop+(oy+up)*k-5)+'px) translate(-50%,-100%)'}
+ const tg=document.getElementById('gytag');if(tg){const k=G.k,w=tg.offsetWidth,cw=cv.parentElement.clientWidth,l=Math.max(w/2+2,Math.min(cw-w/2-2,cv.offsetLeft+(px-cam)*k));tg.style.transform='translate('+Math.round(l)+'px,'+Math.round(cv.offsetTop+(oy+up)*k-5)+'px) translate(-50%,-100%)'}
  if(lab!=G.st){G.st=lab;const e=document.getElementById('gyst');if(e)e.textContent=lab}}
 function gLoop(ts){const cv=document.getElementById('gymcv');if(!cv){G.raf=0;return}
- const dt=Math.min(.1,(ts-G.last)/1000||0);G.last=ts;if(cv.width==G.W){gStep(dt);gDraw(cv)}G.raf=requestAnimationFrame(gLoop)}
+ const dt=Math.min(.1,(ts-G.last)/1000||0);G.last=ts;if(cv.width==G.VW){gStep(dt);gCamStep(dt);gDraw(cv)}G.raf=requestAnimationFrame(gLoop)}
 function gymRoom(){const q=lvl(),hub=v.n=='home',c=S.cur,sx=c&&sess(c.sid),col=lvColor(q.L);
- const card=`<div class="card gymc"><canvas id="gymcv"></canvas><div id="gytag" class="bx ${lvFx(q.L)}" style="--lc:${col};border:3px solid ${col};background:#0a070e;color:${col};padding:4px 5px;font:8px var(--px);white-space:nowrap">Niv.${q.L}</div></div>`;
+ const card=`<div class="card gymc"><canvas id="gymcv"></canvas><div id="gytag" onclick="gCamCenter()" class="bx ${lvFx(q.L)}" style="--lc:${col};border:3px solid ${col};background:#0a070e;color:${col};padding:4px 5px;font:8px var(--px);white-space:nowrap">Niv.${q.L}</div></div>`;
  if(hub){updDock();A.innerHTML=tipHtml()+(sx?`<div class="card today" style="margin:0 0 8px;padding:8px 10px"><div class="mu" style="font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">▶ ${sx.name} · <span id="t_el"></span> · <span id="t_vol"></span></div><div class="grid" style="margin-top:6px;gap:8px"><button class="btn p s" style="margin:0;padding:8px" onclick="resume()">Reprendre</button><button class="btn d s" style="margin:0;padding:8px" onclick="ask('Abandonner la séance ?',()=>{S.cur=null;save();render()})">Abandonner</button></div></div>`:'')+card}
  else A.innerHTML=hdr('Ma salle',"swipeGo('home','l')")+card+`<div class="row" style="margin-top:4px"><b>${S.me.name||curName()}</b><span class="chip b">Niv.${q.L} · ${lvTitle(q.L)}</span></div><div class="mu" id="gyst" style="margin-top:6px"></div>`;
  const cv=$('#gymcv'),dh=hub?($('#dock')?$('#dock').offsetHeight:92):0,avail=cv.parentElement.clientWidth||320,k=avail>=300?3:2,W=Math.max(96,Math.floor(avail/k)),H=Math.max(Math.round(W*.78),Math.min(Math.round(W*2.2),Math.floor((innerHeight-(cv.parentElement.getBoundingClientRect().top+scrollY)-(hub?dh+34:135))/k))),first=!G.W;
- cv.width=W;cv.height=H;cv.style.width=W*k+'px';cv.style.height=H*k+'px';G.k=k;
- if(first||G.W!=W||G.H!=H){const WH=gWall(H);if(first){G.x=W/2;G.y=(WH+H)/2;G.mode='front';G.wait=2.6;G.ft=0;G.wave=true}else{G.x=G.x/G.W*W;G.y=WH+(G.y-gWall(G.H))/(G.H-gWall(G.H))*(H-WH);if(G.mode=='walk')G.mode='idle'}G.W=W;G.H=H}
+ const WW=Math.max(G_WORLD,W);cv.width=W;cv.height=H;cv.style.width=W*k+'px';cv.style.height=H*k+'px';G.k=k;G.VW=W;gCamBind(cv);
+ if(first||G.W!=WW||G.H!=H){const WH=gWall(H);if(first){G.x=WW/2;G.y=(WH+H)/2;G.mode='front';G.wait=2.6;G.ft=0;G.wave=true}else{G.x=G.x/G.W*WW;G.y=WH+(G.y-gWall(G.H))/(G.H-gWall(G.H))*(H-WH);if(G.mode=='walk')G.mode='idle'}G.W=WW;G.H=H;if(first){G.cam=gCamClamp(G.x-W/2);G.camT=performance.now()/1000}}
+ G.cam=gCamClamp(G.cam);
  G.st='';gDraw(cv);if(!G.raf){G.last=performance.now();G.raf=requestAnimationFrame(gLoop)}}
 
 function goals(){const g=goalsHtml(),m=monthHtml();
