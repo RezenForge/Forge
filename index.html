@@ -171,7 +171,27 @@ html.lock,html.lock body{overflow:hidden}.ov{overscroll-behavior:contain}
 .lvc .mu{margin:2px 0}.lvc .btn{margin:12px 0 0}
 @media(prefers-reduced-motion:reduce){.lvc,.lvc *,.lvc::after,.lvfl{animation:none!important}#lvup i{display:none}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
-</style></head><body><div id="bar"></div><div id="app"></div><div id="pg"></div><div id="dock"></div>
+
+/* ===== ECRAN DE CHARGEMENT ===== */
+#splash{position:fixed;inset:0;z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:24px;text-align:center;background-color:#0e0914;background-image:linear-gradient(var(--ink) 4px,transparent 4px),linear-gradient(90deg,var(--ink) 4px,transparent 4px);background-size:48px 48px;overflow:hidden;transition:opacity .5s steps(6)}
+#splash::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,#ffb02e14 0,transparent 40%,#000d 100%)}
+#splash.out{opacity:0;pointer-events:none}
+#splash>*{position:relative}
+#splash .sp-row{display:flex;align-items:flex-end;justify-content:center;gap:22px}
+#splash .sp-logo{animation:spbob 1.2s steps(2) infinite}
+@keyframes spbob{50%{transform:translateY(-6px)}}
+#splash .sp-t{font:26px/1.35 var(--px);color:var(--ac);margin:0;letter-spacing:2px;text-shadow:3px 0 0 var(--ink),-3px 0 0 var(--ink),0 3px 0 var(--ink),0 -3px 0 var(--ink),3px 3px 0 var(--ink),-3px 3px 0 var(--ink),0 8px 0 #7a3b00}
+#splash .sp-t span{display:block;color:var(--tx);font-size:30px}
+#splash .sp-s{font:22px/1 VT323,monospace;color:var(--mu);letter-spacing:1px}
+#splash .sp-bar{display:flex;gap:4px;padding:6px;width:min(78vw,300px);background:var(--ink);border:4px solid var(--ink);box-shadow:0 0 0 3px var(--bg3),0 4px 0 3px var(--ink)}
+#splash .sp-bar i{flex:1;height:16px;background:#2a2036}
+#splash .sp-bar i.on{background:var(--ac);box-shadow:inset 0 -4px 0 #c97a00,inset 0 3px 0 #ffe08a}
+#splash .sp-msg{font:22px/1 VT323,monospace;color:var(--tx);min-height:24px}
+#splash .sp-skip{font:8px/1.6 var(--px);color:var(--mu);opacity:.7;animation:spbl 1s steps(2) infinite}
+@keyframes spbl{50%{opacity:0}}
+#splash .sp-em{position:absolute;bottom:-10px;width:6px;height:6px;background:var(--ac);opacity:.8;animation:spem linear infinite}
+@keyframes spem{to{transform:translate(var(--dx),-110vh);opacity:0}}
+</style></head><body><div id="splash" aria-hidden="true"><div class="sp-row"><div id="spT1"></div><div class="sp-logo" id="spLogo"></div><div id="spT2"></div></div><h1 class="sp-t">DUNGEON<span>GAINS</span></h1><div class="sp-s">~ le roguelike de la muscu ~</div><div><div class="sp-bar" id="spBar"></div><div class="sp-msg" id="spMsg" style="margin-top:12px"></div></div><div class="sp-skip">TOUCHE POUR PASSER</div></div><div id="bar"></div><div id="app"></div><div id="pg"></div><div id="dock"></div>
 <script>
 const $=s=>document.querySelector(s),A=$('#app');
 const DAYS=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
@@ -593,4 +613,20 @@ document.addEventListener('click',keepAwake);
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 keepAwake();
 render();
+/* ===== ECRAN DE CHARGEMENT (fictif) ===== */
+(function(){
+ const o=document.getElementById('splash');if(!o)return;
+ SP.dumb=["..oo........oo..",".oggo......oggo.",".ogho.oooo.ohgo.","ogghoaaaaaaohggo","ogghobbbbbbohggo",".ogho.oooo.ohgo.",".oggo......oggo.","..oo........oo.."];
+ document.getElementById('spLogo').innerHTML=spr('dumb',7,0);
+ document.getElementById('spT1').innerHTML=torch();document.getElementById('spT2').innerHTML=torch();
+ for(let i=0;i<14;i++){const e=document.createElement('b');e.className='sp-em';e.style.cssText='left:'+(Math.random()*100)+'%;--dx:'+((Math.random()*80-40)|0)+'px;animation-duration:'+(2.5+Math.random()*3).toFixed(1)+'s;animation-delay:-'+(Math.random()*4).toFixed(1)+'s';o.append(e)}
+ const N=10,bar=document.getElementById('spBar'),msg=document.getElementById('spMsg'),M=['Réveil du donjon...','Affûtage des haltères...','Chargement des barres...','Invocation du coach...','Échauffement du héros...'];
+ bar.innerHTML='<i></i>'.repeat(N);const seg=bar.children;
+ let n=0,done=false;
+ function end(){if(done)return;done=true;clearInterval(t);o.classList.add('out');setTimeout(()=>o.remove(),550)}
+ function tick(){if(n<N){seg[n].classList.add('on');n++;msg.textContent=M[Math.min(M.length-1,Math.floor((n-1)/N*M.length))]}if(n>=N){msg.textContent='Prêt pour le combat !';clearInterval(t);setTimeout(end,500)}}
+ msg.textContent=M[0];
+ const t=setInterval(tick,250);
+ o.addEventListener('click',end);
+})();
 </script></body></html>
