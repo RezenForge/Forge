@@ -1,6 +1,6 @@
 /* Dungeon Gains — service worker
    Change VERSION à chaque mise à jour importante pour forcer le rafraîchissement. */
-const VERSION = 'dg-2026-10-15';
+const VERSION = 'dg-2026-10-15zg';
 const ASSETS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
