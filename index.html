@@ -1529,9 +1529,133 @@ const FLOORS=[
  {id:'checker',n:"Damier de taverne",d:"Carreaux rouges et crème, ambiance auberge.",p:240,L:9},
  {id:'marbleF',n:"Marbre poli",d:"Grandes dalles de marbre qui reflètent la lumière.",p:420,L:15},
  {id:'goldF',n:"Dallage d'or",d:"Des dalles en or. Rien que ça.",p:750,L:25}];
+/* ===== Murs et sols supplémentaires : 3 + 3 par palier, du plus brut au plus luxueux ===== */
+const WALLS2=[
+ /* Cure-dent */
+ {id:'plaster',n:"Crépi défraîchi",d:"Un vieux crépi beige plein de taches. Mieux que rien.",p:30,L:1,lb:['#3a332c','#5a5048','#2c2620','#1e1a16']},
+ {id:'cinder',n:"Parpaings bruts",d:"Des blocs gris posés à la va-vite. Ambiance garage.",p:45,L:1,lb:['#2c2c32','#4a4a50','#222228','#16161a']},
+ {id:'mossy',n:"Briques moussues",d:"Les briques du donjon, envahies par la mousse.",p:60,L:2,lb:['#2a3a2a','#3f6b3a','#1f2c1f','#141c14']},
+ /* Bâtonnet */
+ {id:'paint',n:"Peinture fraîche",d:"Deux tons de bleu et une frise claire. Propre et simple.",p:90,L:3,lb:['#1f2c3a','#8fa8c0','#17212c','#10171f']},
+ {id:'osb',n:"Panneaux OSB",d:"Des panneaux de copeaux de bois, façon atelier.",p:110,L:4,lb:['#5a4020','#a8834e','#4a3418','#2e2010']},
+ {id:'redbrick',n:"Briques rouges",d:"De belles briques rouges aux joints clairs.",p:130,L:5,lb:['#5a2a20','#a04a36','#4a2018','#2e140e']},
+ /* Créatineux */
+ {id:'garage',n:"Béton street",d:"Béton brut et graffitis colorés, style salle de quartier.",p:180,L:6,lb:['#2c2c32','#6a6a72','#222228','#16161a']},
+ {id:'tilesW',n:"Carrelage de vestiaire",d:"Petits carreaux blancs et frise bleue, comme aux vestiaires.",p:200,L:7,lb:['#2f4a6a','#5a8ac0','#24394f','#18263a']},
+ {id:'club',n:"Salle de club",d:"Murs sombres et bande lumineuse à ta couleur.",p:240,L:9,lb:['#15151a','#3a3a46','#101014','#0a0a0d']},
+ /* Pumpé */
+ {id:'loft',n:"Loft industriel",d:"Briques apparentes et poutres d'acier rivetées.",p:300,L:10,lb:['#1b1b22','#3a3a46','#121218','#0a0a0e']},
+ {id:'wallpaper',n:"Papier peint rétro",d:"Motif à losanges vert et or, chic à l'ancienne.",p:330,L:11,lb:['#3a2814','#8b5a2b','#2a1c0e','#1a1008']},
+ {id:'oak',n:"Boiseries de chêne",d:"Lambris moulurés et cimaise, comme dans un manoir.",p:380,L:13,lb:['#3a2814','#a06a35','#2a1c0e','#1a1008']},
+ /* Veineux */
+ {id:'mirror',n:"Mur de miroirs",d:"Des miroirs du sol au plafond pour admirer tes veines.",p:480,L:16,lb:['#6c6480','#e4ecf4','#544c68','#2a2438']},
+ {id:'mosaic',n:"Mosaïque romaine",d:"Des milliers de tesselles et une frise antique.",p:540,L:18,lb:['#5a2a20','#c9a227','#4a2018','#2e140e']},
+ {id:'jade',n:"Pagode de jade",d:"Panneaux de jade et piliers laqués rouge et or.",p:620,L:21,lb:['#5a0e0e','#c9a227','#3a0808','#1e0404']},
+ /* Frigo */
+ {id:'ice',n:"Palais de glace",d:"Des blocs de glace taillés. Normal, pour un Frigo.",p:800,L:26,lb:['#4f8fb8','#e4f6ff','#3f7aa0','#2a5a7a']},
+ {id:'obsidian',n:"Obsidienne et lave",d:"Roche noire veinée de lave en fusion.",p:900,L:30,lb:['#15111c','#ff8a1f','#0e0b14','#08060c']},
+ {id:'cathedral',n:"Vitraux de cathédrale",d:"Pierre claire et grands vitraux colorés.",p:1000,L:34,lb:['#3f3d48','#8c8a98','#2f2d38','#1e1c24']},
+ /* Musclor */
+ {id:'olymp',n:"Temple de l'Olympe",d:"Marbre blanc, colonnes d'or et frise des dieux.",p:1300,L:40,lb:['#c9a227','#ffe066','#8c6a14','#5a420a']},
+ {id:'cosmos',n:"Nébuleuse cosmique",d:"Tu t'entraînes au milieu des étoiles.",p:1500,L:44,lb:['#140c2a','#7a4bd0','#0e081e','#06040e']},
+ {id:'goldwall',n:"Coffre-fort d'or",d:"Un mur entier de lingots. La salle d'un vrai Musclor.",p:1800,L:50,lb:['#8c6a14','#ffe066','#6a4e0a','#3a2a06']}];
+const FLOORS2=[
+ /* Cure-dent */
+ {id:'dirt',n:"Terre battue",d:"De la terre tassée et quelques cailloux.",p:25,L:1},
+ {id:'concrete',n:"Béton brut",d:"Une dalle de béton gris, solide et sans chichis.",p:40,L:1},
+ {id:'lino',n:"Lino de grand-mère",d:"Un lino beige à motifs, un peu jauni.",p:55,L:2},
+ /* Bâtonnet */
+ {id:'carpet',n:"Moquette grise",d:"Une moquette épaisse, douce pour les abdos au sol.",p:90,L:3},
+ {id:'pine',n:"Lattes de pin",d:"Un parquet clair en pin, avec ses nœuds.",p:110,L:4},
+ {id:'tilesF',n:"Carrelage blanc",d:"De grands carreaux blancs faciles à nettoyer.",p:130,L:5},
+ /* Créatineux */
+ {id:'court',n:"Sol sportif",d:"Revêtement bleu de gymnase avec ses lignes de terrain.",p:180,L:6},
+ {id:'herring',n:"Parquet à chevrons",d:"Des lames posées en chevrons, ça a du style.",p:220,L:7},
+ {id:'terracotta',n:"Tomettes",d:"Des tomettes orangées, chaleureuses comme le Sud.",p:250,L:8},
+ /* Pumpé */
+ {id:'slate',n:"Dalles d'ardoise",d:"De l'ardoise sombre posée en grandes plaques.",p:300,L:10},
+ {id:'walnut',n:"Parquet de noyer",d:"Un parquet foncé et lustré, très chic.",p:340,L:12},
+ {id:'redcarp',n:"Tapis de gala",d:"Un tapis rouge bordé d'or sur tout le sol.",p:390,L:14},
+ /* Veineux */
+ {id:'mosaicF',n:"Mosaïque bleue",d:"Des tesselles bleues et blanches en rosaces.",p:470,L:16},
+ {id:'granite',n:"Granit noir poli",d:"Du granit moucheté qui brille comme un miroir.",p:540,L:19},
+ {id:'jadeF',n:"Dalles de jade",d:"Des dalles de jade serties d'or.",p:620,L:22},
+ /* Frigo */
+ {id:'iceF',n:"Glace éternelle",d:"Un sol de glace qui ne fond jamais.",p:800,L:26},
+ {id:'lavaF',n:"Dalles de lave",d:"Du basalte aux joints de lave incandescente.",p:900,L:31},
+ {id:'persian',n:"Tapis persan",d:"Un immense tapis tissé de motifs royaux.",p:1000,L:35},
+ /* Musclor */
+ {id:'cloud',n:"Nuages de l'Olympe",d:"Tu t'entraînes au-dessus des nuages.",p:1300,L:40},
+ {id:'starF',n:"Sol étoilé",d:"Des dalles d'or sur un ciel de nuit.",p:1500,L:45},
+ {id:'diamond',n:"Dallage de diamant",d:"Des dalles taillées comme des diamants. Le sommet.",p:1800,L:50}];
+WALLS.push(...WALLS2);FLOORS.push(...FLOORS2);WALLS.sort((a,b)=>a.L-b.L||a.p-b.p);FLOORS.sort((a,b)=>a.L-b.L||a.p-b.p);
+/* outils de dessin */
+function dBricks(R,W,H,bw,bh,c,m,h,v,sd){const q=gRnd(sd||77);R(0,0,W,H,m);for(let r=0,y=0;y<H;r++,y+=bh)for(let bx=(r%2?-bw/2:0);bx<W;bx+=bw){const col=v&&q()<.4?v[Math.floor(q()*v.length)]:c;R(bx+1,y+1,bw-1,bh-1,col);if(h)R(bx+1,y+1,bw-1,1,h)}}
+function dSpeck(R,x0,y0,W,H,n,cols,sd){const q=gRnd(sd||5);for(let i=0;i<n;i++)R(x0+Math.floor(q()*W),y0+Math.floor(q()*H),1,1,cols[Math.floor(q()*cols.length)])}
+function dGrid(R,x0,y0,W,H,s,c1,c2,g,hl){for(let ty=y0,r=0;ty<y0+H;ty+=s,r++)for(let tx=x0,i=0;tx<x0+W;tx+=s,i++){R(tx,ty,s,s,(i+r)%2&&c2?c2:c1);if(hl){R(tx+1,ty+1,Math.max(1,s>>2),1,hl);R(tx+1,ty+1,1,Math.max(1,s>>2),hl)}}
+ if(g){for(let ty=y0;ty<y0+H;ty+=s)R(x0,ty,W,1,g);for(let tx=x0;tx<x0+W;tx+=s)R(tx,y0,1,H,g)}}
+const WP={
+ plaster(R,W,H,top){R(0,0,W,H,'#5a5048');dSpeck(R,0,0,W,top,W*top/9,['#4a4038','#6a6058','#544a42'],11);const q=gRnd(3);for(let i=0;i<W/40;i++){const x=Math.floor(q()*W),y=Math.floor(q()*Math.max(1,top-8));R(x,y,7,5,'#4f463e');R(x+1,y+5,4,2,'#4f463e')}
+  for(let i=0;i<W/70;i++){let x=Math.floor(q()*W),y=Math.floor(q()*top*.5);for(let k=0;k<9;k++){R(x,y,1,1,'#2e2822');y++;x+=Math.floor(q()*3)-1}}},
+ cinder(R,W,H){dBricks(R,W,H,16,8,'#4a4a50','#2c2c32','#58585f',['#45454b','#505057'],21);dSpeck(R,0,0,W,H,W*H/14,['#3e3e44','#56565c'],7)},
+ mossy(R,W,H,top){dBricks(R,W,H,12,6,'#3a3046','#1f1829','#463a55',['#352b40'],31);const q=gRnd(9);for(let i=0;i<W/9;i++){const x=Math.floor(q()*W),y=q()<.5?Math.floor(q()*6):top-2-Math.floor(q()*8),w=3+Math.floor(q()*6);R(x,y,w,2,'#2f5230');R(x+1,y-1,w-2,1,'#3f6b3a');if(q()<.5)R(x+1,y+2,1,2+Math.floor(q()*3),'#2f5230')}},
+ paint(R,W,H,top){const y=Math.round(top*.55);R(0,0,W,H,'#47607a');R(0,y,W,H-y,'#2f4256');for(let x=0;x<W;x+=5)R(x,0,1,y,'#4a6480');R(0,y,W,2,'#8fa8c0');R(0,y+2,W,1,'#1f2c3a')},
+ osb(R,W,H){R(0,0,W,H,'#a8834e');dSpeck(R,0,0,W,H,W*H/3,['#8c6a3a','#c09a60','#7a5a30','#b8925a'],13);const q=gRnd(4);for(let i=0;i<W*H/40;i++)R(Math.floor(q()*W),Math.floor(q()*H),2,1,'#8c6a3a');for(let x=0;x<W;x+=24){R(x,0,1,H,'#5a4020');R(x+1,0,1,H,'#c09a60')}},
+ redbrick(R,W,H){dBricks(R,W,H,12,6,'#8a3a2a','#c8b8a0','#a04a36',['#7a3224','#94422f'],41)},
+ garage(R,W,H,top){R(0,0,W,H,'#55555c');dSpeck(R,0,0,W,H,W*H/6,['#4a4a50','#606068'],17);for(let y=10;y<top;y+=10)R(0,y,W,1,'#4a4a50');
+  const T=['#ff4fa0','#3fd0e0','#ffd166','#7cff6a'];for(let gx=18,k=0;gx<W-30;gx+=95,k++){const c=T[k%4],c2=T[(k+1)%4],y0=Math.round(top*.35);for(let i=0;i<22;i++){const yy=y0+Math.round(Math.sin(i*.7+k)*4);R(gx+i,yy,2,3,c);if(i%3==0)R(gx+i,yy+3,1,2,c)}R(gx+3,y0+7,16,2,c2);R(gx+24,y0-2,3,3,c2)}},
+ tilesW(R,W,H,top){dGrid(R,0,0,W,H,6,'#d8dde4',null,'#9aa0aa','#eef1f5');const y=Math.round(top*.6)-Math.round(top*.6)%6;R(0,y+1,W,5,'#3f6fa8');for(let x=0;x<W;x+=6)R(x,y,1,6,'#2f4a6a')},
+ club(R,W,H,top){const ac=(S.set&&S.set.ac)||'#ffb02e';R(0,0,W,H,'#1e1e26');for(let x=0;x<W;x+=32){R(x,0,1,H,'#16161c');R(x+1,0,1,H,'#26262f')}const y=Math.round(top*.5);R(0,y,W,4,ac);R(0,y,W,1,gShade(ac,1.25));R(0,y+4,W,1,'#0a0a0d');R(0,y+7,W,1,gShade(ac,.6))},
+ loft(R,W,H){dBricks(R,W,H,14,6,'#7a4030','#3a2420','#8c4c38',['#6e382a','#86483a'],51);for(let x=20;x<W;x+=64){R(x,0,6,H,'#1b1b22');R(x,0,1,H,'#3a3a46');for(let y=3;y<H;y+=8){R(x+2,y,1,1,'#55556a');R(x+4,y,1,1,'#55556a')}}R(0,0,W,4,'#1b1b22');R(0,4,W,1,'#3a3a46')},
+ wallpaper(R,W,H){R(0,0,W,H,'#2f4a3a');for(let y=0,r=0;y<H;y+=10,r++)for(let x=(r%2?5:0);x<W;x+=10){R(x+4,y+1,2,1,'#3f6050');R(x+3,y+2,4,1,'#3f6050');R(x+2,y+3,6,2,'#3f6050');R(x+3,y+5,4,1,'#3f6050');R(x+4,y+6,2,1,'#3f6050');R(x+4,y+3,2,2,'#c9a227')}R(0,0,W,3,'#c9a227');R(0,3,W,1,'#8c6a14')},
+ oak(R,W,H,top){const y=Math.round(top*.45);R(0,0,W,y,'#4a2f17');for(let x=0;x<W;x+=4)R(x,0,1,y,'#3e2712');R(0,y,W,H-y,'#5a3a1e');R(0,y,W,2,'#a06a35');R(0,y+2,W,1,'#2a1c0e');
+  for(let x=2;x<W;x+=24){R(x,y+5,20,Math.max(3,top-y-8),'#3a2814');R(x+1,y+6,18,Math.max(1,top-y-10),'#6b4a2a');R(x+2,y+7,16,Math.max(1,top-y-12),'#5a3a1e')}},
+ mirror(R,W,H,top){R(0,0,W,H,'#c9c2d4');for(let x=2;x<W;x+=28){R(x,2,24,top-3,'#e4ecf4');R(x+1,3,22,top-5,'#8fa6bc');R(x+1,3,22,Math.round((top-5)*.4),'#9fb4c8');for(let k=0;k<top-6;k++){if(x+4+k<x+22)R(x+4+k,4+k,1,1,'#d8e6f2');if(x+9+k<x+22)R(x+9+k,4+k,1,1,'#c4d6e6')}}},
+ mosaic(R,W,H,top){const P=['#e8d5a3','#d8c090','#c8b080','#e0caa0'],q=gRnd(61);for(let y=0;y<H;y+=3)for(let x=0;x<W;x+=3)R(x,y,3,3,P[Math.floor(q()*4)]);
+  const b=Math.round(top*.5)-3;for(let x=0;x<W;x+=3){R(x,b,3,3,'#8c3a2a');R(x,b+9,3,3,'#8c3a2a')}for(let x=0;x<W;x+=12){R(x,b+3,3,6,'#2f6fa0');R(x+3,b+3,3,3,'#2f6fa0');R(x+6,b+6,3,3,'#c9a227');R(x+9,b+3,3,6,'#3f8fc0')}
+  for(let y=0;y<H;y+=3)for(let x=0;x<W;x+=3)R(x,y,3,1,'#00000014')},
+ jade(R,W,H,top){R(0,0,W,H,'#2f6b4f');for(let x=0;x<W;x+=48){R(x+6,3,36,top-5,'#4f9b72');R(x+8,5,32,top-9,'#3f8a62');R(x+8,5,32,1,'#7fcfa0');R(x+23,Math.round(top/2)-3,2,6,'#c9a227');R(x+21,Math.round(top/2)-1,6,2,'#c9a227');R(x,0,5,H,'#9a1e1e');R(x+1,0,1,H,'#c43a3a');R(x,0,5,3,'#c9a227');R(x,top-3,5,3,'#c9a227')}},
+ ice(R,W,H){dBricks(R,W,H,16,8,'#9fd4f0','#6fb0d8','#e4f6ff',['#bfe6fa','#8cc8e8'],71);dSpeck(R,0,0,W,H,W*H/30,['#ffffff'],8)},
+ obsidian(R,W,H,top){R(0,0,W,H,'#15111c');const q=gRnd(81);for(let i=0;i<W*H/60;i++){const x=Math.floor(q()*W),y=Math.floor(q()*H);R(x,y,3+Math.floor(q()*4),2,'#221b2c');R(x,y,2,1,'#3a2f48')}
+  for(let k=0;k<W/34;k++){let x=Math.floor(q()*W),y=0;while(y<top){R(x,y,2,1,'#ff8a1f');R(x,y,1,1,'#ffd166');y++;if(q()<.4)x+=q()<.5?-1:1;if(q()<.05){let bx=x;for(let j=0;j<6;j++){R(bx,y,1,1,'#c4501a');bx+=q()<.5?1:2}}}}},
+ cathedral(R,W,H,top){dBricks(R,W,H,14,7,'#6c6a76','#4a4854','#7c7a86',['#64626e'],91);const C=['#e2373f','#3f5fb0','#ffd166','#5fd35f','#7a4bd0'],q=gRnd(93);
+  for(let x=14;x<W-14;x+=64){const h=top-8,y0=4;R(x-1,y0+2,14,h,'#0a070e');R(x+1,y0,10,2,'#0a070e');for(let yy=y0+2;yy<y0+h-1;yy+=3)for(let xx=x;xx<x+12;xx+=3)R(xx,yy,3,3,C[Math.floor(q()*5)]);R(x+2,y0+1,8,2,C[2]);for(let yy=y0+2;yy<y0+h;yy+=3)R(x,yy,12,1,'#0a070e');for(let xx=x;xx<=x+12;xx+=3)R(xx,y0+2,1,h-1,'#0a070e')}},
+ olymp(R,W,H,top){R(0,0,W,H,'#e8e4f0');const q=gRnd(101);for(let i=0;i<W/12;i++){let x=Math.floor(q()*W),y=0;while(y<top){R(x,y,1,1,'#cfc8dc');y++;x+=Math.floor(q()*3)-1}}
+  R(0,0,W,5,'#c9a227');for(let x=0;x<W;x+=6){R(x,1,4,1,'#ffe066');R(x+3,2,1,2,'#8c6a14');R(x,3,4,1,'#8c6a14')}for(let x=18;x<W;x+=50){R(x,5,10,H,'#c9a227');for(let f=1;f<10;f+=3){R(x+f,7,1,H,'#ffe066');R(x+f+1,7,1,H,'#8c6a14')}R(x-2,5,14,3,'#ffe066');R(x-2,8,14,1,'#8c6a14')}},
+ cosmos(R,W,H){R(0,0,W,H,'#0b0820');const q=gRnd(111),N=['#1e1240','#2a1650','#3a1f6b','#4a2a80'];for(let k=0;k<W/50;k++){const cx=Math.floor(q()*W),cy=Math.floor(q()*H);for(let r=4;r>0;r--){const w=r*7,h=r*4;R(cx-w/2+Math.floor(q()*3),cy-h/2,w,h,N[4-r])}}
+  dSpeck(R,0,0,W,H,W*H/25,['#ffffff','#ffe066','#9fd4f0'],113);for(let k=0;k<W/80;k++){const x=Math.floor(q()*W),y=2+Math.floor(q()*(H-6));R(x-1,y,3,1,'#ffffff');R(x,y-1,1,3,'#ffffff')}},
+ goldwall(R,W,H){R(0,0,W,H,'#6a4e0a');for(let r=0,y=0;y<H;r++,y+=6)for(let bx=(r%2?-7:0);bx<W;bx+=14){R(bx+1,y+1,13,5,'#e0b53a');R(bx+2,y+1,11,1,'#ffe066');R(bx+1,y+5,13,1,'#9a7414');R(bx+3,y+3,2,1,'#fff3b0')}}};
+const FP={
+ dirt(R,W,H,WH){R(0,WH,W,H-WH,'#4a3524');dSpeck(R,0,WH,W,H-WH,W*(H-WH)/4,['#5a4330','#3a2818','#55402c'],121);const q=gRnd(123);for(let i=0;i<W*(H-WH)/220;i++){const x=Math.floor(q()*W),y=WH+Math.floor(q()*(H-WH));R(x,y,2,1,'#6a6060');R(x,y+1,2,1,'#4a4444')}},
+ concrete(R,W,H,WH){R(0,WH,W,H-WH,'#5c5c63');dSpeck(R,0,WH,W,H-WH,W*(H-WH)/5,['#52525a','#66666e'],131);for(let x=0;x<W;x+=32)R(x,WH,1,H-WH,'#45454b');for(let y=WH;y<H;y+=32)R(0,y,W,1,'#45454b');const q=gRnd(133);for(let i=0;i<W/60;i++)R(Math.floor(q()*W),WH+Math.floor(q()*(H-WH)),9,5,'#55555c')},
+ lino(R,W,H,WH){dGrid(R,0,WH,W,H-WH,8,'#b8a888','#a89878');for(let ty=WH;ty<H;ty+=8)for(let tx=0;tx<W;tx+=8){R(tx+3,ty+3,2,2,'#8c7a5a');R(tx+3,ty+1,2,1,'#c8b898')}dSpeck(R,0,WH,W,H-WH,W*(H-WH)/30,['#9a8a6a'],137)},
+ carpet(R,W,H,WH){R(0,WH,W,H-WH,'#4a4a55');dSpeck(R,0,WH,W,H-WH,W*(H-WH)/2,['#55555f','#40404a','#4e4e5a'],141)},
+ pine(R,W,H,WH){const q=gRnd(151);for(let ty=WH,r=0;ty<H;ty+=5,r++){R(0,ty,W,5,r%2?'#c8a060':'#b89050');R(0,ty,W,1,'#8a6a3a');R(0,ty+1,W,1,'#d8b070');for(let tx=(r*13)%30;tx<W;tx+=30)R(tx,ty,1,5,'#8a6a3a');if(q()<.5)R(Math.floor(q()*W),ty+2,2,2,'#8a6030')}},
+ tilesF(R,W,H,WH){dGrid(R,0,WH,W,H-WH,12,'#d8dde4','#cfd5dd','#9aa0aa','#eef1f5')},
+ court(R,W,H,WH){R(0,WH,W,H-WH,'#2f5f9a');dSpeck(R,0,WH,W,H-WH,W*(H-WH)/12,['#2a5690','#3668a6'],161);const my=WH+Math.round((H-WH)/2);R(0,my,W,2,'#e4ecf4');R(0,WH+4,W,1,'#e4ecf4');R(0,H-5,W,1,'#ffd166');
+  const cx=Math.round(W/2),r=Math.min(18,Math.round((H-WH)/3));for(let a=0;a<64;a++){const t=a/64*6.283;R(cx+Math.round(Math.cos(t)*r*1.6),my+Math.round(Math.sin(t)*r),1,1,'#e4ecf4')}},
+ herring(R,W,H,WH){const C=['#8b5a2b','#a06a35','#7a4c22','#94602f'];for(let y=WH;y<H;y++)for(let x=0;x<W;x+=1){const u=x%16<8?x+(y-WH):x-(y-WH)+64,k=Math.floor(u/4);R(x,y,1,1,C[k%4])}for(let x=8;x<W;x+=8)R(x,WH,1,H-WH,'#5a3a1e')},
+ terracotta(R,W,H,WH){const q=gRnd(171);R(0,WH,W,H-WH,'#6a3020');for(let ty=WH,r=0;ty<H;ty+=10,r++)for(let tx=(r%2?-5:0);tx<W;tx+=10){const c=['#b0502e','#c0603a','#a04428'][Math.floor(q()*3)];R(tx+2,ty+1,6,8,c);R(tx+1,ty+2,8,6,c);R(tx+2,ty+2,3,1,'#d07a50')}},
+ slate(R,W,H,WH){const q=gRnd(181);R(0,WH,W,H-WH,'#22252c');for(let ty=WH,r=0;ty<H;ty+=14,r++)for(let tx=(r%2?-12:0);tx<W;tx+=24){R(tx+1,ty+1,23,13,['#3a3f4a','#343944','#424856'][Math.floor(q()*3)]);R(tx+1,ty+1,23,1,'#4e5462');for(let k=0;k<3;k++)R(tx+2+Math.floor(q()*20),ty+3+Math.floor(q()*9),5,1,'#30343e')}},
+ walnut(R,W,H,WH){for(let ty=WH,r=0;ty<H;ty+=4,r++){R(0,ty,W,4,['#4a2c18','#5a3620','#3e2414'][r%3]);R(0,ty,W,1,'#2a180c');R(0,ty+1,W,1,'#6a4428');for(let tx=(r*17)%40;tx<W;tx+=40)R(tx,ty,1,4,'#2a180c')}},
+ redcarp(R,W,H,WH){R(0,WH,W,H-WH,'#8a1a22');for(let ty=WH+8;ty<H-6;ty+=8)for(let tx=(ty/8%2?4:0);tx<W;tx+=8){R(tx+3,ty,2,1,'#a02a30');R(tx+2,ty+1,4,1,'#a02a30');R(tx+3,ty+2,2,1,'#a02a30')}R(0,WH+2,W,2,'#c9a227');R(0,WH+5,W,1,'#c9a227');R(0,H-5,W,1,'#c9a227');R(0,H-3,W,2,'#c9a227')},
+ mosaicF(R,W,H,WH){const q=gRnd(191);for(let y=WH;y<H;y+=4)for(let x=0;x<W;x+=4)R(x,y,4,4,['#2f6fa0','#3f8fc0','#e4ecf4','#2a5a88'][Math.floor(q()*4)]);
+  for(let cy=WH+12;cy<H;cy+=24)for(let cx=12;cx<W;cx+=24){for(let a=0;a<4;a++){R(cx-8+a*4,cy-a*4,4,4,'#e4ecf4');R(cx-8+a*4,cy+a*4,4,4,'#e4ecf4');R(cx+8-a*4,cy-a*4,4,4,'#e4ecf4');R(cx+8-a*4,cy+a*4,4,4,'#e4ecf4')}R(cx-2,cy-2,4,4,'#c9a227')}
+  for(let y=WH;y<H;y+=4)R(0,y,W,1,'#1e3a58')},
+ granite(R,W,H,WH){R(0,WH,W,H-WH,'#1e1e24');dSpeck(R,0,WH,W,H-WH,W*(H-WH)/3,['#3a3a44','#55556a','#2c2c36','#8c84a0'],201);for(let x=0;x<W;x+=24)R(x,WH,1,H-WH,'#121216');for(let y=WH;y<H;y+=24)R(0,y,W,1,'#121216');
+  for(let ty=WH;ty<H;ty+=24)for(let tx=0;tx<W;tx+=24)for(let k=0;k<8;k++)R(tx+3+k,ty+3+k,1,1,'#4a4a58')},
+ jadeF(R,W,H,WH){dGrid(R,0,WH,W,H-WH,16,'#3f8f68','#4f9f78','#c9a227','#8fdfb0');for(let ty=WH;ty<H;ty+=16)for(let tx=0;tx<W;tx+=16)R(tx+7,ty+7,2,2,'#2f6b4f')},
+ iceF(R,W,H,WH){dGrid(R,0,WH,W,H-WH,16,'#a8dcf4','#9cd2ee','#7cc4e8','#e4f6ff');const q=gRnd(211);for(let k=0;k<W/14;k++){let x=Math.floor(q()*W),y=WH+Math.floor(q()*(H-WH));for(let j=0;j<8;j++){R(x,y,1,1,'#ffffff');x+=q()<.5?1:-1;y+=1}}dSpeck(R,0,WH,W,H-WH,W*(H-WH)/40,['#ffffff'],213)},
+ lavaF(R,W,H,WH){const q=gRnd(221);R(0,WH,W,H-WH,'#ff8a1f');for(let ty=WH,r=0;ty<H;ty+=14,r++)for(let tx=(r%2?-7:0);tx<W;tx+=14){R(tx+2,ty+2,11,11,['#2a2024','#241c20','#30262a'][Math.floor(q()*3)]);R(tx+2,ty+2,11,1,'#3e3236')}
+  for(let ty=WH;ty<H;ty+=14)R(0,ty+1,W,1,'#ffd166')},
+ persian(R,W,H,WH){R(0,WH,W,H-WH,'#6a1a2a');R(0,WH+2,W,4,'#c9a227');R(0,WH+6,W,2,'#2f4a8a');R(0,H-8,W,2,'#2f4a8a');R(0,H-6,W,4,'#c9a227');for(let x=0;x<W;x+=6)R(x+2,WH+3,2,2,'#2f4a8a');
+  for(let cy=WH+Math.round((H-WH)/2),cx=20;cx<W;cx+=40){for(let a=0;a<8;a++){R(cx-a,cy-8+a,a*2+1,1,'#c9a227');R(cx-a,cy+8-a,a*2+1,1,'#c9a227')}for(let a=0;a<5;a++){R(cx-a,cy-5+a,a*2+1,1,'#2f4a8a');R(cx-a,cy+5-a,a*2+1,1,'#2f4a8a')}R(cx-1,cy-1,3,3,'#e8d5a3')}},
+ cloud(R,W,H,WH){R(0,WH,W,H-WH,'#9fd0ff');const q=gRnd(231);for(let k=0;k<W*(H-WH)/260;k++){const x=Math.floor(q()*W),y=WH+Math.floor(q()*(H-WH)),w=10+Math.floor(q()*14);R(x,y,w,4,'#e4f0ff');R(x+3,y-3,w-6,3,'#ffffff');R(x+2,y+4,w-4,2,'#cfe2f8')}},
+ starF(R,W,H,WH){R(0,WH,W,H-WH,'#0b0820');dSpeck(R,0,WH,W,H-WH,W*(H-WH)/20,['#ffffff','#ffe066','#9fd4f0'],241);for(let x=0;x<W;x+=16)R(x,WH,1,H-WH,'#c9a227');for(let y=WH;y<H;y+=16)R(0,y,W,1,'#c9a227');for(let ty=WH;ty<H;ty+=16)for(let tx=0;tx<W;tx+=16)R(tx,ty,2,2,'#ffe066')},
+ diamond(R,W,H,WH){R(0,WH,W,H-WH,'#8c94a8');for(let ty=WH;ty<H;ty+=12)for(let tx=0;tx<W;tx+=12){for(let a=0;a<5;a++){R(tx+6-a,ty+1+a,a,1,'#dff4ff');R(tx+6,ty+1+a,a,1,'#a8d8f0');R(tx+6-a,ty+10-a,a,1,'#7cc0e8');R(tx+6,ty+10-a,a,1,'#bfe6fa')}R(tx+1,ty+6,10,1,'#e4f6ff');R(tx+5,ty+3,1,1,'#ffffff')}}};
 const curWall=()=>WALLS.find(w=>w.id==(S.room&&S.room.wall))||WALLS[0],curFloor=()=>FLOORS.find(f=>f.id==(S.room&&S.room.floor))||FLOORS[0];
 const styOwn=(sec,it)=>it.p==0||!!(S.room&&S.room.own&&S.room.own[sec+'_'+it.id]);
-function gWallPaint(R,W,WH,id,F){const top=WH-15;
+function gWallPaint(R,W,WH,id,F){const top=WH-15;if(WP[id])return WP[id](R,W,WH,top);
  if(id=='stone'){R(0,0,W,WH,'#34343f');for(let r=0,y=4;y<top;r++,y+=8){R(0,y,W,1,'#1e1e26');R(0,y+1,W,1,'#40404c');for(let bx=(r%2?8:0);bx<W;bx+=16)R(bx,y+1,1,7,'#1e1e26')}}
  else if(id=='wood'){R(0,0,W,WH,'#5a3a1e');for(let px=0;px<W;px+=7){R(px,0,1,top,'#3a2814');R(px+1,0,1,top,'#6b4a2a')}for(let i=0;i<14;i++){const kx=(i*53)%W+3,ky=6+(i*29)%Math.max(4,top-8);R(kx,ky,2,1,'#3a2814')}}
  else if(id=='castle'){R(0,0,W,WH,'#2e3a52');for(let r=0,y=4;y<top;r++,y+=6){R(0,y,W,1,'#1c2436');for(let bx=(r%2?6:0);bx<W;bx+=12){R(bx,y+1,1,5,'#1c2436');if((bx*7+r*13)%5==0)R(bx+1,y+1,11,5,'#36445f')}}
@@ -1540,7 +1664,7 @@ function gWallPaint(R,W,WH,id,F){const top=WH-15;
  else if(id=='throne'){R(0,0,W,WH,'#5a1018');for(let y=6;y<top;y+=6)for(let px=((y/6)%2?3:0);px<W;px+=6){R(px+1,y,1,1,'#7a1e28');R(px,y+1,3,1,'#7a1e28');R(px+1,y+2,1,1,'#7a1e28')}for(let px=16;px<W;px+=44){R(px,0,5,top,'#c9a227');R(px+1,0,1,top,'#ffe066');R(px+4,0,1,top,'#8c6a14')}}
  else{R(0,0,W,WH,F.cracks?'#272032':'#2b2038');for(let r=0,y=4;y<top;r++,y+=6){R(0,y,W,1,'#1f1829');for(let bx=(r%2?6:0);bx<W;bx+=12)R(bx,y+1,1,5,'#1f1829')}}}
 function gFloorPaint(R,W,H,WH,id,F,rnd){
- if(id=='planks'){for(let ty=WH,r=0;ty<H;ty+=6,r++){R(0,ty,W,6,r%2?'#6b4a2a':'#5e4024');R(0,ty,W,1,'#3a2814');R(0,ty+1,W,1,'#7a5530');for(let tx=(r*11)%24;tx<W;tx+=24)R(tx,ty,1,6,'#3a2814')}}
+ if(FP[id])FP[id](R,W,H,WH);else if(id=='planks'){for(let ty=WH,r=0;ty<H;ty+=6,r++){R(0,ty,W,6,r%2?'#6b4a2a':'#5e4024');R(0,ty,W,1,'#3a2814');R(0,ty+1,W,1,'#7a5530');for(let tx=(r*11)%24;tx<W;tx+=24)R(tx,ty,1,6,'#3a2814')}}
  else if(id=='mat'){const q=gRnd(4321);for(let ty=WH,r=0;ty<H;ty+=16,r++)for(let tx=0,i=0;tx<W;tx+=16,i++){R(tx,ty,16,16,(i+r)%2?'#24242c':'#2a2a33');for(let k=0;k<5;k++)R(tx+Math.floor(q()*15),ty+Math.floor(q()*15),1,1,'#3a3a46')}
   for(let ty=WH;ty<H;ty+=16)R(0,ty,W,1,'#15151a');for(let tx=0;tx<W;tx+=16)R(tx,WH,1,H-WH,'#15151a')}
  else if(id=='checker'){for(let ty=WH,r=0;ty<H;ty+=12,r++)for(let tx=0,i=0;tx<W;tx+=12,i++){R(tx,ty,12,12,(i+r)%2?'#8c3a2a':'#bfa87e');R(tx,ty,12,1,(i+r)%2?'#a04a36':'#d8c49a')}}
@@ -1647,7 +1771,7 @@ function shop(){const L=lvl().L,P0=S.prots||0,back=S.set.hub===false?'gym':'home
  if(tab=='deco'){x+=`<p class="sin">Rénove et décore ta salle.</p>`+SHOP.map((it,i)=>{const own=shopOwn(it);return shCard(spr(it.ic,3,0),it.n,it.d,own?'Dans ta salle':it.p+" Prot's · Niv. "+it.L,shBtn(it,own,'Installé ✓',`buy('deco',${i})`),own?'own':L<it.L?'lk':'')}).join('')
   +[['wall','Murs',WALLS,curWall().id],['floor','Sols',FLOORS,curFloor().id]].map(([sec,ttl,LST,cur])=>`<h2>${ttl}</h2>`+LST.map((it,i)=>{const own=styOwn(sec,it),on=it.id==cur;
    const btn=own?(on?`<button class="btn s shb" disabled>Posé ✓</button>`:`<button class="btn p s shb" onclick="setSty('${sec}','${it.id}')">Poser</button>`):shBtn(it,false,'',`buy('${sec}',${i})`);
-   return shCard(`<img src="${styImg(sec,it)}" alt="" style="max-width:38px;max-height:38px">`,it.n,it.d,own?(on?'Dans ta salle':'Déjà acheté'):it.p+" Prot's · Niv. "+it.L,btn,own?'own':L<it.L?'lk':'')}).join('')).join('')}
+   return (i==0||lvTitle(LST[i-1].L)!=lvTitle(it.L)?`<div class="mlsg">Palier ${lvTitle(it.L)} · Niv. ${lvTiers.filter(t=>t<=it.L).pop()}+</div>`:'')+shCard(`<img src="${styImg(sec,it)}" alt="" style="max-width:38px;max-height:38px">`,it.n,it.d,own?(on?'Dans ta salle':'Déjà acheté'):it.p+" Prot's · Niv. "+it.L,btn,own?'own':L<it.L?'lk':'')}).join('')).join('')}
  else if(tab=='mach'){x+=`<p class="sin">Achetées en bois, puis améliorables en Acier, Pro et Doré.</p>`+MACH.map((m,i)=>{const own=machOwn(m),t=own?machTier(m):0,tg=` <span class="tier" style="color:${MT[t].col}">${MT[t].n}</span>`;
   let btn,meta;if(!own){btn=shBtn(m,false,'',`buy('mach',${i})`);meta=m.p+" Prot's · Niv. "+m.L}
   else if(t>=3){btn=`<button class="btn s shb" disabled>Max ✓</button>`;meta='Dans ta salle'}
