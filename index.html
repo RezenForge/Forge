@@ -1282,7 +1282,7 @@ const sh=(c,k)=>{const n=parseInt(c.slice(1),16),f=v=>Math.max(0,Math.min(255,Ma
 const tri=c=>[sh(c,1.18),c,sh(c,.72)],dot=(ctx,p,w,h,c)=>{ctx.fillStyle=c;ctx.fillRect(Math.round(p[0]),Math.round(p[1]),w,h)};
 
 /* ---------- état : salle de départ (petit garage, un banc) et coffre ---------- */
-const DEF={size:0,next:2,items:[{id:1,type:'bench',i:2,j:1,r:0}],walls:[],inv:{bench:0,plant:2,window:2,torch:2,banner:1,mirror:1,door:1}};
+const DEF={size:0,next:3,v:2,items:[{id:1,type:'bench',i:2,j:1,r:0,skin:'rouille'}],walls:[{id:2,wall:1,type:'door',side:'L',t:3}],inv:{bench:0,banner:1,door:0}};
 let G=null,OCC=new Map();
 const NX=()=>SIZES[G.size][0],NY=()=>SIZES[G.size][1];
 const keep=()=>save();
@@ -1320,13 +1320,14 @@ function paintRoom(){const nx=NX(),ny=NY();b.clearRect(0,0,WW,WH);
 /* ---------- catalogue : chaque objet est décrit dans son propre repère (largeur w, profondeur d), puis tourné ---------- */
 const CAT={
  bench:{n:'Banc de développé couché',w:2,d:2,parts:[
-  ['b',.88,.4,0,.24,.12,5,'#2b2b35'],['b',.88,1.38,0,.24,.12,5,'#2b2b35'],['b',.8,.22,5,.4,1.36,2,'#8c2a34'],
-  ['b',.55,.3,0,.1,.1,18,'#55556a'],['b',1.35,.3,0,.1,.1,18,'#55556a'],
-  ['b',.55,.4,13,.1,.06,1.5,'#2b2b35'],['b',1.35,.4,13,.1,.06,1.5,'#2b2b35'],
-  ['b',.305,.415,14.3,1.39,.06,1.6,'#c8ccd6'],
-  ['p',.27,.445,15.1,.34,4.6,'#3f5fb0','#2d4586'],['p',1.73,.445,15.1,.34,4.6,'#3f5fb0','#2d4586'],
-  ['b',.06,.415,14.3,.175,.06,1.6,'#c8ccd6'],['b',1.765,.415,14.3,.175,.06,1.6,'#c8ccd6']],bar:7},
- plant:{n:'Plante',w:1,d:1,deco:1,parts:[['b',.35,.35,0,.3,.3,6,'#8b5a2b'],['f',.5,.5,6,'leaves']]}};
+  ['b',.88,.4,0,.24,.12,5,'$leg'],['b',.88,1.38,0,.24,.12,5,'$leg'],['b',.8,.22,5,.4,1.36,2,'$pad'],['b',.8,.95,7,.4,.14,.01,'$tape'],
+  ['b',.55,.3,0,.1,.1,7,'$rust'],['b',1.35,.3,0,.1,.1,7,'$rust'],['b',.55,.3,7,.1,.1,11,'$post'],['b',1.35,.3,7,.1,.1,11,'$post'],
+  ['b',.55,.4,13,.1,.06,1.5,'$leg'],['b',1.35,.4,13,.1,.06,1.5,'$leg'],
+  ['b',.305,.415,14.3,1.39,.06,1.6,'$bar'],
+  ['p',.27,.445,15.1,.34,4.6,'$plate','$plate2'],['p',1.73,.445,15.1,.34,4.6,'$plate','$plate2'],
+  ['b',.06,.415,14.3,.175,.06,1.6,'$bar'],['b',1.765,.415,14.3,.175,.06,1.6,'$bar']],bar:10}};
+const SKINS={bench:{rouille:{leg:'#3a3430',pad:'#7a3b32',tape:'#8a877c',rust:'#6e4a33',post:'#5c5652',bar:'#9a968c',plate:'#45423f',plate2:'#6e4a33'}}};
+const skinCol=(it,c)=>{if(c[0]!='$')return c;const L=SKINS[it.type]||{},k=(L[it.skin]||L.rouille||{})[c.slice(1)];return k||'#ff00ff'};
 const dims=(t,r)=>{const c=CAT[t];return r%2?[c.d,c.w]:[c.w,c.d]};
 function tf(t,r,i,j){const c=CAT[t],w=c.w,d=c.d;return(px,py)=>{const q=r==0?[px,py]:r==1?[d-py,px]:r==2?[w-px,d-py]:[py,w-px];return[i+q[0],j+q[1]]}}
 
@@ -1370,10 +1371,10 @@ function isoSort(L){const n=L.length,E=1e-4,beh=(A,B)=>{const a=A.b,c=B.b,sa=a[0
  L.map((o,k)=>[k,o.b[0]+o.b[1]+o.b[2]+o.b[3]]).sort((p,q)=>p[1]-q[1]).forEach(([k])=>vis(k));return out}
 function drawItem(it,alpha){const Tf=tf(it.type,it.r,it.i,it.j),L=[],c=CAT[it.type];let parts=c.parts;
  if(USE&&USE.it===it&&!alpha){const[dy,dz]=benchPose(USE.t);parts=parts.map((p,k)=>k>=c.bar?(p=p.slice(),p[2]+=dy,p[3]+=dz,p):p).concat(lifter(dy,dz,it))}
- parts.forEach(p=>{if(p[0]=='b'){const[,px,py,z,w,d,h,col]=p,a=Tf(px,py),e=Tf(px+w,py+d),X0=Math.min(a[0],e[0]),Y0=Math.min(a[1],e[1]),W=Math.abs(e[0]-a[0]),Dd=Math.abs(e[1]-a[1]);L.push({b:[X0,X0+W,Y0,Y0+Dd,z,z+h],f:()=>box(X0,Y0,z,W,Dd,h,tri(col))})}
+ parts.forEach(p=>{if(p[0]=='b'){const[,px,py,z,w,d,h,col]=p,a=Tf(px,py),e=Tf(px+w,py+d),X0=Math.min(a[0],e[0]),Y0=Math.min(a[1],e[1]),W=Math.abs(e[0]-a[0]),Dd=Math.abs(e[1]-a[1]);L.push({b:[X0,X0+W,Y0,Y0+Dd,z,z+h],f:()=>box(X0,Y0,z,W,Dd,h,tri(skinCol(it,col)))})}
   else if(p[0]=='p'){const[,px,py,z,rr,rz,c1,c2]=p,ring=(ox,R,RZ)=>{const o=[];for(let k=0;k<12;k++){const th=k/12*Math.PI*2,q=Tf(px+ox,py+Math.cos(th)*R);o.push(P(q[0],q[1],z+Math.sin(th)*RZ))}return o};
    const A=Tf(px-.035,py),B=Tf(px+.035,py),fr=(B[0]+B[1])>(A[0]+A[1])?.035:-.035,q0=Tf(px-.035,py-rr),q1=Tf(px+.035,py+rr),bx=[Math.min(q0[0],q1[0]),Math.max(q0[0],q1[0]),Math.min(q0[1],q1[1]),Math.max(q0[1],q1[1])];
-   L.push({b:[...bx,z-rz,z+rz],f:()=>{poly(ring(-fr,rr,rz),'#0a070e');poly(ring(fr,rr,rz),'#0a070e');poly(ring(fr,rr-.05,rz-.7),c1);poly(ring(fr,rr*.3,rz*.3),c2)}})}
+   L.push({b:[...bx,z-rz,z+rz],f:()=>{poly(ring(-fr,rr,rz),'#0a070e');poly(ring(fr,rr,rz),'#0a070e');poly(ring(fr,rr-.05,rz-.7),skinCol(it,c1));poly(ring(fr,rr*.3,rz*.3),skinCol(it,c2))}})}
   else if(p[0]=='s'){const a=Tf(p[1],p[3]),e=Tf(p[2],p[4]);L.push({b:[Math.min(a[0],e[0]),Math.max(a[0],e[0]),Math.min(a[1],e[1]),Math.max(a[1],e[1]),p[5],p[6]],f:()=>p[7](Tf)})}
   else{const[,px,py,z]=p,a=Tf(px,py),q=P(a[0],a[1],z);L.push({b:[a[0]-.3,a[0]+.3,a[1]-.3,a[1]+.3,z,z+10],f:()=>[[0,-6,'#2f8f3f'],[-3,-3,'#3fa34f'],[3,-3,'#3fa34f'],[-2,-9,'#5fd35f'],[2,-8,'#4fbf5f'],[0,-2,'#2f8f3f'],[-4,-6,'#2f8f3f'],[4,-6,'#4fbf5f'],[0,-11,'#5fd35f']].forEach(([dx,dy,col])=>dot(x,[q[0]+dx-2,q[1]+dy],5,3,col))})}});
  if(alpha)x.globalAlpha=alpha;isoSort(L).forEach(o=>o.f());x.globalAlpha=1}
@@ -1384,12 +1385,9 @@ const free=(i,j)=>i>=0&&j>=0&&i<NX()&&j<NY()&&!OCC.has(i+','+j);
 /* ---------- décorations murales : sur le mur de gauche (L) ou de droite (R), sans se chevaucher ---------- */
 const WPt=(side,t,z)=>side=='L'?P(0,t,z):P(t,0,z),wlen=side=>side=='L'?NY():NX();
 const WCAT={
- window:{n:'Fenêtre',w:2,z:[18,38],draw(q){poly([q(.2,18),q(1.8,18),q(1.8,38),q(.2,38)],'#0a070e');poly([q(.3,19),q(1.7,19),q(1.7,37),q(.3,37)],'#24305a');line(q(1,19),q(1,37),'#0a070e');line(q(.3,28),q(1.7,28),'#0a070e');[[.5,33,'#ffe066'],[1.4,35,'#f4ecd8'],[1.2,24,'#f4ecd8'],[.6,22,'#f4ecd8']].forEach(([t,z,col])=>dot(x,q(t,z),1,1,col))}},
- torch:{n:'Torche',w:1,z:[22,37],draw(q){const p=q(.5,30);dot(x,[p[0]-1,p[1]],3,6,'#5a3a1e');dot(x,[p[0]-1,p[1]-4],3,4,'#ff8a1f');dot(x,[p[0],p[1]-3],1,2,'#ffe066')}},
  banner:{n:'Bannière',w:1,z:[16,42],draw(q){poly([q(.1,40),q(.9,40),q(.9,20),q(.5,16),q(.1,20)],'#ffb02e');poly([q(.25,36),q(.75,36),q(.75,30),q(.25,30)],'#b06f12');line(q(0,41),q(1,41),'#0a070e')}},
  door:{n:'Porte d\'entrée',w:1,z:[0,31],draw(q){poly([q(0,0),q(1,0),q(1,31),q(0,31)],'#0a070e');poly([q(.08,0),q(.92,0),q(.92,30),q(.08,30)],'#5a3d24');poly([q(.16,0),q(.84,0),q(.84,28),q(.16,28)],'#6e4b2c');
-  poly([q(.24,16),q(.76,16),q(.76,26),q(.24,26)],'#5a3d24');poly([q(.24,3),q(.76,3),q(.76,13),q(.24,13)],'#5a3d24');line(q(.16,28),q(.84,28),'#82593a');dot(x,q(.74,15),2,2,'#c9a227');dot(x,q(.3,9),1,1,'#4a3220')}},
- mirror:{n:'Miroir',w:2,z:[4,36],draw(q){poly([q(.1,4),q(1.9,4),q(1.9,36),q(.1,36)],'#0a070e');poly([q(.2,5),q(1.8,5),q(1.8,35),q(.2,35)],'#8fa6bc');for(let k=0;k<3;k++)line(q(.45+k*.5,32),q(.85+k*.5,10),'#d8e6f2')}}};
+  poly([q(.24,16),q(.76,16),q(.76,26),q(.24,26)],'#5a3d24');poly([q(.24,3),q(.76,3),q(.76,13),q(.24,13)],'#5a3d24');line(q(.16,28),q(.84,28),'#82593a');dot(x,q(.74,15),2,2,'#c9a227');dot(x,q(.3,9),1,1,'#4a3220')}}};
 function wcheck(type,side,t,ign){const w=WCAT[type].w;if(t<0||t+w>wlen(side))return'Ça dépasse du mur.';if(G.walls.some(o=>o.id!==ign&&o.side==side&&t<o.t+WCAT[o.type].w&&o.t<t+w))return'Il y a déjà une déco à cet endroit du mur.';return null}
 function drawWall(it,alpha){const q=(a,z)=>WPt(it.side,it.t+a,z);if(alpha)x.globalAlpha=alpha;WCAT[it.type].draw(q);x.globalAlpha=1}
 function wquad(it){const c=WCAT[it.type],q=(a,z)=>WPt(it.side,it.t+a,z);return[q(0,c.z[0]),q(c.w,c.z[0]),q(c.w,c.z[1]),q(0,c.z[1])]}
@@ -1418,6 +1416,7 @@ function load(){if(!S.iso||!Array.isArray(S.iso.items)){S.iso=JSON.parse(JSON.st
  if(!Array.isArray(G.walls))G.walls=[];G.inv=G.inv||{};for(const k in DEF.inv)if(G.inv[k]==null)G.inv[k]=DEF.inv[k];if(!(G.size>=0&&G.size<SIZES.length))G.size=0;
  const ok=[],m=new Set();G.items.forEach(it=>{if(!CAT[it.type])return;const Tl=tilesOf(it.type,it.r,it.i,it.j);if(Tl.some(([a,c])=>a<0||c<0||a>=NX()||c>=NY()||m.has(a+','+c)))G.inv[it.type]=(G.inv[it.type]||0)+1;else{Tl.forEach(([a,c])=>m.add(a+','+c));ok.push(it)}});G.items=ok;
  G.walls=G.walls.filter(o=>WCAT[o.type]);
+ if(!(G.v>=2)){G.v=2;if(!G.walls.some(o=>o.type=='door')){const t=[3,2,1,0].find(k=>!wcheck('door','L',k));if(t!=null){G.walls.push({id:G.next++,wall:1,type:'door',side:'L',t});if(G.inv.door>0)G.inv.door--}}save()}
  OCC=occ();USE=null;BM.sel=null;BM.place=null;BM.inv=false;Object.assign(hero,actor('hero',1,3),{hidden:false});Object.assign(coach,actor('coach',4,3));nearestFree(hero);nearestFree(coach);paintRoom();fresh=true}
 
 /* ---------- caméra ---------- */
@@ -1441,13 +1440,9 @@ const ICO={chest:PIX([".oooooooooo.","ohhhhhhhhhho","ohkkkkkkkkho","oggggyyggggo
  rot:PIX(["......a.....","...aaaaa....","..aaaaaaa...",".aaa..aa....",".aa...a.....",".aa.........",".aa.........",".aa......a..",".aaa....aaa.","..aaaaaaaa..","...aaaaaa...","............"],W1),
  ok:PIX(["..........a",".........aa","........aa.","a......aa..","aa....aa...",".aa..aa....","..aaaa.....","...aa......"],W1),
  no:PIX(["aa.....aa","aaa...aaa",".aaa.aaa.","..aaaaa..","...aaa...","..aaaaa..",".aaa.aaa.","aaa...aaa","aa.....aa"],W1),
- window:PIX(["kkkkkkkkkk","kbbbbkbbbk","kbybbkbbbk","kbbbbkbbbk","kkkkkkkkkk","kbbbbkbbbk","kbbbbkbbyk","kbbbbkbbbk","kkkkkkkkkk"],{k:'#8b5a2b',b:'#3a5a9a',y:'#ffe066'}),
- torch:PIX(["..y..",".yny.",".nnn.","onnno","okkko",".oko.",".oko.",".oko.",".ooo."],{o:'#0a070e',y:'#ffe066',n:'#ff8a1f',k:'#8b5a2b'}),
  banner:PIX(["oooooooo","oaaaaaao","oaccccao","oaccccao","oaaaaaao","oaaaaaao","oaaooaao","oao..oao","oo....oo"],{o:'#0a070e',a:'#ffb02e',c:'#b06f12'}),
  door:PIX(["oooooooo","oddddddo","odkkkkdo","odkddkdo","odkkkkdo","odddddyo","odkkkkdo","odkddkdo","odkkkkdo","oddddddo"],{o:'#0a070e',d:'#5a3d24',k:'#6e4b2c',y:'#c9a227'}),
- mirror:PIX(["oooooooo","ommmmmmo","omwmmmmo","ommwmmmo","ommmwmmo","ommmmwmo","ommmmmmo","oooooooo"],{o:'#0a070e',m:'#8fa6bc',w:'#d8e6f2'}),
- bench:PIX(["o..........o","os........so","os........so","oooooooooooo","orrrrrrrrrro","oRRRRRRRRRRo",".oo......oo.",".oo......oo."],{o:'#0a070e',s:'#aab4c4',r:'#a8343f',R:'#7a1e28'}),
- plant:PIX(["...lL.Ll...","..lLLlLLl..",".lLlLLlLLl.","..lLlLlLl..","...ooooo...","...ohhho...","...ohhho...","....ooo...."],{o:'#0a070e',l:'#5fd35f',L:'#2f8f3f',h:'#8b5a2b'})};
+ bench:PIX(["o..........o","os........so","os........so","oooooooooooo","orrrgrrrrrro","oRRRgRRRRRRo",".oo......oo.",".oo......oo."],{o:'#0a070e',s:'#9a968c',r:'#7a3b32',R:'#5a2a24',g:'#8a877c'})};
 const $i=id=>root&&root.querySelector('#'+id);
 function ui(){if(!root)return;const bi=$i('binv'),iw=$i('invw'),iv=$i('inv'),o=$i('oacts');if(!bi)return;bi.setAttribute('aria-pressed',BM.inv?'true':'false');iw.hidden=!BM.inv;
  if(BM.inv)iv.innerHTML=[...Object.keys(CAT),...Object.keys(WCAT)].filter(t=>G.inv[t]>0).map(t=>`<div class="irow"><span class="iic">${ICO[t]||''}</span><span class="n">${(CAT[t]||WCAT[t]).n}<small>× ${G.inv[t]}</small></span><button class="ipose" data-t="${t}">Poser</button></div>`).join('')||'<div class="inv0">Le coffre est vide.</div>';
