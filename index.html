@@ -96,6 +96,8 @@ button{font:inherit;color:inherit;cursor:pointer}
 .iso #inv{display:flex;flex-direction:column;gap:10px;overflow-y:auto;touch-action:pan-y;overscroll-behavior:contain;padding-right:4px}.iso .irow{display:flex;align-items:center;gap:8px;font:20px/1 VT323,monospace}.iso .irow .iic{width:26px;display:grid}.iso .irow .iic svg{width:26px;height:auto;shape-rendering:crispEdges}.iso .irow .n{flex:1;min-width:0}.iso .irow small{font:9px var(--px);color:var(--ac);margin-left:4px}.iso .ipose{font:8px/1 var(--px);padding:8px 9px;border:3px solid var(--ink);background:#2f8f3f;color:#f4ecd8;box-shadow:inset 0 0 0 2px #5fd35f,0 3px 0 var(--ink);cursor:pointer}.iso .ipose:active{transform:translateY(2px)}.iso .inv0{font:18px/1.2 VT323,monospace;color:var(--mu);text-align:center;padding:6px 0}
 .iso .oacts{position:absolute;z-index:3;display:flex;gap:6px;transform:translateX(-50%)}.iso .oacts .gbtn{width:40px;height:40px}.iso .oacts .gbtn svg{width:22px}.iso .oacts .gbtn.ok{background:#2f8f3f;box-shadow:inset 0 0 0 2px #5fd35f,0 3px 0 var(--ink)}.iso .oacts .gbtn.no{background:#5a1a22;box-shadow:inset 0 0 0 2px #8c3040,0 3px 0 var(--ink)}
 .iso #gytools{top:8px;right:8px}
+.iso .bub{position:absolute;z-index:3;transform:translate(-50%,-100%);background:var(--bg2);border:3px solid var(--ink);box-shadow:inset 0 0 0 2px #5b4873;padding:6px 8px;font:18px/1.1 VT323,monospace;color:var(--tx);max-width:min(240px,calc(100% - 16px));width:max-content;text-align:center;pointer-events:none}.iso .bub b{color:var(--ac);font-weight:400}.iso .bub .nx{color:var(--ac)}.iso .bub::after{content:'';position:absolute;left:calc(50% + var(--ax,0px));bottom:-9px;margin-left:-6px;border:6px solid transparent;border-top-color:var(--ink);border-bottom:0}
+.iso .xp{position:absolute;z-index:3;transform:translate(-50%,-100%);font:10px var(--px);color:var(--ac);text-shadow:2px 2px 0 var(--ink);pointer-events:none;line-height:1;transition:transform 1.2s ease-out,opacity 1.2s ease-in}
 #dock{position:fixed;left:0;right:0;bottom:0;z-index:4;display:none;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));background:#150f1c;border-top:4px solid var(--ink);box-shadow:0 -3px 0 #4b3a5e}
 #dock .in{max-width:520px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
 .dk{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px;padding:6px 2px 5px;min-width:0;width:auto;margin:0;background:#342743;border:3px solid var(--ink);box-shadow:inset 0 0 0 2px #5b4873,0 3px 0 var(--ink);color:var(--tx);cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -1325,7 +1327,11 @@ const CAT={
   ['b',.55,.4,13,.1,.06,1.5,'$leg'],['b',1.35,.4,13,.1,.06,1.5,'$leg'],
   ['b',.305,.415,14.3,1.39,.06,1.6,'$bar'],
   ['p',.27,.445,15.1,.34,4.6,'$plate','$plate2'],['p',1.73,.445,15.1,.34,4.6,'$plate','$plate2'],
-  ['b',.06,.415,14.3,.175,.06,1.6,'$bar'],['b',1.765,.415,14.3,.175,.06,1.6,'$bar']],bar:10}};
+  ['b',.06,.415,14.3,.175,.06,1.6,'$bar'],['b',1.765,.415,14.3,.175,.06,1.6,'$bar']],bar:10},
+ /* déchets du vieux garage : on reste appuyé dessus pour les jeter */
+ box1:{n:'Carton',w:1,d:1,junk:1,parts:[['b',.2,.2,0,.6,.55,7,'#9a7445'],['b',.2,.44,7,.6,.07,.01,'#c9b48a']]},
+ box2:{n:'Cartons',w:1,d:1,junk:1,parts:[['b',.15,.15,0,.7,.65,6,'#8b6a3e'],['b',.25,.25,6,.5,.45,5,'#a7824f'],['b',.25,.44,11,.5,.06,.01,'#c9b48a']]},
+ bag:{n:'Sac poubelle',w:1,d:1,junk:1,parts:[['b',.25,.3,0,.5,.45,6,'#2b2b30'],['b',.33,.38,6,.34,.3,2,'#2b2b30'],['b',.45,.48,8,.1,.1,1.2,'#46464e']]}};
 const SKINS={bench:{rouille:{leg:'#3a3430',pad:'#7a3b32',tape:'#8a877c',rust:'#6e4a33',post:'#5c5652',bar:'#9a968c',plate:'#45423f',plate2:'#6e4a33'}}};
 const skinCol=(it,c)=>{if(c[0]!='$')return c;const L=SKINS[it.type]||{},k=(L[it.skin]||L.rouille||{})[c.slice(1)];return k||'#ff00ff'};
 const dims=(t,r)=>{const c=CAT[t];return r%2?[c.d,c.w]:[c.w,c.d]};
@@ -1360,6 +1366,29 @@ function lifter(dy,dz,it){const by=.445+dy,bz=14.3+dz;
 function startUse(it){USE={it,t:0};hero.hidden=true;hero.path=[];target=null}
 function endUse(){if(!USE)return;hero.hidden=false;USE=null}
 
+/* ---------- bulles du Coach, arrivée par la porte et grand ménage (rester appuyé sur un carton) ---------- */
+let SC=null,CLEAN=null,DOOR=0,FX=[],BUB=null;const HOLD=1;
+function say(html,a,ms){bubOff();BUB={html,a,until:ms?performance.now()+ms:0,el:null};bubDom()}
+function bubDom(){if(!BUB||!root)return;if(BUB.el&&BUB.el.isConnected)return;const d=document.createElement('div');d.className='bub';d.innerHTML=BUB.html;root.append(d);BUB.el=d}
+function bubOff(){if(BUB&&BUB.el)BUB.el.remove();BUB=null}
+function bubPlace(){if(!BUB)return;if(BUB.until&&performance.now()>BUB.until)return bubOff();bubDom();const d=BUB.el,a=BUB.a,[sx,sy]=toScreen(a.gx,a.gy,27),w=d.offsetWidth,cx=Math.max(w/2+4,Math.min(CW-w/2-4,sx));
+ d.style.left=Math.round(cx)+'px';d.style.top=Math.round(Math.max(d.offsetHeight+4,sy-4))+'px';d.style.setProperty('--ax',Math.round(Math.max(-w/2+10,Math.min(w/2-10,sx-cx)))+'px')}
+function floatXP(gx,gy,t){if(!root)return;const d=document.createElement('div');d.className='xp';d.textContent=t;const[sx,sy]=toScreen(gx,gy,18);d.style.left=sx+'px';d.style.top=sy+'px';root.append(d);
+ requestAnimationFrame(()=>requestAnimationFrame(()=>{d.style.transform='translate(-50%,-160%)';d.style.opacity='0'}));setTimeout(()=>d.remove(),1300)}
+function giveXP(n){const a=lvl().L;S.xp=(S.xp||0)+n;save();try{updBar()}catch(e){}const b=lvl().L;if(b>a)try{lvUp(a,b)}catch(e){}}
+const LINES=["Bienvenue dans ta salle ! Bon… pour l'instant, c'est surtout un <b>vieux garage</b>.","Plus tu t'entraîneras, plus tu pourras l'<b>améliorer</b> : machines, déco… et même pousser les murs !","Mais d'abord, un peu de ménage : <b>reste appuyé</b> sur un carton pour le jeter."];
+const blocked=()=>!!document.querySelector('.ov,#chest,#splash,#tour,#obg,#lvup,#obh');
+function startIntro(){SC={ph:'enter',t:0};DOOR=1;BM.sel=null;BM.place=null;BM.inv=false;ui();endUse();if(GC.pop)coachClose();
+ Object.assign(hero,{gx:.5,gy:3.5,ti:0,tj:3,path:[[1,3]],goal:null,hidden:false,face:[1,0]});Object.assign(coach,{gx:.5,gy:3.5,ti:0,tj:3,path:[],goal:null,hidden:true,face:[1,0]});center({gx:NX()/2,gy:NY()/2});followOn=false;manualT=performance.now()+3000}
+function introStep(dt){SC.t+=dt;if(SC.ph!='enter')return;
+ if(SC.t>1.1&&coach.hidden){coach.hidden=false;coach.path=[[0,4]]}
+ if(SC.t>2.4&&!coach.hidden&&!coach.path.length&&!hero.path.length){DOOR=0;coach.face=[1,0];hero.face=[0,1];SC={ph:'talk',i:0,t:0};say(LINES[0]+' <span class="nx">▸</span>',coach)}}
+function introNext(){if(!SC||SC.ph!='talk')return;SC.i++;if(SC.i<LINES.length){say(LINES[SC.i]+(SC.i<LINES.length-1?' <span class="nx">▸</span>':''),coach);return}
+ SC=null;bubOff();G.intro='clean';save()}
+function finishClean(){const it=CLEAN.it;CLEAN=null;G.items=G.items.filter(o=>o!==it);OCC=occ();FX.push({gx:it.i+.5,gy:it.j+.5,t:0});floatXP(it.i+.5,it.j+.5,'+5 XP');giveXP(5);try{navigator.vibrate&&navigator.vibrate(30)}catch(_){}
+ if(!G.items.some(o=>CAT[o.type].junk)&&G.intro!='done'){G.intro='done';say("Nickel ! Ta salle est prête. Touche le <b>banc</b> pour t'entraîner.",coach,5000);if(S.ob&&S.ob.st==='')setTimeout(()=>{try{obOffer()}catch(e){}},3200)}
+ keep()}
+
 /* ---------- ordre d'affichage : chaque élément a une boîte au sol ; on ne compare que ceux qui se chevauchent à l'écran ---------- */
 function isoSort(L){const n=L.length,E=1e-4,beh=(A,B)=>{const a=A.b,c=B.b,sa=a[0]+a[1]+a[2]+a[3],sb=c[0]+c[1]+c[2]+c[3];
   const bk=a[1]<=c[0]+E||a[3]<=c[2]+E,fr=c[1]<=a[0]+E||c[3]<=a[2]+E;
@@ -1386,7 +1415,7 @@ const free=(i,j)=>i>=0&&j>=0&&i<NX()&&j<NY()&&!OCC.has(i+','+j);
 const WPt=(side,t,z)=>side=='L'?P(0,t,z):P(t,0,z),wlen=side=>side=='L'?NY():NX();
 const WCAT={
  banner:{n:'Bannière',w:1,z:[16,42],draw(q){poly([q(.1,40),q(.9,40),q(.9,20),q(.5,16),q(.1,20)],'#ffb02e');poly([q(.25,36),q(.75,36),q(.75,30),q(.25,30)],'#b06f12');line(q(0,41),q(1,41),'#0a070e')}},
- door:{n:'Porte d\'entrée',w:1,z:[0,31],draw(q){poly([q(0,0),q(1,0),q(1,31),q(0,31)],'#0a070e');poly([q(.08,0),q(.92,0),q(.92,30),q(.08,30)],'#5a3d24');poly([q(.16,0),q(.84,0),q(.84,28),q(.16,28)],'#6e4b2c');
+ door:{n:'Porte d\'entrée',w:1,z:[0,31],draw(q){poly([q(0,0),q(1,0),q(1,31),q(0,31)],'#0a070e');if(DOOR){poly([q(.08,0),q(.92,0),q(.92,30),q(.08,30)],'#05030a');return}poly([q(.08,0),q(.92,0),q(.92,30),q(.08,30)],'#5a3d24');poly([q(.16,0),q(.84,0),q(.84,28),q(.16,28)],'#6e4b2c');
   poly([q(.24,16),q(.76,16),q(.76,26),q(.24,26)],'#5a3d24');poly([q(.24,3),q(.76,3),q(.76,13),q(.24,13)],'#5a3d24');line(q(.16,28),q(.84,28),'#82593a');dot(x,q(.74,15),2,2,'#c9a227');dot(x,q(.3,9),1,1,'#4a3220')}}};
 function wcheck(type,side,t,ign){const w=WCAT[type].w;if(t<0||t+w>wlen(side))return'Ça dépasse du mur.';if(G.walls.some(o=>o.id!==ign&&o.side==side&&t<o.t+WCAT[o.type].w&&o.t<t+w))return'Il y a déjà une déco à cet endroit du mur.';return null}
 function drawWall(it,alpha){const q=(a,z)=>WPt(it.side,it.t+a,z);if(alpha)x.globalAlpha=alpha;WCAT[it.type].draw(q);x.globalAlpha=1}
@@ -1412,12 +1441,13 @@ function check(t,r,i,j,ign){const Tl=tilesOf(t,r,i,j),nx=NX(),ny=NY();
  if(seen.size<tot)return'Ça bloquerait un passage.';return null}
 
 /* ---------- chargement de l'état du profil (nouvelle salle si besoin, objets qui ne rentrent plus = retour au coffre) ---------- */
-function load(){if(!S.iso||!Array.isArray(S.iso.items)){S.iso=JSON.parse(JSON.stringify(DEF));save()}G=S.iso;
+const JUNK=[[1,1,'box1'],[1,2,'bag'],[2,0,'box2'],[3,0,'box1'],[4,1,'box2'],[4,2,'box1'],[2,3,'bag'],[3,3,'box2'],[5,0,'box1'],[5,4,'bag']];
+function load(){if(!S.iso||!Array.isArray(S.iso.items)){S.iso=JSON.parse(JSON.stringify(DEF));S.iso.intro='todo';JUNK.forEach(([i,j,t])=>S.iso.items.push({id:S.iso.next++,type:t,i,j,r:(i+j)%2}));save()}G=S.iso;
  if(!Array.isArray(G.walls))G.walls=[];G.inv=G.inv||{};for(const k in DEF.inv)if(G.inv[k]==null)G.inv[k]=DEF.inv[k];if(!(G.size>=0&&G.size<SIZES.length))G.size=0;
  const ok=[],m=new Set();G.items.forEach(it=>{if(!CAT[it.type])return;const Tl=tilesOf(it.type,it.r,it.i,it.j);if(Tl.some(([a,c])=>a<0||c<0||a>=NX()||c>=NY()||m.has(a+','+c)))G.inv[it.type]=(G.inv[it.type]||0)+1;else{Tl.forEach(([a,c])=>m.add(a+','+c));ok.push(it)}});G.items=ok;
  G.walls=G.walls.filter(o=>WCAT[o.type]);
  if(!(G.v>=2)){G.v=2;if(!G.walls.some(o=>o.type=='door')){const t=[3,2,1,0].find(k=>!wcheck('door','L',k));if(t!=null){G.walls.push({id:G.next++,wall:1,type:'door',side:'L',t});if(G.inv.door>0)G.inv.door--}}save()}
- OCC=occ();USE=null;BM.sel=null;BM.place=null;BM.inv=false;Object.assign(hero,actor('hero',1,3),{hidden:false});Object.assign(coach,actor('coach',4,3));nearestFree(hero);nearestFree(coach);paintRoom();fresh=true}
+ OCC=occ();USE=null;SC=null;CLEAN=null;DOOR=0;bubOff();BM.sel=null;BM.place=null;BM.inv=false;Object.assign(hero,actor('hero',1,3),{hidden:false});Object.assign(coach,actor('coach',4,3));nearestFree(hero);nearestFree(coach);paintRoom();fresh=true}
 
 /* ---------- caméra ---------- */
 let followOn=false,Z=0,LW=0,LH=0,CW=0,CH=0,fresh=true;const cam={x:0,y:0};let manualT=0;
@@ -1486,11 +1516,13 @@ function outline(Tl,c){Tl.forEach(([i,j])=>{[[P(i,j),P(i+1,j)],[P(i+1,j),P(i+1,j
 function tags(){const tg=document.getElementById('gytag'),ct=document.getElementById('gctag'),pp=document.getElementById('gcpop');
  const put=(el,gx,gy,z)=>{const[sx,sy]=toScreen(gx,gy,z),w=el.offsetWidth,vis=sx>-20&&sx<CW+20&&sy>0&&sy<CH+30;el.style.visibility=vis?'':'hidden';el.style.transform='translate('+Math.round(Math.max(w/2+2,Math.min(CW-w/2-2,sx)))+'px,'+Math.round(sy-3)+'px) translate(-50%,-100%)';return[sx,sy]};
  if(tg){if(USE){const[w,d]=dims(USE.it.type,USE.it.r);put(tg,USE.it.i+w/2,USE.it.j+d/2,26)}else put(tg,hero.gx,hero.gy,25)}
- if(ct){const[sx,sy]=put(ct,coach.gx,coach.gy,25);
+ if(ct){const[sx,sy]=put(ct,coach.gx,coach.gy,25);if(coach.hidden)ct.style.visibility='hidden';
   if(GC.pop&&pp){const w=pp.offsetWidth,h=pp.offsetHeight,l=Math.max(4,Math.min(CW-w-4,sx-w/2));let t=sy-ct.offsetHeight-10-h;if(t<4)t=Math.min(CH-h-4,sy+8);pp.style.transform='translate('+Math.round(l)+'px,'+Math.round(Math.max(4,t))+'px)'}}
  const st=document.getElementById('gyst');if(st){const tx=USE?'Fait du développé couché':hero.path.length?'Se promène dans sa salle':'Se repose un instant';if(tx!=stTxt||st.textContent!=tx){stTxt=tx;st.textContent=tx}}}
 function frame(now){if(!cv||!cv.isConnected){raf=0;return}const dt=Math.min(.05,(now-(last||now))/1000);last=now;
  if(G!==S.iso){load();size(false);center(hero);ui()}
+ if(G.intro=='todo'&&!SC&&!blocked())startIntro();if(SC)introStep(dt);
+ if(CLEAN){CLEAN.t+=dt;if(CLEAN.t>=HOLD)finishClean()}
  if(USE){USE.t+=dt;if(!G.items.includes(USE.it))endUse();else if(USE.t>=BT.end)endUse()}
  const arr=step(hero,dt);
  if(hero.goal&&hero.goal.wall&&(arr||!hero.path.length)){const wi=hero.goal.wall;hero.goal=null;hero.face=wi.side=='L'?[-1,0]:[0,-1]}
@@ -1498,6 +1530,7 @@ function frame(now){if(!cv||!cv.isConnected){raf=0;return}const dt=Math.min(.05,
   if(it.type=='bench')startUse(it);target=null}
  if(!hero.path.length&&target&&!hero.goal)target=null;
  if(GC.pop){coach.path=[];coach.face=[0,1]}
+ else if(SC)step(coach,dt);
  else{if(!coach.path.length&&!hero.path.length&&coach.ti==hero.ti&&coach.tj==hero.tj){const p=bfs(coach,(i,j)=>!(i==hero.ti&&j==hero.tj));if(p)coach.path=p}
   coachWait-=dt;if(step(coach,dt)||(!coach.path.length&&coachWait<=0)){if(coachWait<=0){const ti=Math.floor(Math.random()*NX()),tj=Math.floor(Math.random()*NY());const p=free(ti,tj)?bfs(coach,(i,j)=>i==ti&&j==tj,(i,j)=>i==hero.ti&&j==hero.tj):null;if(p)coach.path=p;coachWait=3+Math.random()*3}}}
  follow(dt);
@@ -1512,13 +1545,20 @@ function frame(now){if(!cv||!cv.isConnected){raf=0;return}const dt=Math.min(.05,
  const L=[...G.items.map(it=>{const[w,d]=dims(it.type,it.r);return{b:[it.i,it.i+w,it.j,it.j+d,0,16],f:()=>drawItem(it)}}),...[hero,coach].map(a=>({b:[a.gx-.3,a.gx+.3,a.gy-.3,a.gy+.3,0,28],f:()=>drawActor(a)}))];
  if(BM.place&&!BM.place.wall){const p=BM.place,[w,d]=dims(p.type,p.r),ok=!check(p.type,p.r,p.i,p.j);L.push({b:[p.i,p.i+w,p.j,p.j+d,0,16],f:()=>{outline(tilesOf(p.type,p.r,p.i,p.j),ok?'#7cff6a':'#ff4d5a');drawItem(p,.7)}})}
  isoSort(L).forEach(o=>o.f());
+ if(CLEAN){const it=CLEAN.it,p=P(it.i+.5,it.j+.5,17),k=Math.min(1,CLEAN.t/HOLD);dot(x,[p[0]-9,p[1]-3],18,5,'#0a070e');dot(x,[p[0]-8,p[1]-2],16,3,'#3a2d49');dot(x,[p[0]-8,p[1]-2],Math.round(16*k),3,'#5fd35f')}
+ FX=FX.filter(f=>(f.t+=dt)<.7);FX.forEach(f=>{const p=P(f.gx,f.gy,3+f.t*14);for(let k=0;k<8;k++){const a=k/8*Math.PI*2;dot(x,[p[0]+Math.cos(a)*(3+f.t*14),p[1]+Math.sin(a)*(2+f.t*6)],1,1,k%2?'#8a8882':'#b3aea3')}});
  x.setTransform(1,0,0,1,0,0);
- placeActs();tags();raf=requestAnimationFrame(frame)}
+ placeActs();tags();bubPlace();raf=requestAnimationFrame(frame)}
 
 /* ---------- toucher ---------- */
 function tileAt(sx,sy){const lx=cam.x+sx/Z,ly=cam.y+sy/Z;return[Math.floor(((lx-OX)/HW+(ly-OY)/HH)/2),Math.floor(((ly-OY)/HH-(lx-OX)/HW)/2),lx,ly]}
-function itemAt(lx,ly,ti,tj){const o=OCC.get(ti+','+tj);if(o)return o;
- return[...G.items].sort((p,q)=>(q.i+q.j)-(p.i+p.j)).find(it=>{const[w,d]=dims(it.type,it.r),pts=[];[it.i,it.i+w].forEach(a=>[it.j,it.j+d].forEach(c=>[0,20].forEach(z=>pts.push(P(a,c,z)))));const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);return lx>=Math.min(...xs)&&lx<=Math.max(...xs)&&ly>=Math.min(...ys)&&ly<=Math.max(...ys)&&ly<P(ti,tj)[1]})}
+/* toucher précis : on redessine chaque objet candidat sur une petite zone autour du doigt et on garde le plus en avant qui a des pixels à cet endroit */
+const pk=document.createElement('canvas');pk.width=pk.height=7;const pkx=pk.getContext('2d',{willReadFrequently:true});
+function solidAt(it,lx,ly){const keep=x;x=pkx;pkx.setTransform(1,0,0,1,0,0);pkx.clearRect(0,0,7,7);pkx.setTransform(1,0,0,1,3-Math.round(lx),3-Math.round(ly));try{drawItem(it)}finally{x=keep}
+ const d=pkx.getImageData(0,0,7,7).data;for(let k=3;k<d.length;k+=4)if(d[k]>0)return true;return false}
+function itemAt(lx,ly,ti,tj){const C=G.items.map(it=>{const[w,d]=dims(it.type,it.r);return{it,b:[it.i,it.i+w,it.j,it.j+d,0,20]}});
+ const order=isoSort(C);for(let k=order.length-1;k>=0;k--)if(solidAt(order[k].it,lx,ly))return order[k].it;
+ return OCC.get(ti+','+tj)||null}
 const coachHit=(lx,ly)=>{const s=P(coach.gx,coach.gy);return Math.abs(lx-s[0])<=7&&ly>=s[1]-24&&ly<=s[1]+2};
 const onPlace=(ti,tj,lx,ly)=>BM.place&&(BM.place.wall?!!wallAt(lx,ly,[BM.place]):tilesOf(BM.place.type,BM.place.r,BM.place.i,BM.place.j).some(([a,c])=>a==ti&&c==tj));
 function movePlace(ti,tj,lx,ly){const p=BM.place;if(p.wall){const W=wallPos(lx,ly);p.side=W.side;p.t=Math.round(W.t-WCAT[p.type].w/2);return}const[w,d]=dims(p.type,p.r);p.i=ti-Math.floor((w-1)/2);p.j=tj-Math.floor((d-1)/2)}
@@ -1526,27 +1566,30 @@ function tap(sx,sy){const[ti,tj,lx,ly]=tileAt(sx,sy);
  if(BM.place){movePlace(ti,tj,lx,ly);return}
  if(BM.sel){BM.sel=null;ui();return}
  if(BM.inv){BM.inv=false;ui()}
- const onC=coachHit(lx,ly);if(GC.pop&&!onC){coachClose();return}if(onC){coachOpen();return}
+ if(SC){if(SC.ph=='talk')introNext();return}
+ const onC=!coach.hidden&&coachHit(lx,ly);if(GC.pop&&!onC){coachClose();return}if(onC){coachOpen();return}
  if(USE)endUse();
  const it=itemAt(lx,ly,ti,tj),wi=it?null:wallAt(lx,ly);
+ if(it&&CAT[it.type].junk){say('Reste <b>appuyé</b> dessus pour le jeter !',coach,2400);return}
  if(wi){const[fi,fj]=wfront(wi),p=hero.ti==fi&&hero.tj==fj?[]:bfs(hero,free(fi,fj)?(i,j)=>i==fi&&j==fj:(i,j)=>Math.abs(i-fi)+Math.abs(j-fj)<=1);if(p){hero.path=p.length?p:[[hero.ti,hero.tj]];hero.goal={wall:wi};target=null;manualT=0}return}
  if(!it&&free(ti,tj)){const p=bfs(hero,(i,j)=>i==ti&&j==tj);if(p){hero.path=p;hero.goal=null;target=[ti,tj];manualT=0}return}
- if(it){const Tl=tilesOf(it.type,it.r,it.i,it.j),adj=(i,j)=>Tl.some(([a,c])=>Math.abs(a-i)+Math.abs(c-j)==1);if(adj(hero.ti,hero.tj)){hero.goal=it;hero.path=[[hero.ti,hero.tj]]}else{const p=bfs(hero,adj);if(p){hero.path=p;hero.goal=it;target=p[p.length-1];manualT=0}}}}
+ if(it){const Tl=tilesOf(it.type,it.r,it.i,it.j),adj=(i,j)=>Tl.some(([a,c])=>Math.abs(a-i)+Math.abs(c-j)==1);if(adj(hero.ti,hero.tj)){hero.goal=it;hero.path=[[hero.ti,hero.tj]]}else{const p=bfs(hero,adj);if(p){hero.path=p;hero.goal=it;target=p[p.length-1];manualT=0}else if(G.items.some(o=>CAT[o.type].junk))say('Impossible d\'y accéder : les <b>cartons</b> bloquent le passage.',coach,2600)}}}
 function bind(){const pts=new Map();let drag=null,pinch=null,lpT=0;
  stage.addEventListener('pointerdown',e=>{try{stage.setPointerCapture(e.pointerId)}catch(_){}pts.set(e.pointerId,[e.clientX,e.clientY]);clearTimeout(lpT);
   if(pts.size==1){const r=stage.getBoundingClientRect(),[ti,tj,lx,ly]=tileAt(e.clientX-r.left,e.clientY-r.top);
    drag={x:e.clientX,y:e.clientY,cx:cam.x,cy:cam.y,moved:false,piece:onPlace(ti,tj,lx,ly),lp:false};
-   if(!BM.place){const it=itemAt(lx,ly,ti,tj)||wallAt(lx,ly);if(it)lpT=setTimeout(()=>{if(drag&&!drag.moved&&pts.size==1){drag.lp=true;endUse();if(GC.pop)coachClose();BM.sel=it;BM.inv=false;target=null;try{navigator.vibrate&&navigator.vibrate(25)}catch(_){}ui()}},450)}}
+   if(SC)return;
+   if(!BM.place){const it=itemAt(lx,ly,ti,tj)||wallAt(lx,ly);if(it&&!it.wall&&CAT[it.type].junk){lpT=setTimeout(()=>{if(drag&&!drag.moved&&pts.size==1){drag.lp=true;CLEAN={it,t:0}}},120);return}if(it)lpT=setTimeout(()=>{if(drag&&!drag.moved&&pts.size==1){drag.lp=true;endUse();if(GC.pop)coachClose();BM.sel=it;BM.inv=false;target=null;try{navigator.vibrate&&navigator.vibrate(25)}catch(_){}ui()}},450)}}
   else if(pts.size==2){clearTimeout(lpT);const[a,c]=[...pts.values()];pinch={d:Math.hypot(a[0]-c[0],a[1]-c[1]),z:Z};drag=null}});
  stage.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId))return;pts.set(e.pointerId,[e.clientX,e.clientY]);
   if(pinch&&pts.size==2){const[a,c]=[...pts.values()],r=stage.getBoundingClientRect(),d=Math.hypot(a[0]-c[0],a[1]-c[1]);zoom(pinch.z*d/pinch.d/Z,(a[0]+c[0])/2-r.left,(a[1]+c[1])/2-r.top);return}
-  if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(!drag.moved&&Math.hypot(dx,dy)>6){drag.moved=true;clearTimeout(lpT);if(!drag.piece)stage.classList.add('drag')}
+  if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(!drag.moved&&Math.hypot(dx,dy)>6&&!(CLEAN&&drag.lp)){drag.moved=true;clearTimeout(lpT);if(!drag.piece)stage.classList.add('drag')}
   if(!drag.moved||drag.lp)return;
   if(drag.piece&&BM.place){const r=stage.getBoundingClientRect(),[ti,tj,lx,ly]=tileAt(e.clientX-r.left,e.clientY-r.top);movePlace(ti,tj,lx,ly);return}
   followOn=false;cam.x=drag.cx-dx/Z;cam.y=drag.cy-dy/Z;clampCam();manualT=performance.now()});
- const up=e=>{if(!pts.has(e.pointerId))return;pts.delete(e.pointerId);clearTimeout(lpT);if(pts.size<2)pinch=null;
+ const up=e=>{if(!pts.has(e.pointerId))return;pts.delete(e.pointerId);clearTimeout(lpT);CLEAN=null;if(pts.size<2)pinch=null;
   if(drag&&!drag.moved&&!drag.lp&&pts.size==0){const r=stage.getBoundingClientRect();tap(e.clientX-r.left,e.clientY-r.top)}if(pts.size==0){drag=null;stage.classList.remove('drag')}};
- stage.addEventListener('pointerup',up);stage.addEventListener('pointercancel',e=>{clearTimeout(lpT);pts.delete(e.pointerId);drag=null;pinch=null;stage.classList.remove('drag')});
+ stage.addEventListener('pointerup',up);stage.addEventListener('pointercancel',e=>{clearTimeout(lpT);CLEAN=null;pts.delete(e.pointerId);drag=null;pinch=null;stage.classList.remove('drag')});
  stage.addEventListener('wheel',e=>{e.preventDefault();const r=stage.getBoundingClientRect();zoom(e.deltaY<0?1.15:1/1.15,e.clientX-r.left,e.clientY-r.top)},{passive:false});
  root.querySelector('#oacts').addEventListener('click',e=>{const a=e.target.closest('[data-a]');if(a)act(a.dataset.a)});
  root.querySelector('#inv').addEventListener('click',e=>{const b2=e.target.closest('[data-t]');if(!b2)return;if(BM.place)cancelPlace();BM.inv=false;startPlace(b2.dataset.t)});
@@ -1559,7 +1602,7 @@ function mount(el,h){root=el;stage=el.querySelector('.stage');cv=stage.querySele
  if(!Z)Z=Math.min(zMax(),zMin()*1.25);size(false);if(fresh){center(hero);fresh=false}else clampCam();
  bind();ui();if(!raf){last=0;raf=requestAnimationFrame(frame)}}
 function grow(){if(!G||G.size>=SIZES.length-1)return false;G.size++;keep();paintRoom();size(true);return true}
-return{get busy(){return!!USE},get heroAt(){return[hero.ti,hero.tj,hero.path.length,!!hero.goal]},mount,tags:()=>{if(cv&&cv.isConnected&&G)tags()},center:()=>{followOn=false;manualT=0;center(hero)},grow,sizes:SIZES,get size(){return G?G.size:0}}})();
+return{skipIntro(){if(SC){SC=null;DOOR=0;bubOff();coach.hidden=false;hero.path=[];coach.path=[]}if(G&&G.intro=='todo'){G.intro='clean';save()}},get cleaning(){return CLEAN?[CLEAN.it.i,CLEAN.it.j,+CLEAN.t.toFixed(2)]:null},look:(i,j)=>{followOn=false;manualT=performance.now();center({gx:i,gy:j})},pick:(sx,sy)=>{const[ti,tj,lx,ly]=tileAt(sx,sy),it=itemAt(lx,ly,ti,tj);return it?[it.type,it.i,it.j]:null},scr:(gx,gy,z)=>toScreen(gx,gy,z||0),get intro(){return SC?SC.ph+(SC.i??''):G&&G.intro},get introBusy(){return!!SC||!!(G&&G===S.iso&&G.intro=='todo'&&cv&&cv.isConnected)},get busy(){return!!USE},get heroAt(){return[hero.ti,hero.tj,hero.path.length,!!hero.goal]},mount,tags:()=>{if(cv&&cv.isConnected&&G)tags()},center:()=>{followOn=false;manualT=0;center(hero)},grow,sizes:SIZES,get size(){return G?G.size:0}}})();
 function gCamCenter(){ISO.center()}
 function admGrow(){if(!isAdm())return;toast(ISO.grow()?'🛠 Salle agrandie':'🛠 Salle déjà au maximum')}
 function gymRoom(){const q=lvl(),hub=v.n=='home',c=S.cur,sx=c&&sess(c.sid),col=lvColor(q.L);
@@ -2489,7 +2532,7 @@ const OBS=[
   x:"Touche <b>Générer</b> : je te propose des exercices selon la zone, ton matériel et ton niveau. Tu peux aussi les <b>ajouter un par un</b>."},
  {id:'go',n:3,go:'train2',pre:1,fin:1,t:'Le jour J',done:()=>v.n=='run',sel:()=>tq('#app .exb'),
   x:"Ta séance est prête ! À la salle, touche un exercice pour lancer son <b>minuteur</b> : je t'expliquerai chaque étape au bon moment. Ta quête <b>Premiers pas</b> t'attend dans Quêtes."}];
-function obOffer(){obInit();if(S.ob.st=='run'&&!OB)S.ob.st='';if(OB||TR||S.ob.st!==''||(S.cur&&S.cur.started)||obBusy())return;
+function obOffer(){obInit();if(S.ob.st=='run'&&!OB)S.ob.st='';if(OB||TR||S.ob.st!==''||(S.cur&&S.cur.started)||obBusy()||(typeof ISO!='undefined'&&ISO.introBusy))return;
  const o=document.createElement('div');o.className='ov';o.id='tov';o.innerHTML=`<div class="sheet"><div class="obh">${obFace()}<h2>Bienvenue, aventurier !</h2></div><p style="font-size:21px;line-height:1.15">Je suis le <b style="color:var(--ac);font-weight:400">Coach</b>. Ici, chaque séance de muscu te rapporte de l'XP et des Prot's pour faire grandir ton héros et ta salle.</p><p style="font-size:21px;line-height:1.15">On prépare ta première séance ensemble ? Ça prend 30 secondes.</p><button class="btn p" id="tgo">C'est parti !</button><button class="btn s" id="tlt">Plus tard</button></div>`;
  document.body.append(o);o.querySelector('#tgo').onclick=()=>{o.remove();obStart()};o.querySelector('#tlt').onclick=()=>{o.remove();S.ob.st='skip';save();toast('Tu me retrouves dans Options → Guide de démarrage')}}
 function obStart(manual){if(OB||TR)return;if(S.cur&&!S.cur.demo){toast('Termine ta séance en cours avant le guide');return}obInit();
@@ -2551,13 +2594,14 @@ function hintPlace(){if(!HN)return;const el=hintEl(HN.h);if(!el)return obHintOff
 function obHintOff(){if(HN){HN.o.remove();HN=null}}
 
 /* ---------- 3. Quête « Premiers pas » ---------- */
-Object.assign(QI,{pp_me:'helmet',pp_ses:'sword',pp_cue:'scroll',pp_run:'flame',pp_w2:'drumstick',pp_place:'chestC'});
+Object.assign(QI,{pp_me:'helmet',pp_ses:'sword',pp_cue:'scroll',pp_run:'flame',pp_w2:'drumstick',pp_place:'chestC',pp_clean:'broom'});
 const PPQ=[
  {k:'me',t:'Remplir ton profil (au moins ton poids)',h:'Options → Modifier',xp:20,ok:()=>S.me.weight>0},
  {k:'ses',t:'Créer ta propre séance',h:"S'entraîner → Ajouter une séance",xp:30,ok:()=>S.sessions.some(s=>!/^s[12]$/.test(s.id)&&!s.demo&&s.ex.length)},
  {k:'cue',t:"Lire la fiche d'un exercice",h:"Touche le petit parchemin à côté d'un exercice",xp:15,ok:()=>!!(S.ob.f&&S.ob.f.cue)},
  {k:'run',t:'Terminer ta première séance',h:'Lance une séance et va jusqu\'au bout',xp:50,ok:()=>S.hist.length>0},
  {k:'w2',t:'Te repeser un autre jour',h:'Nutrition → + Pesée',xp:20,ok:()=>(S.wl||[]).length>=2},
+ {k:'clean',t:'Faire le ménage dans ta salle',h:'Reste appuyé sur les cartons pour les jeter',xp:20,ok:()=>!!(S.iso&&S.iso.intro!='todo'&&S.iso.intro!='clean')},
  {k:'place',t:'Poser un objet dans ta salle',h:'Dans ta salle → coffre → Poser',xp:20,ok:()=>!!(S.ob.f&&(S.ob.f.place||S.ob.f.buy))}];
 const PPB=60,ppOn=()=>!!(S.ob&&S.ob.pp&&!(S.ob.q&&S.ob.q.bonus));
 function ppClaim(){if(!ppOn()||window.tdemo||TR||LOOT||obBusy())return;const q=S.ob.q=S.ob.q||{};
