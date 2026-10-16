@@ -1387,10 +1387,11 @@ function gPushFx(x,px,py,T,oy){const P=gPushPose(),fx=P.fx;if(!fx)return;const p
  else if(fx=='angry'){const ax=px+7,ay=oy-2,c=Math.floor(T*6)%2?'#ff3b3b':'#e2373f';[[0,0],[1,0],[0,1],[3,0],[4,0],[4,1],[0,3],[0,4],[1,4],[4,3],[4,4],[3,4]].forEach(([a,b])=>px_(ax+a,ay+b,c))}}
 /* ===== Le Coach : un deuxième personnage qui se promène au centre de la salle ; le toucher ouvre son aide ===== */
 const GC={x:0,y:0,tx:0,ty:0,mode:'idle',wait:2,wt:0,dir:-1,init:0,spr:null};
-const CPAL={o:'#0a070e',s:'#c98b5e',S:'#a96d43',L:'#e8b48a',A:'#2b2b35',D:'#17171e',b:'#22222b',B:'#121218',f:'#f1ecf7',F:'#8c84a0',W:'#f1ecf7'};
+const CPAL={o:'#0a070e',s:'#c98b5e',S:'#a96d43',L:'#e8b48a',h:'#3b2417',H:'#5a3a24',A:'#2b2b35',D:'#17171e',b:'#22222b',B:'#121218',f:'#f1ecf7',F:'#8c84a0',W:'#f1ecf7'};
 function coachRows(k){const g=CHF[k].map(r=>r.split('')),front=k=='front'||k=='wave';
- for(let y=0;y<=6;y++)g[y].forEach((c,i)=>{if(c=='h'||c=='H')g[y][i]='s'});/* crâne rasé */
- if(front){g[1][5]='L';g[1][6]='L';g[8][6]='W'}else{g[1][6]='L';g[1][7]='L';g[8][8]='W'}/* reflet sur le crâne, logo blanc */
+ /* cheveux courts brun foncé (reflet plus clair sur le dessus), côtés dégradés en vue de face */
+ if(front){g[1].forEach((c,i)=>{if(c=='h'&&(i==5||i==6))g[1][i]='H'});[3].forEach(y=>g[y].forEach((c,i)=>{if(c=='h'&&(i==3||i==10))g[y][i]='h'}));g[8][6]='W'}
+ else{g[1].forEach((c,i)=>{if(c=='h'&&(i==6||i==7))g[1][i]='H'});g[8][8]='W'}/* logo blanc */
  [15,16].forEach(y=>g[y].forEach((c,i)=>{if(c=='s')g[y][i]='b'}));/* pantalon long */
  const st=g[12].indexOf('b');if(st>=0)[12,13].forEach(y=>{if(g[y][st]=='b')g[y][st]='W'});/* bande blanche sur le pantalon */
  return g.map(r=>r.join(''))}
