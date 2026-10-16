@@ -415,7 +415,7 @@ const key=id=>id=='p1'?'gymv1':'gymv1_'+id;
 const fresh=()=>JSON.parse(JSON.stringify({...DEF,sessions:[],hist:[],cur:null}));
 let S;function loadP(){try{S=JSON.parse(localStorage[key(P.cur)])}catch(e){S=null}if(!S)S=P.cur=='p1'?JSON.parse(JSON.stringify(DEF)):fresh();S.me=S.me||{name:'',weight:0,goal:''};if(S.cur&&S.cur.started===false)S.cur=null}
 loadP();
-const save=()=>{try{localStorage[key(P.cur)]=JSON.stringify(S);localStorage.gymprof=JSON.stringify(P)}catch(e){}};
+const save=()=>{if(window.tdemo)return;try{localStorage[key(P.cur)]=JSON.stringify(S);localStorage.gymprof=JSON.stringify(P)}catch(e){}};
 let v={n:'home'};const go=(n,x={})=>{v={n,...x};render()};
 const fmt=s=>{s=Math.max(0,Math.round(s));const h=s/3600|0,m=(s%3600)/60|0;return(h?h+':'+String(m).padStart(2,'0'):m)+':'+String(s%60).padStart(2,'0')};
 const kg=n=>(Math.round(n*100)/100).toString().replace('.',',');
@@ -880,7 +880,7 @@ function opts(){const t=S.set,m=S.me||{},L=lvl().L,E=t.eqp||{},nE=EQL.filter(([k
  `<h2>Application</h2><div class="card omc">`+
   omr('⏱️','Minuteur et sons',`${t.sound?'Sons activés · volume '+Math.round((t.vol??.5)*100)+' %':'Sons coupés'}${t.awake!==false?' · écran allumé':''}`,"go('optx',{s:'timer'})")+
   omr('🎨','Affichage',`${t.hub!==false?'Accueil : ma salle':'Accueil : classique'} · couleur du thème`,"go('optx',{s:'look'})")+
-  omr('🧭','Visite guidée',"Revoir comment fonctionne l'appli, en 1 minute","tourStart('opts')")+`</div>`+
+  omr('🧭','Visite guidée',"Revoir comment fonctionne l'appli, en 2 minutes","tourStart('opts')")+`</div>`+
  `<h2>Données</h2><div class="card omc">`+
   omr('👥','Profils',P.list.length>1?P.list.length+' profils · actif : '+esc(curName()):'1 profil · en ajouter un',"go('optx',{s:'prof'})")+
   omr('💾','Sauvegarde et export','Sauvegarde, import et bilan Excel',"go('optx',{s:'save'})")+`</div>`}
@@ -2435,16 +2435,23 @@ keepAwake();
 render();
 /* ===== Visite guidée : bulle + flèche + surbrillance, change de page toute seule ===== */
 const TOUR=[
- {go:'home',ic:'dumb',t:'Bienvenue !',x:"<b>Dungeon Gains</b> transforme ta séance de muscu en aventure : tu t'entraînes, tu gagnes de l'XP et ton héros monte de niveau. Je te montre l'essentiel, en 1 minute environ."},
+ {go:'home',ic:'dumb',t:'Bienvenue !',x:"<b>Dungeon Gains</b> transforme ta séance de muscu en aventure : tu t'entraînes, tu gagnes de l'XP et ton héros monte de niveau. Je te montre l'essentiel, en 2 minutes environ."},
  {go:'home',ic:'scroll',t:'Ton niveau',sel:'#bar',x:"En haut : ton <b>niveau</b> et ton <b>XP</b>. Chaque séance terminée te fait progresser. Dessous, la semaine : un point sous un jour veut dire qu'une séance est prévue."},
  {go:'home',hub:1,ic:'helmet',t:'Ta salle',sel:'#gymcv',x:"Voici ta salle de sport. Ton héros s'y balade et tu peux le toucher pour le faire réagir. Plus tu t'entraînes, plus la salle évolue."},
  {go:'home',hub:1,ic:'helmet',t:'Le Coach',sel:'#gcpop',on:()=>{try{if(!GC.pop)coachOpen()}catch(e){}},off:()=>{try{coachClose()}catch(e){}},x:"Le <b>Coach</b> se promène dans la salle. Touche-le : un petit menu s'ouvre avec tes <b>séances</b>, l'<b>encyclopédie</b> et tes <b>stats</b>."},
  {go:'home',hub:1,ic:'coin',t:'La boutique',sel:'#gyshop',x:"En t'entraînant, tu gagnes des <b>protéines</b>, la monnaie du jeu. Tu les dépenses ici pour rénover la salle, ajouter des machines et changer le style de ton héros."},
  {go:'home',hub:1,ic:'book',t:'Le conseil du jour',sel:'.dlg',x:"Cette bulle te donne un conseil adapté à toi (entraînement, repos, nutrition). Touche-la pour en lire un autre."},
  {go:'home',hub:1,ic:'sword',t:'Le menu',sel:'#dock',x:"En bas, les <b>5 grandes parties</b> de l'appli. On les visite une par une."},
- {go:'train',ic:'sword',t:'Séance',sel:'#app .exb',x:"Tes séances de la semaine, chacune avec son jour. <b>Touche une séance</b> pour la voir et la lancer, ou le <b>crayon</b> pour modifier ses exercices."},
- {go:'train',ic:'sword',t:'Créer une séance',sel:()=>[...document.querySelectorAll('#app .btn.s')].pop()||null,x:"Le bouton <b>Ajouter une séance</b> en crée une : tu peux la composer toi-même, ou laisser l'appli en générer une adaptée à ton matériel et à tes zones sensibles."},
- {go:'train',ic:'sword',t:'Pendant la séance',sel:'#app .exb',x:"Une fois lancée, l'appli te guide <b>série par série</b> : échauffement automatique, minuteur de repos, bips avant la fin. Tu notes si c'était réussi, partiel ou raté, et la charge s'adapte pour la prochaine fois."},
+ {go:'train',ic:'sword',t:'Séance',sel:()=>tq('#app .exb')||tq('#app .card'),x:"Tes séances de la semaine, chacune avec son jour. <b>Touche une séance</b> pour la voir et la lancer, ou le <b>crayon</b> pour modifier ses exercices. Si tu n'en as pas encore, tu en crées une en deux secondes."},
+ {go:'train',ic:'sword',t:'Créer une séance',sel:()=>[...document.querySelectorAll('#app > .btn')].pop()||null,x:"Le bouton <b>Ajouter une séance</b> en crée une : tu peux la composer toi-même, ou laisser l'appli en générer une équilibrée, adaptée à ton matériel et à tes zones sensibles."},
+ {go:'train2',pre:1,ex:1,ic:'sword',t:'Lancer un exercice',sel:'#app .exb',x:"Voici le détail d'une séance. <b>Touche un exercice</b> pour ouvrir son minuteur : la séance démarre à ce moment-là. Le petit parchemin à droite d'un exercice donne ses conseils d'exécution."},
+ {go:'run',demo:'ready',ex:1,ic:'sword',t:'Le minuteur',sel:'.ring',x:"Voici le <b>minuteur</b>, le cœur de l'appli. Touche le cercle ou « Démarrer » : il te guide <b>répétition par répétition</b> au tempo réglé et bipe à chaque étape. Le tempo se règle plus bas avec + et −."},
+ {go:'run',demo:'ready',ex:1,ic:'sword',t:"L'échauffement",sel:'.wu',x:"Avant la 1re série, l'appli propose un <b>échauffement</b> progressif avec des charges légères, calculé d'après ta force. Si tes muscles sont déjà chauds ou si la charge est légère, elle t'indique de le sauter."},
+ {go:'run',demo:'ready',ex:1,ic:'sword',t:'Machine occupée ?',sel:'.rswap',x:"Une machine est prise à la salle ? Ce bouton propose un <b>exercice de remplacement</b> pour aujourd'hui, avec le matériel de ta salle."},
+ {go:'run',demo:'rep',ex:1,ic:'sword',t:'Pendant la série',sel:'.ring',x:"Le chiffre au centre compte tes <b>répétitions</b>, au rythme du tempo. Tu as calé avant la fin ? Le bouton « J'ai calé » juste en dessous enregistre ce que tu as fait."},
+ {go:'run',demo:'rep',ex:1,ic:'sword',t:'Tes séries',sel:'#sets',x:"Sous le cercle, tes <b>séries</b> : la verte est finie (✓), la jaune est en cours, les autres arrivent."},
+ {go:'run',demo:'rest',ex:1,ic:'sword',t:'Le repos',sel:'.radj',x:"Entre deux séries, le <b>repos</b> démarre seul : compte à rebours dans le cercle et bips avant la fin. Ces boutons le raccourcissent de 15 s, le passent ou l'allongent de 15 s."},
+ {go:'run',demo:'rate',ex:1,ic:'sword',t:'Le bilan',sel:'#app .card',x:"À la fin d'un exercice, tu notes le bilan : les <b>répétitions réussies par série</b> (corrigeables) et la <b>charge conseillée pour la prochaine fois</b>. L'appli l'adapte à tes résultats : tu progresses sans y penser."},
  {go:'goals',ic:'shield',t:'Quêtes',sel:()=>tq('#app .card'),x:"Des objectifs précis pour chaque séance et pour la semaine. Chaque quête réussie te rapporte de l'<b>XP</b> et te garde motivé."},
  {go:'stats',ic:'scroll',t:'Stats',sel:()=>tUni(tq('#balc .blk'),document.querySelectorAll('#balc .blr')[3])||tq('#balc')||tq('#app .card'),x:"Ta régularité, tes courbes, tes records. Plus bas, l'<b>équilibre du programme</b> te dit quels muscles tu travailles trop ou pas assez, avec des corrections en un geste."},
  {go:'health',ic:'drumstick',t:'Nutrition',sel:()=>tq('#app .card'),x:"Ton <b>poids</b> et tes besoins en calories et protéines, calculés d'après ton profil et ton objectif. Pèse-toi 2 fois par semaine pour suivre ton évolution."},
@@ -2458,7 +2465,7 @@ const tq=s=>document.querySelector(s),tTxt=(s,t)=>[...document.querySelectorAll(
 function tUni(a,b){if(!a||!b)return null;return{getBoundingClientRect(){const x=a.getBoundingClientRect(),y=b.getBoundingClientRect(),l=Math.min(x.left,y.left),t=Math.min(x.top,y.top),r=Math.max(x.right,y.right),bt=Math.max(x.bottom,y.bottom);return{left:l,top:t,right:r,bottom:bt,width:r-l,height:bt-t}},closest(){return null}}}
 function tourFlag(x){try{if(x===undefined)return localStorage.dgtour;localStorage.dgtour=x}catch(e){}}
 function tourOffer(){if(TR||tourFlag()||S.cur||S.hist.length||P.list.length>1)return;
- const o=document.createElement('div');o.className='ov';o.id='tov';o.innerHTML=`<div class="sheet"><h2>Bienvenue !</h2><p style="font-size:21px;line-height:1.15">Première fois ici ? Je te fais visiter l'appli en 1 minute : à quoi sert chaque partie et par où commencer.</p><button class="btn p" id="tgo">Commencer la visite</button><button class="btn s" id="tlt">Plus tard</button></div>`;
+ const o=document.createElement('div');o.className='ov';o.id='tov';o.innerHTML=`<div class="sheet"><h2>Bienvenue !</h2><p style="font-size:21px;line-height:1.15">Première fois ici ? Je te fais visiter l'appli en 2 minutes : à quoi sert chaque partie, le minuteur compris, et par où commencer.</p><button class="btn p" id="tgo">Commencer la visite</button><button class="btn s" id="tlt">Plus tard</button></div>`;
  document.body.append(o);o.querySelector('#tgo').onclick=()=>{o.remove();tourStart('home')};o.querySelector('#tlt').onclick=()=>{o.remove();tourFlag('skip');toast('Visite dispo dans Options → Visite guidée')}}
 function tourStart(back){if(TR)return;if(S.cur){toast('Termine ta séance en cours avant la visite');return}
  const steps=TOUR.filter(s=>!(s.hub&&S.set.hub===false));
@@ -2466,6 +2473,12 @@ function tourStart(back){if(TR)return;if(S.cur){toast('Termine ta séance en cou
  document.body.append(o);TR={o,steps,i:-1,back:back||'home',id:0,off:null};
  o.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('[data-a]');if(!a)return;const k=a.dataset.a;if(k=='n')tourGo(TR.i+1);else if(k=='b')tourGo(TR.i-1);else tourEnd(false)});
  addEventListener('resize',tourPlace);tourGo(0)}
+function tDemoSess(){window.tdemo=1;let q=S.sessions.find(z=>z.ex.length);if(!q){q={id:'tdemo',name:'Séance de démo',day:new Date().getDay(),demo:1,ex:[{id:'tdex',name:'Développé couché',load:40,inc:2.5,sets:4,reps:8,rest:120}]};S.sessions.push(q)}return q}
+function tDemo(ph){const q=tDemoSess(),e=q.ex[0],r=e.reps||8;
+ const x={id:e.id,set:ph=='ready'?1:2,rep:ph=='rep'?Math.min(5,r):1,side:0,ph,left:ph=='rest'?Math.round((e.rest||90)*.6):Math.max(1,tpOf(e)*.6),sr:ph=='ready'?undefined:[r]};
+ if(ph=='rate'){x.set=e.sets;x.sr=Array.from({length:e.sets},(_,k)=>k<e.sets-1?r:Math.max(1,r-1))}
+ S.cur={sid:q.id,elapsed:754,vol:Math.round((e.load||20)*r),done:{},log:{},ex:x,paused:true,started:true,demo:1}}
+function tDemoOff(){if(S.cur&&S.cur.demo)S.cur=null;S.sessions=S.sessions.filter(q=>!q.demo);window.tdemo=0}
 function tourGo(i){if(!TR)return;const st=TR.steps;if(i>=st.length)return tourEnd(true);if(i<0)return;
  const id=++TR.id;if(TR.off){try{TR.off()}catch(e){}TR.off=null}
  const s=st[i],o=TR.o;TR.i=i;TR.s=s;
@@ -2474,7 +2487,8 @@ function tourGo(i){if(!TR)return;const st=TR.steps;if(i>=st.length)return tourEn
  const bb=o.querySelector('[data-a=b]'),bn=o.querySelector('[data-a=n]');bb.style.display=i?'':'none';o.querySelector('.tvb').classList.toggle('one',!i);bn.textContent=i==0?'Commencer ›':i==st.length-1?'Terminer ✓':'Suivant ›';
  o.querySelector('.tskip').style.display=i==st.length-1?'none':'block';
  o.classList.add('busy');
- if(v.n!=s.go)go(s.go);
+ if(s.demo)tDemo(s.demo);else if(s.ex){if(S.cur&&S.cur.demo)S.cur=null;tDemoSess()}else tDemoOff();
+ if(s.demo||s.pre||v.n!=s.go)go(s.go,s.pre?{pre:tDemoSess().id}:{})
  setTimeout(()=>{if(!TR||id!=TR.id)return;
   if(s.on){try{s.on()}catch(e){}TR.off=s.off||null}else TR.off=s.off||null;
   tourPlace(true);o.classList.remove('busy');setTimeout(()=>{if(TR&&id==TR.id)tourPlace()},450)},520)}
@@ -2483,13 +2497,13 @@ function tourPlace(scroll){if(!TR)return;const o=TR.o,sp=o.querySelector('.tsp')
  const el=tourEl();if(el&&scroll===true&&!(el.closest&&el.closest('#bar,#dock'))){const r=el.getBoundingClientRect();if(r.height>vh*.6)scrollBy({top:r.top-120,behavior:'instant'});else scrollBy({top:r.top+r.height/2-vh/2,behavior:'instant'})}
  const bw=Math.min(340,vw-24);bb.style.width=bw+'px';const bh=bb.offsetHeight;let L,T,side=0,cx=0;
  if(!el){sp.style.display='none';bk.classList.add('dim');L=(vw-bw)/2;T=Math.max(12,(vh-bh)/2)}
- else{const r=el.getBoundingClientRect(),pad=6,t0=Math.max(2,r.top-pad);let b0=Math.min(vh-2,r.bottom+pad);if(b0-t0>vh*.45)b0=Math.min(b0,t0+vh*.42);const l0=Math.max(2,r.left-pad),r0=Math.min(vw-2,r.right+pad);
+ else{const r=el.getBoundingClientRect(),pad=6,t0=Math.max(2,r.top-pad);let b0=Math.min(vh-2,r.bottom+pad);if(b0-t0>vh*.52)b0=Math.min(b0,t0+vh*.5);const l0=Math.max(2,r.left-pad),r0=Math.min(vw-2,r.right+pad);
   sp.style.display='block';bk.classList.remove('dim');sp.style.left=l0+'px';sp.style.top=t0+'px';sp.style.width=(r0-l0)+'px';sp.style.height=(b0-t0)+'px';
   cx=(l0+r0)/2;L=Math.max(12,Math.min(vw-bw-12,cx-bw/2));const below=vh-b0,above=t0,need=bh+30;
   if(below>=need){side=1;T=b0+24}else if(above>=need){side=2;T=t0-24-bh}else{side=0;T=below>above?vh-bh-12:12}}
  bb.style.left=L+'px';bb.style.top=T+'px';ar.style.display=side?'block':'none';
  if(side){ar.className='tar '+(side==1?'up':'dn');ar.style.left=Math.max(14,Math.min(bw-34,cx-L-10))+'px'}}
-function tourEnd(done){if(!TR)return;try{if(TR.off)TR.off()}catch(e){}removeEventListener('resize',tourPlace);const b=TR.back;TR.o.remove();TR=null;tourFlag(done?'done':'skip');go(b);if(done)toast('Visite terminée. Bonne séance !')}
+function tourEnd(done){if(!TR)return;try{if(TR.off)TR.off()}catch(e){}tDemoOff();removeEventListener('resize',tourPlace);const b=TR.back;TR.o.remove();TR=null;tourFlag(done?'done':'skip');go(b);if(done)toast('Visite terminée. Bonne séance !')}
 
 /* ===== ECRAN DE CHARGEMENT (fictif) ===== */
 (function(){
