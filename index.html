@@ -2397,13 +2397,21 @@ function ency(){const g=v.g||'all',q=v.q||'',k=v.k||'ex',tabs=`<div class="nseg 
  if(k=='lex'){scrollTo(0,0);A.innerHTML=hdr('Encyclopédie',"go('opts')")+tabs+lexy();lexList();if(v.q)lexIn();return}
  scrollTo(0,0);A.innerHTML=hdr('Encyclopédie',"go('opts')")+tabs+`<input id="enq" class="mlq" placeholder="Rechercher un exercice (nom, muscle, machine…)" oninput="encyIn()" autocomplete="off" value="${esc(q)}"><div class="exsg" id="ensg" onclick="encySg(event)"></div><div class="tgl eng">${ENG.map(([k,l])=>`<button class="${g==k?'on':''}" onclick="v.g='${k}';v.q=document.getElementById('enq').value;encyList();document.querySelectorAll('.eng button').forEach(b=>b.classList.toggle('on',b==this))">${l}</button>`).join('')}</div><div class="mu" id="enc" style="margin:8px 0 4px"></div><div id="enl"></div>`;encyList()}
 /* même recherche que l'ajout d'un exercice : suggestions au fil de la frappe (noms, noms anglais, machines), puis repli sur muscles et matériel */
+/* mots courants -> muscles (pecs, fesses, abdominaux, jambes, bras…) : la recherche ne se limite plus aux noms exacts */
+const MSYN=[[/^(pec|pecs|pectoral\w*|pectoraux|poitrine|torse)$/,['pec']],[/^(dos|dorsa\w*|dorsaux|lats?|grand|rhomboides?)$/,['dos']],[/^(trap|traps|trapez\w*)$/,['trp']],
+ [/^(epaules?|deltoide\w*|deltos?|delto|delt)$/,['epa','epl','epp']],[/^(biceps?)$/,['bic']],[/^(triceps?)$/,['tri']],[/^(bras)$/,['bic','tri','avb']],[/^(avant|brachial\w*)$/,['avb']],
+ [/^(abdos?|abdo|abdominaux|abdominal\w*|abs|ventre|gainage|sangle)$/,['abs']],[/^(lombaires?|lombes|reins?)$/,['lom']],[/^(fess\w*|glutes?|gluteus|gluteaux|derriere)$/,['fes']],
+ [/^(quad\w*|cuisses?)$/,['qua']],[/^(cuisses?)$/,['isc','add']],[/^(isch\w*|jambiers?|hamstrings?)$/,['isc']],[/^(adducteurs?)$/,['add']],[/^(mollets?|calves|soleaire)$/,['mol']],[/^(jambes?|legs?)$/,['qua','isc','fes','mol','add']]];
+const encyQ=q=>{const t=nzS(q).replace(/\bbas du dos\b/,'lombaires').replace(/\bhaut du dos\b/,'dos').split(' ').filter(Boolean),k=t.filter(w=>!/^(du|de|des|la|le|les|d|en|pour|haut)$/.test(w));return k.length?k:t};
+const msyn=w=>{const K=new Set();MSYN.forEach(([r,k])=>{if(r.test(w))k.forEach(x=>K.add(x))});return[...K]};
+const encyHit=(c,Q,sec)=>{const h=nzS([c.n,...(c.a||[]),...c.p.map(k=>MUS[k]),...(sec?c.s.map(k=>MUS[k]):[]),EQN[c.eq]||''].join(' '));return Q.every(w=>h.includes(w)||msyn(w).some(k=>c.p.includes(k)||(sec&&c.s.includes(k))))};
 function encyIn(){const sg=document.getElementById('ensg'),q=document.getElementById('enq').value;let L=exSug(q);
- if(!L.length&&nzS(q)){const Q=nzS(q).split(' ');L=catAll().filter(c=>{const h=nzS([c.n,...c.p.map(k=>MUS[k]),EQN[c.eq]||''].join(' '));return Q.every(w=>h.includes(w))}).slice(0,6)}
+ if(!L.length&&nzS(q)){const Q=encyQ(q);L=catAll().filter(c=>encyHit(c,Q,0)).slice(0,6)}
  sg.innerHTML=L.map(c=>`<button type="button" data-c="${c.id}">${esc(c.n)}<span>${c.p.map(k=>MUS[k]).join(', ')}</span></button>`).join('');encyList()}
 function encySg(ev){const b=ev.target.closest('button');if(!b)return;const c=catGet(b.dataset.c);if(!c)return;const n=document.getElementById('enq');n.value=c.n;document.getElementById('ensg').innerHTML='';n.blur();encyList();encyShow(c.id)}
 function encyList(){const el=document.getElementById('enl');if(!el)return;const inp=document.getElementById('enq');v.q=inp?inp.value:'';const q=nzS(v.q),g=v.g||'all',G=ENG.find(x=>x[0]==g);
  let L=catAll().filter(c=>g=='moi'?String(c.id).startsWith('u'):!G[2]||G[2].includes(c.p[0]));
- if(q){const Q=q.split(' '),hit=sec=>L.filter(c=>{const h=nzS([c.n,...(c.a||[]),...c.p.map(k=>MUS[k]),...(sec?c.s.map(k=>MUS[k]):[]),EQN[c.eq]||''].join(' '));return Q.every(w=>h.includes(w))});const L1=hit(0);L=L1.length?L1:hit(1)}
+ if(q){const Q=encyQ(q),hit=sec=>L.filter(c=>encyHit(c,Q,sec));const L1=hit(0);L=L1.length?L1:hit(1)}
  const used=new Set(S.sessions.flatMap(s=>s.ex.map(e=>lk(e))));
  document.getElementById('enc').textContent=L.length+' exercice'+(L.length>1?'s':'')+(q||g!='all'?' trouvé'+(L.length>1?'s':''):' dans l\'encyclopédie')+' · ⭐ = dans tes séances';
  const by={};L.forEach(c=>{const k=c.p[0]||'abs';(by[k]=by[k]||[]).push(c)});
