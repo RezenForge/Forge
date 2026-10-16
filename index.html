@@ -177,19 +177,23 @@ html.lock,html.lock body{overflow:hidden}.ov{overscroll-behavior:contain}
 
 /* ===== VISITE GUIDÉE ===== */
 #tour{position:fixed;inset:0;z-index:1000;touch-action:none}
-#tour .tbk{position:absolute;inset:0;touch-action:none}#tour .tbk.dim{background:rgba(8,5,12,.84)}
-#tour .tsp{position:fixed;border:4px solid var(--ac);box-shadow:0 0 0 4000px rgba(8,5,12,.82);pointer-events:none}
+:is(#tour,#obg,#obh) .tbk{position:absolute;inset:0;touch-action:none}:is(#tour,#obg,#obh) .tbk.dim{background:rgba(8,5,12,.84)}
+:is(#tour,#obg,#obh) .tsp{position:fixed;border:4px solid var(--ac);box-shadow:0 0 0 4000px rgba(8,5,12,.82);pointer-events:none}
 #tour.busy .tbb,#tour.busy .tsp{opacity:0}
-#tour .tbb{position:fixed;background:var(--bg2);border:4px solid var(--ink);box-shadow:inset 0 0 0 2px #5b4873,0 4px 0 var(--ink);padding:12px 12px 8px}
-#tour .tth{display:flex;align-items:center;gap:8px;margin-bottom:6px}#tour .tth svg{margin:0}
-#tour .ttl{font:11px/1.5 var(--px);color:var(--ac);flex:1;min-width:0}#tour .tct{font:9px var(--px);color:var(--mu)}
-#tour .ttx{font-size:21px;line-height:1.15}#tour .ttx b{color:var(--ac);font-weight:400}
-#tour .tdots{display:flex;gap:3px;margin:10px 0}#tour .tdots i{flex:1;height:5px;background:#342743}#tour .tdots i.on{background:var(--ac)}
-#tour .tvb{display:grid;grid-template-columns:1fr 1.4fr;gap:8px}#tour .tvb.one{grid-template-columns:1fr}#tour .tvb .btn{margin:0;white-space:nowrap;padding:10px 4px}
-#tour .tskip{display:block;width:100%;background:none;border:0;color:var(--mu);font:19px VT323,monospace;margin-top:6px;padding:4px;text-decoration:underline}
-#tour .tar{position:absolute;width:0;height:0;border:11px solid transparent}
-#tour .tar.up{top:-26px;border-bottom-color:var(--ac);border-top-width:0}
-#tour .tar.dn{bottom:-26px;border-top-color:var(--ac);border-bottom-width:0}
+:is(#tour,#obg,#obh) .tbb{position:fixed;background:var(--bg2);border:4px solid var(--ink);box-shadow:inset 0 0 0 2px #5b4873,0 4px 0 var(--ink);padding:12px 12px 8px}
+:is(#tour,#obg,#obh) .tth{display:flex;align-items:center;gap:8px;margin-bottom:6px}:is(#tour,#obg,#obh) .tth svg{margin:0}
+:is(#tour,#obg,#obh) .ttl{font:11px/1.5 var(--px);color:var(--ac);flex:1;min-width:0}:is(#tour,#obg,#obh) .tct{font:9px var(--px);color:var(--mu)}
+:is(#tour,#obg,#obh) .ttx{font-size:21px;line-height:1.15}:is(#tour,#obg,#obh) .ttx b{color:var(--ac);font-weight:400}
+:is(#tour,#obg,#obh) .tdots{display:flex;gap:3px;margin:10px 0}:is(#tour,#obg,#obh) .tdots i{flex:1;height:5px;background:#342743}:is(#tour,#obg,#obh) .tdots i.on{background:var(--ac)}
+:is(#tour,#obg,#obh) .tvb{display:grid;grid-template-columns:1fr 1.4fr;gap:8px}:is(#tour,#obg,#obh) .tvb.one{grid-template-columns:1fr}:is(#tour,#obg,#obh) .tvb .btn{margin:0;white-space:nowrap;padding:10px 4px}
+:is(#tour,#obg,#obh) .tskip{display:block;width:100%;background:none;border:0;color:var(--mu);font:19px VT323,monospace;margin-top:6px;padding:4px;text-decoration:underline}
+:is(#tour,#obg,#obh) .tar{position:absolute;width:0;height:0;border:11px solid transparent}
+:is(#tour,#obg,#obh) .tar.up{top:-26px;border-bottom-color:var(--ac);border-top-width:0}
+:is(#tour,#obg,#obh) .tar.dn{bottom:-26px;border-top-color:var(--ac);border-bottom-width:0}
+#obg{position:fixed;inset:0;z-index:8;pointer-events:none}#obg .tbb,#obh .tbb{pointer-events:auto}#obg.busy .tbb,#obg.busy .tsp{opacity:0}
+#obh{position:fixed;inset:0;z-index:7;pointer-events:none}#obh .obo{position:fixed;border:4px solid var(--ac);pointer-events:none}#obh .ttx{font-size:20px}#obh .btn{margin:10px 0 0}
+.obc{width:28px;height:38px;image-rendering:pixelated;flex:none}#obg .obb{display:grid;gap:8px;margin-top:2px}#obg .obb .btn{margin:0}
+.obh{display:flex;align-items:center;gap:12px;margin-bottom:6px}.obh h2{margin:0}.obh .obc{width:42px;height:57px}
 
 /* ===== ECRAN DE CHARGEMENT ===== */
 #splash{position:fixed;inset:0;z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:24px;text-align:center;background-color:#0e0914;background-image:linear-gradient(var(--ink) 4px,transparent 4px),linear-gradient(90deg,var(--ink) 4px,transparent 4px);background-size:48px 48px;overflow:hidden;transition:opacity .5s steps(6)}
@@ -553,7 +557,7 @@ function startEx(id,force){if(S.cur&&S.cur.done[id]){if(!force)return ask("Exerc
  if(!S.cur){const s=S.sessions.find(s=>s.ex.some(e=>e.id==id));S.cur={sid:s.id,elapsed:0,vol:0,done:{},log:{},ex:null,paused:true,started:false,g:genGoals(s)}}
  const e=sess(S.cur.sid).ex.find(a=>a.id==id);if(!(S.cur.ex&&S.cur.ex.id==id))S.cur.ex={id,set:1,rep:1,side:0,ph:'ready',left:tpOf(e)};S.cur.paused=true;save();go('run')}
 // views
-function render(){try{claimMonth()}catch(e){}try{cxMigrate()}catch(e){}if(!S.cur)try{tmpClean()}catch(e){}document.documentElement.style.setProperty('--ac',S.set.ac);({home:S.set.hub===false?home:gymRoom,train,train2,run,stats,opts,sedit,rec,health,meals,ency,optx,statx,goals,gym:gymRoom,shop}[v.n]||home)();upd();updBar();updPg();updDock();slideFx()}
+function render(){try{obInit()}catch(e){}try{claimMonth()}catch(e){}try{cxMigrate()}catch(e){}if(!S.cur)try{tmpClean()}catch(e){}document.documentElement.style.setProperty('--ac',S.set.ac);({home:S.set.hub===false?home:gymRoom,train,train2,run,stats,opts,sedit,rec,health,meals,ency,optx,statx,goals,gym:gymRoom,shop}[v.n]||home)();upd();updBar();updPg();updDock();slideFx();obRefresh()}
 function hdr(t,b){return`<div class="top"><button class="back" onclick="${b}">‹</button><h1>${t}</h1></div>`}
 function home(){const c=S.cur,s=c&&sess(c.sid);A.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;gap:10px;margin:4px 0 14px">${torch()}<h1 style="font-size:13px;line-height:1.7;text-align:center;flex:1">Prêt à t'entraîner ${S.me.name||curName()} ?</h1>${torch()}</div>${tipHtml()}${c&&s?`<div class="card today"><b>Reprendre la séance ?</b><div class="mu">${s.name} · <span id="t_el"></span> · <span id="t_vol"></span></div><div class="grid" style="margin-top:10px"><button class="btn p s" onclick="resume()">Reprendre</button><button class="btn d s" onclick="ask('Abandonner la séance ?',()=>{S.cur=null;save();render()})">Abandonner</button></div></div>`:''}
 <button class="btn hb" onclick="go('train')">${spr('sword',3,14)}S'entraîner</button><button class="btn hb" onclick="go('goals')">${spr('shield',3,14)}Quêtes</button><button class="btn hb" onclick="go('stats')">${spr('scroll',3,14)}Statistiques</button><button class="btn hb" onclick="go('health')">${spr('drumstick',3,14)}Nutrition</button><button class="btn hb" onclick="go('opts')">${spr('book',3,14)}Options</button><div class="mu" style="text-align:center;margin:2px 0 26px;font-size:18px">Glisse vers la gauche : ta salle ›</div>`}
@@ -880,7 +884,7 @@ function opts(){const t=S.set,m=S.me||{},L=lvl().L,E=t.eqp||{},nE=EQL.filter(([k
  `<h2>Application</h2><div class="card omc">`+
   omr('⏱️','Minuteur et sons',`${t.sound?'Sons activés · volume '+Math.round((t.vol??.5)*100)+' %':'Sons coupés'}${t.awake!==false?' · écran allumé':''}`,"go('optx',{s:'timer'})")+
   omr('🎨','Affichage',`${t.hub!==false?'Accueil : ma salle':'Accueil : classique'} · couleur du thème`,"go('optx',{s:'look'})")+
-  omr('🧭','Visite guidée',"Revoir comment fonctionne l'appli, en 2 minutes","tourStart('opts')")+`</div>`+
+  omr('🧭','Guide de démarrage',"Préparer une séance pas à pas et réactiver les conseils du Coach","obStart(1)")+omr('🗺️','Visite complète',"Le tour de toutes les parties de l'appli, en 2 minutes","tourStart('opts')")+`</div>`+
  `<h2>Données</h2><div class="card omc">`+
   omr('👥','Profils',P.list.length>1?P.list.length+' profils · actif : '+esc(curName()):'1 profil · en ajouter un',"go('optx',{s:'prof'})")+
   omr('💾','Sauvegarde et export','Sauvegarde, import et bilan Excel',"go('optx',{s:'save'})")+`</div>`}
@@ -1488,7 +1492,7 @@ function gymRoom(){const q=lvl(),hub=v.n=='home',c=S.cur,sx=c&&sess(c.sid),col=l
  G.st='';gDraw(cv);if(!G.raf){G.last=performance.now();G.raf=requestAnimationFrame(gLoop)}}
 
 function goals(){const g=goalsHtml(),m=monthHtml();
- A.innerHTML=hdr('Quêtes',"go('home')")+g+m+(g?'':`<div class="card"><div class="qh">${spr('scroll',3)}<div class="t">Quêtes de séance</div></div><div class="mu">Aucune séance avec des exercices. Crée-en une dans S'entraîner pour débloquer les quêtes de séance.</div><button class="btn s" style="margin-top:10px" onclick="go('train')">Aller dans S'entraîner</button></div>`)}
+ A.innerHTML=hdr('Quêtes',"go('home')")+ppHtml()+g+m+(g?'':`<div class="card"><div class="qh">${spr('scroll',3)}<div class="t">Quêtes de séance</div></div><div class="mu">Aucune séance avec des exercices. Crée-en une dans S'entraîner pour débloquer les quêtes de séance.</div><button class="btn s" style="margin-top:10px" onclick="go('train')">Aller dans S'entraîner</button></div>`)}
 const lvCost=L=>250+70*(L-1),xpMult=()=>1+.1*(lvl().L-1),xpBase=x=>x.t=='ex'?(String(x.txt).startsWith('Relancer')?40:30):x.t=='okn'?35:x.t=='vol'?(String(x.txt).startsWith('Battre')?45:30):25,lvColor=L=>L>=40?'#ff4d4d':L>=25?'#ffd23f':L>=15?'#b07cff':L>=10?'#5fd47a':L>=6?'#4da3ff':L>=3?'#9aa4b2':'#ffffff';
 const lvFx=L=>L>=40?'g2':L>=25?'g1':'',lvTitle=L=>L>=40?'Musclor':L>=25?'Frigo':L>=15?'Veineux':L>=10?'Pumpé':L>=6?'Créatineux':L>=3?'Bâtonnet':'Cure-dent';
 function lvInfo(){const T=[1,3,6,10,15,25,40],cur=lvl().L,o=document.createElement('div');o.className='ov';o.style.alignItems='center';o.innerHTML=`<div class="sheet" style="margin:0 auto;width:min(92%,340px);padding:12px"><h2 style="font-size:20px;margin:0 0 8px;text-align:center">Paliers de niveau</h2>${T.map((a,i)=>{const b=T[i+1]?T[i+1]-1:null,c=lvColor(a),on=cur>=a&&(!T[i+1]||cur<T[i+1]);return`<div class="card row" style="padding:7px 10px;gap:6px;margin-bottom:5px;font-size:15px;${on?'outline:2px solid '+c:''}"><span class="${lvFx(a)}" style="color:${c};--lc:${c};font-weight:600;white-space:nowrap">${lvTitle(a)}</span><span class="mu" style="white-space:nowrap;font-size:15px">${b?'Niv. '+a+' à '+b:'Niv. '+a+' et +'}</span><span class="bx ${lvFx(a)}" style="--lc:${c};width:16px;height:16px;flex:none;background:${c}"></span></div>`}).join('')}<button class="btn s" id="x">Fermer</button></div>`;document.body.append(o);lockScroll(o);o.onclick=e=>{if(e.target==o||e.target.id=='x')o.remove()}}
@@ -1660,7 +1664,7 @@ function buy(sec,i){const it={deco:SHOP,mach:MACH,boost:BOO,cos:COS,wall:WALLS,f
   else if(sec=='mach'){S.room.mach=S.room.mach||{};S.room.mach[it.id]=1;G.bg=null;toast(nm+' · installé dans ta salle !')}
   else if(sec=='boost'){S.boost=S.boost||{};S.boost[it.t]={id:it.id,nm,m:it.m,n:it.n};toast(nm+' · activé !')}
   else{S.cos=S.cos||{own:{}};S.cos.own=S.cos.own||{};S.cos.own[it.id]=1;S.cos.eq=it.id;G.spr=null;toast(nm+' · équipée !')}
-  save();render()})}
+  S.ob=S.ob||{};S.ob.f=S.ob.f||{};S.ob.f.buy=1;save();render()})}
 function upMach(i){const m=MACH[i];if(!m||!machOwn(m))return;const t=machTier(m);if(t>=3)return;const nt=t+1,uc=upCost(m,nt);if(lvl().L<upLvl(m,nt)||(S.prots||0)<uc)return;
  ask(`Améliorer « ${m.n} » en gamme ${MT[nt].n} pour ${uc} Prot's ?`,()=>{if((S.prots||0)<uc)return;S.prots-=uc;S.room.mt=S.room.mt||{};S.room.mt[m.id]=nt;G.sprM=null;save();toast(m.n+' · gamme '+MT[nt].n+' !');render()})}
 function setSty(sec,id){S.room=S.room||{};S.room[sec]=id;G.bg=null;save();render()}
@@ -2007,8 +2011,8 @@ function mlFood(){const el=document.getElementById('mlfl');if(!el)return;const q
   return`<div class="mlsg">${l}</div>`+L.map(a=>`<div class="mlfd"><div class="n">${top.has(a.id)?'🥇 ':''}${a.n}${a.pc?`<span class="mu"> · 1 ${a.pl} ≈ ${a.pc} g</span>`:''}</div><div class="v"><b>${a.k} kcal</b><span class="fP">P ${f1(a.p)}</span><span class="fG">G ${f1(a.g)}</span><span class="fL">L ${f1(a.l)}</span><span class="mu">${eur(a.e)}/${ALIQ.has(a.id)?'L':'kg'}</span></div></div>`).join('')}).join('')||'<div class="mu">Aucun aliment trouvé.</div>'}
 function curName(){return P.list.find(p=>p.id==P.cur).name}
 function profileHtml(){const m=S.me;return`<h2>Profil</h2><div class="card"><div class="row" style="align-items:flex-start"><div style="display:flex;gap:12px;align-items:center;min-width:0">${spr('helmet',4,0)}<div style="min-width:0"><div style="font:12px/1.4 var(--px);overflow-wrap:anywhere">${m.name||curName()}</div><div class="${lvFx(lvl().L)}" style="--lc:${lvColor(lvl().L)};font:10px/1.6 var(--px);color:${lvColor(lvl().L)};margin-top:6px">Niv. ${lvl().L} · ${lvTitle(lvl().L)}</div></div></div><button class="btn s" style="width:auto;margin:0;flex:none" onclick="edMe()">Modifier</button></div><div class="mu" style="margin-top:10px">${m.weight?m.weight+' kg':'Poids non renseigné'}${m.tw?' · Objectif '+kg(m.tw)+' kg':''}</div></div><label>Changer de profil</label><select onchange="switchP(this.value)">${P.list.map(p=>`<option value="${p.id}" ${p.id==P.cur?'selected':''}>${p.name}</option>`).join('')}</select><button class="btn s" style="margin-top:10px" onclick="addP()">+ Nouveau profil</button>${P.list.length>1?'<button class="btn d s" onclick="delP()">Supprimer ce profil</button>':''}`}
-function switchP(id){if(S.cur){S.cur.paused=true;S.cur.lt=null}save();P.cur=id;loadP();save();go('home')}
-function addP(){form('Nouveau profil',[{k:'name',l:'Prénom',t:'text'}],r=>{if(!r.name)return;if(S.cur){S.cur.paused=true;S.cur.lt=null}save();const id=uid();P.list.push({id,name:r.name});P.cur=id;S=fresh();S.me={name:r.name,weight:0,goal:''};save();go('home')})}
+function switchP(id){try{if(OB)obEnd(false)}catch(e){}if(S.cur){S.cur.paused=true;S.cur.lt=null}save();P.cur=id;loadP();obInit();save();go('home');setTimeout(()=>{try{obOffer()}catch(e){}},400)}
+function addP(){form('Nouveau profil',[{k:'name',l:'Prénom',t:'text'}],r=>{if(!r.name)return;try{if(OB)obEnd(false)}catch(e){}if(S.cur){S.cur.paused=true;S.cur.lt=null}save();const id=uid();P.list.push({id,name:r.name});P.cur=id;S=fresh();S.me={name:r.name,weight:0,goal:''};obInit();save();go('home');setTimeout(()=>{try{obOffer()}catch(e){}},400)})}
 function edMe(){form('Mon profil',[{k:'name',l:'Prénom',t:'text',v:S.me.name||curName()},{k:'weight',l:'Poids (kg)',v:S.me.weight||''},{k:'tw',l:'Poids cible (kg)',v:S.me.tw||''},{k:'h',l:'Taille (cm)',v:S.me.h||''},{k:'age',l:'Âge',v:S.me.age||''},{k:'sex',l:'Sexe (pour le calcul des besoins)',o:['Homme','Femme'],v:S.me.sex||0},{k:'act',l:'Activité quotidienne',o:['Sédentaire','Légère (1-3 séances/sem)','Modérée (3-5 séances/sem)','Intense (6-7 séances/sem)'],v:S.me.act??1},{k:'mode',l:'Objectif nutrition',o:['Prise de masse','Maintien','Perte de poids'],v:S.me.mode||0},{k:'mt',l:'Morphotype (ressenti)',o:MTL.map((x,i)=>x+' : '+MTD[i]),v:S.me.mt||0}],r=>{const ow=S.me.weight;S.me={...S.me,name:r.name,weight:(r.weight>=20&&r.weight<=400)?r.weight:(ow||0),tw:r.tw||0,h:r.h||0,age:r.age||0,sex:r.sex,act:r.act,mode:r.mode,mt:r.mt};if(r.weight>=20&&r.weight<=400&&r.weight!=ow)logW(r.weight);if(r.name)P.list.find(p=>p.id==P.cur).name=r.name;save();render()})}
 function delP(){ask('Supprimer ce profil et toutes ses données ?',()=>{const id=P.cur;P.list=P.list.filter(p=>p.id!=id);try{localStorage.removeItem(key(id))}catch(e){}P.cur=P.list[0].id;loadP();save();go('home')})}
 function addS(){form('Nouvelle séance',[{k:'name',l:'Nom',t:'text'},{k:'day',l:'Jour',o:DAYS,v:new Date().getDay()}],r=>{if(!r.name)return;S.sessions.push({id:uid(),name:r.name,day:r.day,ex:[]});save();render()})}
@@ -2348,7 +2352,7 @@ thr:"Barre devant les épaules, pieds largeur d'épaules.|Squat avant, puis en r
 clean:"Comme au soulevé de terre.|Tire la barre, explose des hanches, réceptionne-la sur l'avant des épaules en fléchissant les jambes.|Technique d'abord : demande un coach.|Tirer avec les bras.",
 burp:"Debout.|Mains au sol, saute en planche, pompe (optionnelle), ramène les pieds, saute.|Rythme régulier plutôt que vitesse maximale.|Bassin qui tombe en planche."
 };
-function exCue(e){const m=exMus(e),c=m&&m.c,t=c&&EXC[c.id];
+function exCue(e){obFlag('cue');const m=exMus(e),c=m&&m.c,t=c&&EXC[c.id];
  const o=document.createElement('div');o.className='ov';o.style.alignItems='center';
  const sec=(ic,l,x)=>x?`<div class="cue"><b>${ic} ${l}</b><p>${x}</p></div>`:'';
  const PW=c?painOf(c):[],ALT=c&&PW.length?altOf(c).slice(0,3):[];let body;if(t){const[a,b,k,z]=t.split('|'),R=exRec(c);body=`${PW.length?`<div class="cue pwc"><b>⚠️ Zone sensible : ${PW.map(j=>PAINL.find(x=>x[0]==j)[1].toLowerCase()).join(', ')}</b><p>${ALT.length?'Plus doux pour toi : '+ALT.map(x=>x.n).join(', ')+'.':'Pas d\'équivalent sans risque pour cette zone : retire-le de ta séance, ou garde-le très léger et sans douleur.'}</p></div>`:''}<div class="mch">${c.p.map(x=>`<i class="p">${MUS[x]}</i>`).join('')}${c.s.map(x=>`<i>${MUS[x]}</i>`).join('')}</div>${sec('📍','Mise en place',a)}${sec('🔁','Mouvement',b)}${sec('💡','Points clés',k)}${sec('⚠️','À éviter',z)}<div class="mu" style="margin-top:8px">Conseillé : ${R.txt}</div>`}
@@ -2400,7 +2404,7 @@ function encyList(){const el=document.getElementById('enl');if(!el)return;const 
  document.getElementById('enc').textContent=L.length+' exercice'+(L.length>1?'s':'')+(q||g!='all'?' trouvé'+(L.length>1?'s':''):' dans l\'encyclopédie')+' · ⭐ = dans tes séances';
  const by={};L.forEach(c=>{const k=c.p[0]||'abs';(by[k]=by[k]||[]).push(c)});
  el.innerHTML=MUSK.filter(k=>by[k]).map(k=>`<div class="mlsg">${MUS[k]}</div>`+by[k].sort((a,b)=>a.n.localeCompare(b.n)).map(c=>`<button class="enr" onclick="encyShow('${c.id}')"><span class="n">${used.has('c:'+c.id)?'⭐ ':''}${esc(c.n)}</span><span class="d">${EQI[c.eq]||'❔'} ${EQN[c.eq]||'Perso'} · ${c.k?'polyarticulaire':'isolation'}${c.u?' · un côté à la fois':''}</span></button>`).join('')).join('')||'<div class="card mu">Aucun exercice trouvé. Essaie un autre mot (ex. « poulie », « fessiers », « squat »).</div>'}
-function encyShow(id){const c=catGet(id);if(!c)return;const t=EXC[c.id],R=exRec(c),e={name:c.n},H=exHL(e),perso=String(c.id).startsWith('u');
+function encyShow(id){const c=catGet(id);if(!c)return;obFlag('cue');const t=EXC[c.id],R=exRec(c),e={name:c.n},H=exHL(e),perso=String(c.id).startsWith('u');
  const sec=(ic,l,x)=>x?`<div class="cue"><b>${ic} ${l}</b><p>${x}</p></div>`:'';
  const ins=S.sessions.filter(s=>s.ex.some(x=>lk(x)=='c:'+c.id)).map(s=>s.name),alt=perso?[]:altOf(c,1).slice(0,4),zones=PAINL.filter(([j])=>(JTX[c.id]||[]).includes(j)||(JZ[j]||[]).includes(c.p[0])).map(x=>x[1].toLowerCase());
  const best=H.length?H.reduce((b,y)=>xL(y)>xL(b)?y:b,H[0]):null,tp=tpDef(e);
@@ -2458,16 +2462,13 @@ const TOUR=[
  {go:'meals',ic:'drumstick',t:'Repas et courses',sel:()=>tq('#app .card'),x:"Le bouton <b>Repas</b> (en haut de Nutrition) t'organise la semaine avec des plats simples et pas chers, adaptés à ton besoin, puis prépare ta <b>liste de courses</b> avec le budget. Il faut d'abord remplir ton profil (Options)."},
  {go:'ency',ic:'book',t:'Encyclopédie',sel:()=>tq('#app input'),x:"Plus de <b>90 exercices</b> expliqués et un <b>lexique</b> de plus de 170 notions : muscles, jargon de salle, nutrition… La recherche te trouve tout."},
  {go:'opts',ic:'helmet',t:'Options',sel:()=>tq('#app .opf'),x:"Commence par ici : touche <b>Modifier</b> pour renseigner ton poids, ta taille et ton âge. Les conseils et les calories seront alors faits pour toi. Tu y règles aussi ta salle, tes zones sensibles, les rappels et la sauvegarde."},
- {go:'home',ic:'dumb',t:"À toi de jouer !",x:"Ajoute ou lance ta première séance, et c'est parti. Tu peux revoir cette visite quand tu veux dans <b>Options → Visite guidée</b>."}
+ {go:'home',ic:'dumb',t:"À toi de jouer !",x:"Ajoute ou lance ta première séance, et c'est parti. Tu peux revoir cette visite quand tu veux dans <b>Options → Visite complète</b>."}
 ];
 let TR=null;
 const tq=s=>document.querySelector(s),tTxt=(s,t)=>[...document.querySelectorAll(s)].find(e=>e.textContent.includes(t))||null;
 function tUni(a,b){if(!a||!b)return null;return{getBoundingClientRect(){const x=a.getBoundingClientRect(),y=b.getBoundingClientRect(),l=Math.min(x.left,y.left),t=Math.min(x.top,y.top),r=Math.max(x.right,y.right),bt=Math.max(x.bottom,y.bottom);return{left:l,top:t,right:r,bottom:bt,width:r-l,height:bt-t}},closest(){return null}}}
 function tourFlag(x){try{if(x===undefined)return localStorage.dgtour;localStorage.dgtour=x}catch(e){}}
-function tourOffer(){if(TR||tourFlag()||S.cur||S.hist.length||P.list.length>1)return;
- const o=document.createElement('div');o.className='ov';o.id='tov';o.innerHTML=`<div class="sheet"><h2>Bienvenue !</h2><p style="font-size:21px;line-height:1.15">Première fois ici ? Je te fais visiter l'appli en 2 minutes : à quoi sert chaque partie, le minuteur compris, et par où commencer.</p><button class="btn p" id="tgo">Commencer la visite</button><button class="btn s" id="tlt">Plus tard</button></div>`;
- document.body.append(o);o.querySelector('#tgo').onclick=()=>{o.remove();tourStart('home')};o.querySelector('#tlt').onclick=()=>{o.remove();tourFlag('skip');toast('Visite dispo dans Options → Visite guidée')}}
-function tourStart(back){if(TR)return;if(S.cur){toast('Termine ta séance en cours avant la visite');return}
+function tourStart(back){if(TR||OB)return;try{obHintOff()}catch(e){}if(S.cur){toast('Termine ta séance en cours avant la visite');return}
  const steps=TOUR.filter(s=>!(s.hub&&S.set.hub===false));
  const o=document.createElement('div');o.id='tour';o.innerHTML=`<div class="tbk"></div><div class="tsp"></div><div class="tbb"><div class="tar"></div><div class="tth"><span class="tic"></span><b class="ttl"></b><span class="tct"></span></div><div class="ttx"></div><div class="tdots"></div><div class="tvb"><button class="btn s" data-a="b">‹ Retour</button><button class="btn p s" data-a="n">Suivant ›</button></div><button class="tskip" data-a="x">Passer la visite</button></div>`;
  document.body.append(o);TR={o,steps,i:-1,back:back||'home',id:0,off:null};
@@ -2505,6 +2506,124 @@ function tourPlace(scroll){if(!TR)return;const o=TR.o,sp=o.querySelector('.tsp')
  if(side){ar.className='tar '+(side==1?'up':'dn');ar.style.left=Math.max(14,Math.min(bw-34,cx-L-10))+'px'}}
 function tourEnd(done){if(!TR)return;try{if(TR.off)TR.off()}catch(e){}tDemoOff();removeEventListener('resize',tourPlace);const b=TR.back;TR.o.remove();TR=null;tourFlag(done?'done':'skip');go(b);if(done)toast('Visite terminée. Bonne séance !')}
 
+/* ===== Démarrage guidé par le Coach, conseils au premier passage, quête « Premiers pas » =====
+   S.ob (par profil) : st ''=pas encore proposé | 'run' | 'done' | 'skip' | 'old' (utilisateur déjà actif)
+   hint : conseils activés · h : conseils déjà vus · pp : quête active · q : étapes encaissées · f : actions repérées */
+function obInit(){if(S.ob)return;const old=S.hist.length>0||!!(S.cur&&!S.cur.demo)||(S.xp||0)>0;S.ob={st:old?'old':'',hint:old?0:1,pp:old?0:1,h:{},q:{},f:{}}}
+function obFlag(k){if(window.tdemo)return;obInit();S.ob.f=S.ob.f||{};if(!S.ob.f[k]){S.ob.f[k]=1;save()}}
+const obBusy=()=>document.querySelector('.ov,#chest,#splash');let OBF=null;function obFace(){try{OBF=OBF||coachImg();return`<img class="obc" src="${OBF}" alt="">`}catch(e){return SP.helmet?spr('helmet',3,0):''}}
+/* place la bulle près de la cible (au-dessus ou en dessous), avec la flèche et le cadre */
+function obPos(el,bb,ar,sp,bk){const vw=innerWidth,vh=innerHeight,bw=Math.min(340,vw-24);bb.style.width=bw+'px';const bh=bb.offsetHeight;let L,T,side=0,cx=0;
+ if(!el){if(sp)sp.style.display='none';if(bk)bk.classList.add('dim');L=(vw-bw)/2;T=Math.max(12,(vh-bh)/2)}
+ else{const r=el.getBoundingClientRect(),pad=6,t0=Math.max(2,r.top-pad);let b0=Math.min(vh-2,r.bottom+pad);if(b0-t0>vh*.52)b0=Math.min(b0,t0+vh*.5);const l0=Math.max(2,r.left-pad),r0=Math.min(vw-2,r.right+pad);
+  if(sp){sp.style.display='block';sp.style.left=l0+'px';sp.style.top=t0+'px';sp.style.width=Math.max(0,r0-l0)+'px';sp.style.height=Math.max(0,b0-t0)+'px'}if(bk)bk.classList.remove('dim');
+  cx=(l0+r0)/2;L=Math.max(12,Math.min(vw-bw-12,cx-bw/2));const below=vh-b0,above=t0,need=bh+30;
+  if(below>=need){side=1;T=b0+24}else if(above>=need){side=2;T=t0-24-bh}else{side=0;T=below>above?vh-bh-12:12}}
+ bb.style.left=Math.round(L)+'px';bb.style.top=Math.round(T)+'px';ar.style.display=side?'block':'none';
+ if(side){ar.className='tar '+(side==1?'up':'dn');ar.style.left=Math.round(Math.max(14,Math.min(bw-34,cx-L-10)))+'px'}}
+/* fait défiler pour que la cible soit visible ET que la bulle tienne au-dessus ou en dessous (sinon cible en haut, bulle dessous) */
+function obSee(el,bb){const r=el.getBoundingClientRect(),vh=innerHeight,br=$('#bar'),top=(document.body.classList.contains('nobar')||!br?0:br.offsetHeight)+10,bh=bb?bb.offsetHeight+34:0;
+ const vis=r.top>=top&&r.bottom<=vh-10,fit=!bb||vh-r.bottom>=bh||r.top-top>=bh;if(vis&&fit)return;
+ scrollBy({top:bb&&r.height+bh<=vh-top?r.top-top:r.top+r.height/2-vh*.4,behavior:'instant'})}
+
+/* ---------- 1. Démarrage guidé : 3 étapes où l'utilisateur agit lui-même ---------- */
+let OB=null;
+const obPick=()=>{const d=new Date().getDay(),L=S.sessions.filter(q=>q.ex.length&&!q.demo);return L.find(q=>q.day==d)||L[0]||null};
+function obNew(){const s=S.sessions.find(q=>!OB.ids.includes(q.id)&&!q.demo);if(s)OB.sid=s.id;return s}
+function obSid(){const q=sess(OB.sid);return q&&q.ex.length?q.id:(obPick()||{}).id}
+const OBS=[
+ {id:'me',n:1,go:'opts',t:'Ton profil',skip:()=>S.me.weight>0,done:()=>S.me.weight>0,sel:()=>tq('#app .opf .btn'),
+  x:"D'abord, présente-toi ! Touche <b>Modifier</b> et indique au moins ton <b>poids</b>. Je m'en sers pour tes calories, tes conseils et tes charges de départ."},
+ {id:'add',n:2,go:'train',t:'Ta séance',skip:()=>!!OB.sid,done:()=>!!obNew(),sel:()=>tTxt('#app > .btn','Ajouter une séance'),
+  x:()=>"Touche <b>Ajouter une séance</b>, puis donne-lui un nom (ex. « Haut du corps ») et un jour."+(obPick()?" Les séances déjà là sont des exemples.":"")},
+ {id:'gen',n:2,go:'train2',pre:1,t:'Tes exercices',skip:()=>!OB.sid||!sess(OB.sid)||sess(OB.sid).ex.length>0,done:()=>{const s=sess(OB.sid);return!!(s&&s.ex.length)},
+  sel:()=>tUni(tTxt('#app .btn','Générer'),tTxt('#app .btn','Ajouter un exercice'))||tTxt('#app .btn','Générer'),alw:()=>[tTxt('#app .btn','Générer'),tTxt('#app .btn','Ajouter un exercice')],
+  x:"Touche <b>Générer</b> : je te propose des exercices selon la zone, ton matériel et ton niveau. Tu peux aussi les <b>ajouter un par un</b>."},
+ {id:'go',n:3,go:'train2',pre:1,fin:1,t:'Le jour J',done:()=>v.n=='run',sel:()=>tq('#app .exb'),
+  x:"Ta séance est prête ! À la salle, touche un exercice pour lancer son <b>minuteur</b> : je t'expliquerai chaque étape au bon moment. Ta quête <b>Premiers pas</b> t'attend dans Quêtes."}];
+function obOffer(){obInit();if(S.ob.st=='run'&&!OB)S.ob.st='';if(OB||TR||S.ob.st!==''||(S.cur&&S.cur.started)||obBusy())return;
+ const o=document.createElement('div');o.className='ov';o.id='tov';o.innerHTML=`<div class="sheet"><div class="obh">${obFace()}<h2>Bienvenue, aventurier !</h2></div><p style="font-size:21px;line-height:1.15">Je suis le <b style="color:var(--ac);font-weight:400">Coach</b>. Ici, chaque séance de muscu te rapporte de l'XP et des Prot's pour faire grandir ton héros et ta salle.</p><p style="font-size:21px;line-height:1.15">On prépare ta première séance ensemble ? Ça prend 30 secondes.</p><button class="btn p" id="tgo">C'est parti !</button><button class="btn s" id="tlt">Plus tard</button></div>`;
+ document.body.append(o);o.querySelector('#tgo').onclick=()=>{o.remove();obStart()};o.querySelector('#tlt').onclick=()=>{o.remove();S.ob.st='skip';save();toast('Tu me retrouves dans Options → Guide de démarrage')}}
+function obStart(manual){if(OB||TR)return;if(S.cur&&!S.cur.demo){toast('Termine ta séance en cours avant le guide');return}obInit();
+ if(manual){S.ob.hint=1;S.ob.h={}}S.ob.st='run';save();obHintOff();
+ const o=document.createElement('div');o.id='obg';o.innerHTML=`<div class="tbk"></div><div class="tsp"></div><div class="tbb"><div class="tar"></div><div class="tth">${obFace()}<b class="ttl"></b><span class="tct"></span></div><div class="ttx"></div><div class="tdots"></div><div class="obb"></div><button class="tskip" data-a="x">Quitter le guide</button></div>`;
+ document.body.append(o);OB={o,i:-1,ids:S.sessions.map(q=>q.id),sid:null};
+ o.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('[data-a]');if(!a||!OB)return;const k=a.dataset.a;
+  if(k=='x')obEnd(false);else if(k=='n')obGo(OB.i+1);else if(k=='ok')obEnd(true);else if(k=='use'){const q=obPick();if(q){OB.sid=q.id;obGo(OBS.findIndex(s=>s.id=='go'))}}});
+ obGo(0)}
+function obGo(i){if(!OB)return;while(i<OBS.length&&OBS[i].skip&&OBS[i].skip())i++;if(i>=OBS.length)return obEnd(true);
+ const s=OBS[i],o=OB.o;OB.i=i;OB.s=s;OB.t0=Date.now();
+ o.querySelector('.ttl').textContent=s.t;o.querySelector('.tct').textContent=s.n+' / 3';o.querySelector('.ttx').innerHTML=typeof s.x=='function'?s.x():s.x;
+ o.querySelector('.tdots').innerHTML=[1,2,3].map(k=>`<i class="${k<=s.n?'on':''}"></i>`).join('');
+ o.querySelector('.obb').innerHTML=s.fin?'<button class="btn p s" data-a="ok">Compris ✓</button>':(s.id=='add'&&obPick()?'<button class="btn s" data-a="use">Utiliser un exemple</button>':'')+'<button class="btn s" data-a="n">Passer cette étape ›</button>';
+ o.querySelector('.tskip').style.display=s.fin?'none':'block';
+ o.classList.add('busy');obNav(s);
+ setTimeout(()=>{if(!OB||OB.s!=s)return;obPlace(true);o.classList.remove('busy')},380)}
+function obNav(s){const pre=s.pre?(s.id=='go'?obSid():OB.sid):null;if(s.pre&&!pre){if(v.n!='train')go('train');return}if(v.n!=s.go||(pre&&v.pre!=pre))go(s.go,pre?{pre}:{})}
+function obEl(){const s=OB&&OB.s;if(!s||!s.sel)return null;try{return s.sel()}catch(e){return null}}
+function obPlace(scroll){if(!OB||!OB.s)return;const o=OB.o,el=obEl();if(el&&scroll===true)obSee(el,o.querySelector('.tbb'));obPos(el,o.querySelector('.tbb'),o.querySelector('.tar'),o.querySelector('.tsp'),o.querySelector('.tbk'))}
+function obTickG(){const o=OB.o,s=OB.s;if(!s)return;const ov=!!obBusy();o.style.display=ov?'none':'';if(ov)return;
+ if(s.done&&s.done()){if(s.fin)return obEnd(true);return obGo(OB.i+1)}
+ if(!o.classList.contains('busy')&&Date.now()-OB.t0>800){const pre=s.pre?(s.id=='go'?obSid():OB.sid):null,off=s.pre&&!pre?v.n!='train':v.n!=s.go||!!(pre&&v.pre!=pre);
+  if(off){obNav(s);OB.t0=Date.now();return setTimeout(()=>obPlace(true),300)}}
+ obPlace()}
+function obEnd(done){if(!OB)return;const run=v.n=='run';OB.o.remove();OB=null;S.ob.st=done?'done':'skip';save();
+ toast(done?(run?"C'est parti ! Je te guide pendant l'exercice":"Bien joué ! Ta quête « Premiers pas » t'attend dans Quêtes"):'Guide à relancer quand tu veux : Options → Guide de démarrage')}
+/* pendant le guide, seul l'élément montré (et la bulle) répond au toucher */
+document.addEventListener('click',e=>{if(!OB||OB.o.style.display=='none')return;const t=e.target;if(!t||!t.closest)return;
+ if(t.closest('#obg .tbb,.ov,.toast'))return;const s=OB.s;if(!s)return e.stopPropagation(),e.preventDefault();
+ const ok=[obEl(),...(s.alw?s.alw():[])].filter(x=>x&&x.contains);if(ok.some(x=>x.contains(t)))return;e.stopPropagation();e.preventDefault()},true);
+
+/* ---------- 2. Conseils au premier passage (une seule fois chacun, sans bloquer l'écran) ---------- */
+const obPh=()=>S.cur&&S.cur.ex&&S.cur.ex.ph;
+const HINTS=[
+ {k:'r_go',pg:'run',w:()=>obPh()=='ready',sel:()=>tq('.ring'),t:'Le minuteur',x:"Touche le cercle ou <b>Démarrer</b> : je compte tes répétitions au rythme du <b>tempo</b> (réglable en bas avec − et +) et je bipe à chaque étape. Tu cales avant la fin ? Touche « J'ai calé »."},
+ {k:'r_wu',pg:'run',w:()=>obPh()=='ready'&&!!tq('.rswap'),sel:()=>tUni(tq('.wu')||tq('.rswap'),tq('.rswap')),t:'Avant de commencer',x:"Ici, ton <b>échauffement</b> : le minuteur l'enchaîne tout seul avant la série 1. Machine prise ? <b>Remplacer</b> te propose un autre exercice pour aujourd'hui."},
+ {k:'r_wrest',pg:'run',w:()=>obPh()=='wrest',sel:()=>tq('.radj'),t:"L'échauffement",x:"Ces séries légères ne comptent pas dans tes séries. Muscles déjà chauds ? <b>Fini l'échauffement</b> passe directement aux vraies séries."},
+ {k:'r_rest',pg:'run',w:()=>obPh()=='rest',sel:()=>tUni(tq('.radj'),tq('.rsr')||tq('.radj')),t:'Le repos',x:"Souffle ! Je bipe avant la fin du repos. <b>−15 s / +15 s</b> pour l'ajuster, <b>Passer</b> pour enchaîner. Pas fait toutes tes répétitions ? Corrige le compte juste en dessous."},
+ {k:'r_rate',pg:'run',w:()=>obPh()=='rate',sel:()=>tq('#app .card'),t:'Le bilan',x:"Vérifie tes <b>répétitions par série</b> avec − et +, puis touche <b>Valider</b>. Je calcule tout seul la charge de la prochaine fois."},
+ {k:'r_next',pg:'train2',w:()=>!!(S.cur&&S.cur.started&&Object.keys(S.cur.done).length),sel:()=>tTxt('#app .btn.p','Terminer'),t:'La suite',x:"Exercice validé ! Touche le suivant quand tu es prêt. À la fin, <b>Terminer la séance</b> t'apporte ton XP et tes Prot's."},
+ {k:'h_room',pg:'home',w:()=>S.set.hub!==false&&!(S.cur&&S.cur.started),sel:()=>tq('#gymcv'),t:'Ta salle',x:"Voici ta salle. Touche ton héros pour le faire réagir, ou le <b>Coach</b> pour ouvrir son menu : séances, encyclopédie, stats."},
+ {k:'h_shop',pg:['home','gym'],w:()=>(S.prots||0)>=30&&!(S.ob.f&&S.ob.f.buy)&&!(S.cur&&S.cur.started),sel:()=>tq('#gyshop'),t:'Tes premiers Prot\'s',x:"Tu as assez de <b>Prot's</b> pour ton premier achat ! Ouvre la boutique pour améliorer ta salle."},
+ {k:'p_goals',pg:'goals',sel:()=>tq('#app .card .qh')||tq('#app .card'),t:'Les quêtes',x:"Tes défis : la quête <b>Premiers pas</b>, ceux de ta prochaine séance et ceux de la semaine. Chaque quête réussie rapporte de l'<b>XP</b> et des <b>Prot's</b>."},
+ {k:'p_stats',pg:'stats',sel:()=>tq('#app .card'),t:'Les stats',x:()=>S.hist.length?"Ta régularité, tes courbes et tes records. Plus bas, l'<b>équilibre du programme</b> te dit quels muscles tu travailles trop ou pas assez.":"Tout se remplira après ta première séance : régularité, courbes, records et <b>équilibre</b> de tes muscles."},
+ {k:'p_health',pg:'health',sel:()=>tTxt('#app button','Pesée')||tTxt('#app button','Ajouter mon poids')||tq('#app .card'),t:'Ton poids',x:"Pèse-toi <b>2 fois par semaine</b>, le matin : je suis ta courbe et j'ajuste tes besoins. Le bouton <b>Repas</b> en haut te prépare menus et courses."},
+ {k:'p_meals',pg:'meals',sel:()=>tq('#app .card'),t:'Tes repas',x:()=>mlTarget()?"Ton menu de la semaine, calculé pour ton objectif. Touche un plat pour le changer : ta <b>liste de courses</b> se met à jour toute seule.":"Complète d'abord ton profil (poids, taille, âge) : je calcule ensuite ton <b>menu de la semaine</b> et ta <b>liste de courses</b>."},
+ {k:'p_ency',pg:'ency',sel:()=>tq('#app input'),t:"L'encyclopédie",x:"Cherche un exercice ou un mot de jargon. Chaque fiche explique la mise en place, le mouvement et les erreurs à éviter."},
+ {k:'p_shop',pg:'shop',sel:()=>tq('#app .stabs')||tq('#app .shopv'),t:'La boutique',x:"Dépense tes <b>Prot's</b> ici : déco de la salle, machines, tenues et boosts. Certains objets se débloquent avec ton niveau."}];
+let HN=null,HC=null;
+function hintEl(h){try{return h.sel()}catch(e){return null}}
+function hintFind(){if(!S.ob||!S.ob.hint||S.ob.st===''||S.ob.st=='run'||OB||TR||window.tdemo||obBusy())return null;const pg=v.n;
+ return HINTS.find(h=>!S.ob.h[h.k]&&(Array.isArray(h.pg)?h.pg.includes(pg):h.pg==pg)&&(!h.w||h.w())&&hintEl(h))||null}
+function hintTick(){const h=hintFind();if(HN&&HN.h!==h)obHintOff();if(!h){HC=null;return}
+ if(HN)return hintPlace();if(!HC||HC.h!==h){HC={h,n:0};return}if(++HC.n>=2)hintShow(h)}
+function hintShow(h){const o=document.createElement('div');o.id='obh';o.innerHTML=`<div class="obo"></div><div class="tbb"><div class="tar"></div><div class="tth">${obFace()}<b class="ttl">${h.t}</b></div><div class="ttx">${typeof h.x=='function'?h.x():h.x}</div><button class="btn p s" data-a="ok">OK, compris</button></div>`;
+ document.body.append(o);HN={h,o};o.querySelector('[data-a=ok]').onclick=()=>{S.ob.h[h.k]=1;save();obHintOff();HC=null};
+ const el=hintEl(h);hintPlace();if(el&&el.getBoundingClientRect&&h.pg!='run'){obSee(el,HN.o.querySelector('.tbb'));hintPlace()}}
+function hintPlace(){if(!HN)return;const el=hintEl(HN.h);if(!el)return obHintOff();obPos(el,HN.o.querySelector('.tbb'),HN.o.querySelector('.tar'),HN.o.querySelector('.obo'),null)}
+function obHintOff(){if(HN){HN.o.remove();HN=null}}
+
+/* ---------- 3. Quête « Premiers pas » ---------- */
+Object.assign(QI,{pp_me:'helmet',pp_ses:'sword',pp_cue:'scroll',pp_run:'flame',pp_w2:'drumstick',pp_buy:'coin'});
+const PPQ=[
+ {k:'me',t:'Remplir ton profil (au moins ton poids)',h:'Options → Modifier',xp:20,ok:()=>S.me.weight>0},
+ {k:'ses',t:'Créer ta propre séance',h:"S'entraîner → Ajouter une séance",xp:30,ok:()=>S.sessions.some(s=>!/^s[12]$/.test(s.id)&&!s.demo&&s.ex.length)},
+ {k:'cue',t:"Lire la fiche d'un exercice",h:"Touche le petit parchemin à côté d'un exercice",xp:15,ok:()=>!!(S.ob.f&&S.ob.f.cue)},
+ {k:'run',t:'Terminer ta première séance',h:'Lance une séance et va jusqu\'au bout',xp:50,ok:()=>S.hist.length>0},
+ {k:'w2',t:'Te repeser un autre jour',h:'Nutrition → + Pesée',xp:20,ok:()=>(S.wl||[]).length>=2},
+ {k:'buy',t:'Faire ton premier achat à la boutique',h:'Dans ta salle → Boutique',xp:20,ok:()=>!!(S.ob.f&&S.ob.f.buy)}];
+const PPB=60,ppOn=()=>!!(S.ob&&S.ob.pp&&!(S.ob.q&&S.ob.q.bonus));
+function ppClaim(){if(!ppOn()||window.tdemo||TR||LOOT||obBusy())return;const q=S.ob.q=S.ob.q||{};
+ const it=PPQ.find(x=>!q[x.k]&&x.ok());if(it){q[it.k]=1;addXP(it.xp,'Premiers pas');return}
+ if(PPQ.every(x=>q[x.k])){q.bonus=1;addXP(PPB,'Premiers pas terminés !');if(v.n=='goals')render()}}
+function ppHtml(){if(!ppOn())return'';const q=S.ob.q||{},L=PPQ.map(x=>{const ok=!!q[x.k];return{txt:x.t,xp:x.xp,ok,t:'pp_'+x.k,p:ok?'Validée':x.h}}),n=L.filter(x=>x.ok).length;
+ return`<div class="card"><div class="qh">${spr('flame',3)}<div><div class="t">Premiers pas</div><div class="mu">Pour bien démarrer l'aventure</div></div><span class="chip b">${n}/${L.length}</span></div>${L.map(qRow).join('')}${qBonus(n,L.length,'Bonus Premiers pas',PPB,false,n+'/'+L.length+' étapes · termine-les toutes pour le bonus')}</div>`}
+
+/* une seule horloge légère pour les trois */
+setInterval(()=>{try{if(OB)obTickG()}catch(e){}try{hintTick()}catch(e){}try{ppClaim()}catch(e){}},350);
+function obRefresh(){try{if(OB)obPlace();if(HN)hintPlace()}catch(e){}}
+addEventListener('scroll',obRefresh,{passive:true});addEventListener('resize',obRefresh);
+
 /* ===== ECRAN DE CHARGEMENT (fictif) ===== */
 (function(){
  const o=document.getElementById('splash');if(!o)return;
@@ -2517,7 +2636,7 @@ function tourEnd(done){if(!TR)return;try{if(TR.off)TR.off()}catch(e){}tDemoOff()
  bar.innerHTML='<i></i>'.repeat(N);const seg=bar.children;
  let n=0,done=false,ready=false;
  const pos=()=>{if(hero.isConnected)hero.style.left=(6+88*n/N)+'%';pc.textContent=Math.round(n/N*100)+' %'};pos();
- function end(){if(done||!ready)return;done=true;o.classList.add('out');setTimeout(()=>{o.remove();try{tourOffer()}catch(e){}},550)}
+ function end(){if(done||!ready)return;done=true;o.classList.add('out');setTimeout(()=>{o.remove();try{obOffer()}catch(e){}},550)}
  function tick(){if(n<N){seg[n].classList.add('on');n++;pos();msg.textContent=M[Math.min(M.length-1,Math.floor((n-1)/N*M.length))]}if(n>=N){msg.textContent='Prêt pour le combat !';clearInterval(t);ready=true;o.classList.add('rdy')}}
  msg.textContent=M[0];
  const t=setInterval(tick,220);
