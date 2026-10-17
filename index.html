@@ -1322,15 +1322,15 @@ function paintRoom(){const nx=NX(),ny=NY();b.clearRect(0,0,WW,WH);
 /* ---------- catalogue : chaque objet est décrit dans son propre repère (largeur w, profondeur d), puis tourné ---------- */
 const CAT={
  bench:{n:'Banc de développé couché',w:2,d:2,parts:[
-  ['b',.88,.4,0,.24,.12,5,'$leg'],['b',.88,1.38,0,.24,.12,5,'$leg'],['b',.8,.22,5,.4,1.36,2,'$pad'],['b',.8,.95,7,.4,.14,.01,'$tape'],
+  ['b',.88,.4,0,.24,.12,5,'$leg'],['b',.88,1.38,0,.24,.12,5,'$leg'],['b',.8,.22,5,.4,1.36,2,'$pad'],['b',.8,.95,7,.4,.14,.01,'$tape',1],
   ['b',.55,.3,0,.1,.1,7,'$rust'],['b',1.35,.3,0,.1,.1,7,'$rust'],['b',.55,.3,7,.1,.1,11,'$post'],['b',1.35,.3,7,.1,.1,11,'$post'],
   ['b',.55,.4,13,.1,.06,1.5,'$leg'],['b',1.35,.4,13,.1,.06,1.5,'$leg'],
   ['b',.305,.415,14.3,1.39,.06,1.6,'$bar'],
   ['p',.27,.445,15.1,.34,4.6,'$plate','$plate2'],['p',1.73,.445,15.1,.34,4.6,'$plate','$plate2'],
   ['b',.06,.415,14.3,.175,.06,1.6,'$bar'],['b',1.765,.415,14.3,.175,.06,1.6,'$bar']],bar:10},
  /* déchets du vieux garage : on reste appuyé dessus pour les jeter */
- box1:{n:'Carton',w:1,d:1,junk:1,parts:[['b',.2,.2,0,.6,.55,7,'#9a7445'],['b',.2,.44,7,.6,.07,.01,'#c9b48a']]},
- box2:{n:'Cartons',w:1,d:1,junk:1,parts:[['b',.15,.15,0,.7,.65,6,'#8b6a3e'],['b',.25,.25,6,.5,.45,5,'#a7824f'],['b',.25,.44,11,.5,.06,.01,'#c9b48a']]},
+ box1:{n:'Carton',w:1,d:1,junk:1,parts:[['b',.2,.2,0,.6,.55,7,'#a87c48'],['b',.46,.2,7,.08,.55,.02,'#e0cc9c',1],['b',.46,.75,2,.08,.01,5,'#e0cc9c',1],['b',.2,.47,7,.6,.01,.02,'#7a5530',1]]},
+ box2:{n:'Cartons',w:1,d:1,junk:1,parts:[['b',.15,.15,0,.7,.65,6,'#9a7040'],['b',.46,.8,1.5,.08,.01,4.5,'#e0cc9c',1],['b',.25,.25,6,.5,.45,5,'#b48a52'],['b',.46,.25,11,.08,.45,.02,'#e0cc9c',1],['b',.75,.46,7,.01,.08,4,'#e0cc9c',1]]},
  bag:{n:'Sac poubelle',w:1,d:1,junk:1,parts:[['b',.25,.3,0,.5,.45,6,'#2b2b30'],['b',.33,.38,6,.34,.3,2,'#2b2b30'],['b',.45,.48,8,.1,.1,1.2,'#46464e']]}};
 const SKINS={bench:{rouille:{leg:'#3a3430',pad:'#7a3b32',tape:'#8a877c',rust:'#6e4a33',post:'#5c5652',bar:'#9a968c',plate:'#45423f',plate2:'#6e4a33'}}};
 const skinCol=(it,c)=>{if(c[0]!='$')return c;const L=SKINS[it.type]||{},k=(L[it.skin]||L.rouille||{})[c.slice(1)];return k||'#ff00ff'};
@@ -1379,7 +1379,7 @@ function giveXP(n){const a=lvl().L;S.xp=(S.xp||0)+n;save();try{updBar()}catch(e)
 const LINES=["Bienvenue dans ta salle ! Bon… pour l'instant, c'est surtout un <b>vieux garage</b>.","Plus tu t'entraîneras, plus tu pourras l'<b>améliorer</b> : machines, déco… et même pousser les murs !","Mais d'abord, un peu de ménage : <b>reste appuyé</b> sur un carton pour le jeter."];
 const blocked=()=>!!document.querySelector('.ov,#chest,#splash,#tour,#obg,#lvup,#obh');
 function startIntro(){SC={ph:'enter',t:0};DOOR=1;BM.sel=null;BM.place=null;BM.inv=false;ui();endUse();if(GC.pop)coachClose();
- Object.assign(hero,{gx:.5,gy:3.5,ti:0,tj:3,path:[[1,3]],goal:null,hidden:false,face:[1,0]});Object.assign(coach,{gx:.5,gy:3.5,ti:0,tj:3,path:[],goal:null,hidden:true,face:[1,0]});center({gx:NX()/2,gy:NY()/2});followOn=false;manualT=performance.now()+3000}
+ Object.assign(hero,{gx:.5,gy:3.5,ti:0,tj:3,path:[[1,3]],goal:null,hidden:false,face:[1,0]});Object.assign(coach,{gx:.5,gy:3.5,ti:0,tj:3,path:[],goal:null,hidden:true,face:[1,0]});Z=zMin();size(false);center({gx:NX()/2,gy:NY()/2});followOn=false}
 function introStep(dt){SC.t+=dt;if(SC.ph!='enter')return;
  if(SC.t>1.1&&coach.hidden){coach.hidden=false;coach.path=[[0,4]]}
  if(SC.t>2.4&&!coach.hidden&&!coach.path.length&&!hero.path.length){DOOR=0;coach.face=[1,0];hero.face=[0,1];SC={ph:'talk',i:0,t:0};say(LINES[0]+' <span class="nx">▸</span>',coach)}}
@@ -1400,7 +1400,7 @@ function isoSort(L){const n=L.length,E=1e-4,beh=(A,B)=>{const a=A.b,c=B.b,sa=a[0
  L.map((o,k)=>[k,o.b[0]+o.b[1]+o.b[2]+o.b[3]]).sort((p,q)=>p[1]-q[1]).forEach(([k])=>vis(k));return out}
 function drawItem(it,alpha){const Tf=tf(it.type,it.r,it.i,it.j),L=[],c=CAT[it.type];let parts=c.parts;
  if(USE&&USE.it===it&&!alpha){const[dy,dz]=benchPose(USE.t);parts=parts.map((p,k)=>k>=c.bar?(p=p.slice(),p[2]+=dy,p[3]+=dz,p):p).concat(lifter(dy,dz,it))}
- parts.forEach(p=>{if(p[0]=='b'){const[,px,py,z,w,d,h,col]=p,a=Tf(px,py),e=Tf(px+w,py+d),X0=Math.min(a[0],e[0]),Y0=Math.min(a[1],e[1]),W=Math.abs(e[0]-a[0]),Dd=Math.abs(e[1]-a[1]);L.push({b:[X0,X0+W,Y0,Y0+Dd,z,z+h],f:()=>box(X0,Y0,z,W,Dd,h,tri(skinCol(it,col)))})}
+ parts.forEach(p=>{if(p[0]=='b'){const[,px,py,z,w,d,h,col]=p,a=Tf(px,py),e=Tf(px+w,py+d),X0=Math.min(a[0],e[0]),Y0=Math.min(a[1],e[1]),W=Math.abs(e[0]-a[0]),Dd=Math.abs(e[1]-a[1]);L.push({b:[X0,X0+W,Y0,Y0+Dd,z,z+h],f:()=>box(X0,Y0,z,W,Dd,h,tri(skinCol(it,col)),p[8]?null:undefined)})}
   else if(p[0]=='p'){const[,px,py,z,rr,rz,c1,c2]=p,ring=(ox,R,RZ)=>{const o=[];for(let k=0;k<12;k++){const th=k/12*Math.PI*2,q=Tf(px+ox,py+Math.cos(th)*R);o.push(P(q[0],q[1],z+Math.sin(th)*RZ))}return o};
    const A=Tf(px-.035,py),B=Tf(px+.035,py),fr=(B[0]+B[1])>(A[0]+A[1])?.035:-.035,q0=Tf(px-.035,py-rr),q1=Tf(px+.035,py+rr),bx=[Math.min(q0[0],q1[0]),Math.max(q0[0],q1[0]),Math.min(q0[1],q1[1]),Math.max(q0[1],q1[1])];
    L.push({b:[...bx,z-rz,z+rz],f:()=>{poly(ring(-fr,rr,rz),'#0a070e');poly(ring(fr,rr,rz),'#0a070e');poly(ring(fr,rr-.05,rz-.7),skinCol(it,c1));poly(ring(fr,rr*.3,rz*.3),skinCol(it,c2))}})}
@@ -1509,7 +1509,7 @@ function drawActor(a){if(a.hidden)return;const s=P(a.gx,a.gy);x.fillStyle='#0a07
  const[fx,fy]=a.face,back=fx<0||fy<0,flip=back?fx<0:fy>0,fr=a.path.length?[1,0,2,0][Math.floor(a.anim*8)%4]:0,img=sprites()[a.kind][back?'b':'f'][fr];
  const px=Math.round(s[0]),py=Math.round(s[1])-img.height+1;
  if(flip){x.save();x.translate(px+7,py);x.scale(-1,1);x.drawImage(img,0,0);x.restore()}else x.drawImage(img,px-6,py)}
-function follow(dt){if(performance.now()-manualT<1200)return;if(!hero.path.length&&!followOn)return;const p=P(hero.gx,hero.gy,14),tx=p[0]-LW/2,ty=p[1]-LH/2;
+function follow(dt){if(SC||performance.now()-manualT<1200)return;if(!hero.path.length&&!followOn)return;const p=P(hero.gx,hero.gy,14),tx=p[0]-LW/2,ty=p[1]-LH/2;
  const k=Math.min(1,dt*(hero.path.length?3.2:2.2)),ox=cam.x,oy=cam.y;cam.x+=(tx-cam.x)*k;cam.y+=(ty-cam.y)*k;clampCam();if(!hero.path.length&&Math.hypot(cam.x-ox,cam.y-oy)<.05)followOn=false;if(hero.path.length)followOn=true}
 function outline(Tl,c){Tl.forEach(([i,j])=>{[[P(i,j),P(i+1,j)],[P(i+1,j),P(i+1,j+1)],[P(i+1,j+1),P(i,j+1)],[P(i,j+1),P(i,j)]].forEach(([a,e])=>line(a,e,c))})}
 /* étiquettes « Niv. » (héros) et « Coach », et le menu du Coach, qui suivent les personnages */
