@@ -1330,8 +1330,8 @@ const CAT={
   ['b',.55,.4,13,.1,.06,1.5,'$leg'],['b',1.35,.4,13,.1,.06,1.5,'$leg'],
   ['b',.305,.415,14.3,1.39,.06,1.6,'$bar'],
   ['p',.27,.445,15.1,.34,4.6,'$plate','$plate2'],['p',1.73,.445,15.1,.34,4.6,'$plate','$plate2'],
-  ['b',.06,.415,14.3,.175,.06,1.6,'$bar'],['b',1.765,.415,14.3,.175,.06,1.6,'$bar']],bar:10},
- rack:{n:"Rack d'haltères rouillés",w:2,d:1,price:30,parts:[['b',.08,.2,0,.14,.14,12,'$frame'],['b',1.78,.2,0,.14,.14,12,'$frame'],['b',.08,.7,0,.14,.14,7,'$frame'],['b',1.78,.7,0,.14,.14,7,'$frame'],['b',.08,.18,11,1.84,.34,1.2,'$rail'],['b',.08,.52,6,1.84,.34,1.2,'$rail'],['b',0.24,0.22,12.2,.19,.26,3,'$db'],['b',0.43,0.31,13.2,.32,.08,1,'$grip',1],['b',0.75,0.22,12.2,.19,.26,3,'$db'],['b',1.06,0.22,12.2,.19,.26,3,'$db2'],['b',1.25,0.31,13.2,.32,.08,1,'$grip',1],['b',1.57,0.22,12.2,.19,.26,3,'$db2'],['b',0.24,0.56,7.2,.19,.26,3,'$db2'],['b',0.43,0.65,8.2,.32,.08,1,'$grip',1],['b',0.75,0.56,7.2,.19,.26,3,'$db2'],['b',1.06,0.56,7.2,.19,.26,3,'$db'],['b',1.25,0.65,8.2,.32,.08,1,'$grip',1],['b',1.57,0.56,7.2,.19,.26,3,'$db']]},
+  ['b',.06,.415,14.3,.175,.06,1.6,'$bar'],['b',1.765,.415,14.3,.175,.06,1.6,'$bar']],bar:10,use:1},
+ rack:{n:"Rack d'haltères rouillés",w:2,d:1,price:30,top:[6,12],use:1,parts:[['b',.08,.2,0,.14,.14,12,'$frame'],['b',1.78,.2,0,.14,.14,12,'$frame'],['b',.08,.7,0,.14,.14,7,'$frame'],['b',1.78,.7,0,.14,.14,7,'$frame'],['b',.08,.18,11,1.84,.34,1.2,'$rail'],['b',.08,.52,6,1.84,.34,1.2,'$rail'],['b',0.24,0.22,12.2,.19,.26,3,'$db'],['b',0.43,0.31,13.2,.32,.08,1,'$grip',1],['b',0.75,0.22,12.2,.19,.26,3,'$db'],['b',1.06,0.22,12.2,.19,.26,3,'$db2'],['b',1.25,0.31,13.2,.32,.08,1,'$grip',1],['b',1.57,0.22,12.2,.19,.26,3,'$db2'],['b',0.24,0.56,7.2,.19,.26,3,'$db2'],['b',0.43,0.65,8.2,.32,.08,1,'$grip',1],['b',0.75,0.56,7.2,.19,.26,3,'$db2'],['b',1.06,0.56,7.2,.19,.26,3,'$db'],['b',1.25,0.65,8.2,.32,.08,1,'$grip',1],['b',1.57,0.56,7.2,.19,.26,3,'$db']]},
  /* déchets du vieux garage : on reste appuyé dessus pour les jeter */
  box1:{n:'Carton',w:1,d:1,junk:1,parts:[['b',.2,.2,0,.6,.55,7,'#a87c48'],['b',.46,.2,7,.08,.55,.02,'#e0cc9c',1],['b',.46,.75,2,.08,.01,5,'#e0cc9c',1],['b',.2,.47,7,.6,.01,.02,'#7a5530',1]]},
  box2:{n:'Cartons',w:1,d:1,junk:1,parts:[['b',.15,.15,0,.7,.65,6,'#9a7040'],['b',.46,.8,1.5,.08,.01,4.5,'#e0cc9c',1],['b',.25,.25,6,.5,.45,5,'#b48a52'],['b',.46,.25,11,.08,.45,.02,'#e0cc9c',1],['b',.75,.46,7,.01,.08,4,'#e0cc9c',1]]},
@@ -1352,7 +1352,12 @@ function femIso(rows,back){const g=rows.map(r=>r.split(''));const set=(y,x,c,onl
  return g.map(r=>r.join(''))}
 function sprite(rows,pal){const c=document.createElement('canvas');c.width=13;c.height=rows.length;const g=c.getContext('2d');rows.forEach((r,y)=>{for(let i=0;i<13;i++){const col=pal[r[i]];if(col){g.fillStyle=col;g.fillRect(i,y,1,1)}}});return c}
 let SPR={},SPK='';const LYC={};
-function sprites(){const hp=heroP(),fem=isFem(),k=JSON.stringify(hp)+fem;if(k!==SPK){SPK=k;for(const q in LYC)delete LYC[q];SPR={hero:{f:FR.map(r=>sprite(fem?femIso(r,0):r,hp)),b:BK.map(r=>sprite(fem?femIso(r,1):r,hp)),pal:hp},coach:{f:FR.map(r=>sprite(r,COACHP)),b:BK.map(r=>sprite(r,COACHP)),pal:COACHP}}}return SPR}
+/* curl marteau : 0 = bras tendus, 1 = bras fléchis (haltères à hauteur d'épaules) */
+const CURL=(()=>{const b=FR[0],d=b.slice(),u=b.slice();
+ d[14]="oSSobbbbboSSo";d[15]="oKKobbbbBoKKo";d[16]="okkobbobBokko";d[17]="oooosSosSoooo";
+ u[9]="oKKoAAAAAoKKo";u[10]="okkoAAAAAokko";u[11]="oSSoAAAAAoSSo";u[12]="osSoAAAAAosSo";u[13]="osSoAAAADosSo";u[14]="oooobbbbboooo";u[15]="...obbbbBo...";u[16]="...obbobBo...";
+ return[d,u]})();
+function sprites(){const hp=heroP(),fem=isFem(),k=JSON.stringify(hp)+fem;if(k!==SPK){SPK=k;for(const q in LYC)delete LYC[q];const hk={...hp,K:'#9a968c',k:'#6e6a62'};SPR={hero:{c:CURL.map(r=>sprite(fem?femIso(r,0):r,hk)),f:FR.map(r=>sprite(fem?femIso(r,0):r,hp)),b:BK.map(r=>sprite(fem?femIso(r,1):r,hp)),pal:hp},coach:{f:FR.map(r=>sprite(r,COACHP)),b:BK.map(r=>sprite(r,COACHP)),pal:COACHP}}}return SPR}
 function actor(kind,i,j){return{kind,gx:i+.5,gy:j+.5,ti:i,tj:j,path:[],face:[1,0],anim:0,goal:null}}
 const hero=actor('hero',1,3),coach=actor('coach',4,3);
 
@@ -1373,11 +1378,18 @@ function lifter(dy,dz,it){const by=.445+dy,bz=14.3+dz;
    for(let q=0;q<=n;q++)dot(x,[A[0]+(B[0]-A[0])*q/n-2,A[1]+(B[1]-A[1])*q/n-2],4,4,'#0a070e');for(let q=0;q<=n;q++)dot(x,[A[0]+(B[0]-A[0])*q/n-1,A[1]+(B[1]-A[1])*q/n-1],2,2,sprites().hero.pal.s)}}]]}
 /* le héros marche jusqu'au côté du banc, s'allonge, puis se relève et revient à sa case (repère local du banc) */
 function toLoc(it,wx,wy){const c=CAT[it.type],w=c.w,d=c.d,u=wx-it.i,v=wy-it.j;return it.r==0?[u,v]:it.r==1?[v,d-u]:it.r==2?[w-u,d-v]:[w-v,u]}
-function startUse(it){hero.path=[];target=null;const f=toLoc(it,hero.ti+.5,hero.tj+.5),c=CAT[it.type],sx=f[0]<c.w/2?.3:c.w-.3,S=[sx,c.d/2],route=[f];
+const CT={take:.45,rep:1.1,n:5};CT.end=CT.take+CT.rep*CT.n;
+const curlPose=t=>{const k=(t%CT.rep)/CT.rep;return k>.2&&k<.7?1:0};
+function rackDir(it){const[w,d]=dims(it.type,it.r),dx=it.i+w/2-hero.gx,dy=it.j+d/2-hero.gy;return Math.abs(dx)>Math.abs(dy)?[Math.sign(dx),0]:[0,Math.sign(dy)]}
+function startRack(it){hero.path=[];target=null;const f=rackDir(it),aw=[-f[0],-f[1]];USE={it,kind:'rack',t:0,ph:'take',face:aw[0]<0?[0,1]:aw[1]<0?[1,0]:aw};hero.face=f}
+function rackStep(dt){const u=USE;u.t+=dt;if(u.ph=='take'&&u.t>=CT.take){u.ph='curl';u.t=0;hero.face=u.face}
+ else if(u.ph=='curl'&&u.t>=CT.rep*CT.n)u.ph='put',u.t=0,hero.face=rackDir(u.it);
+ else if(u.ph=='put'&&u.t>=CT.take){const nx=u.next;USE=null;if(nx&&free(nx[0],nx[1])&&!(nx[0]==hero.ti&&nx[1]==hero.tj)){const p=bfs(hero,(i,j)=>i==nx[0]&&j==nx[1]);if(p){hero.path=p;target=nx;manualT=0}}}}
+function startUse(it){if(it.type=='rack')return startRack(it);hero.path=[];target=null;const f=toLoc(it,hero.ti+.5,hero.tj+.5),c=CAT[it.type],sx=f[0]<c.w/2?.3:c.w-.3,S=[sx,c.d/2],route=[f];
  if(f[1]<0||f[1]>c.d)route.push([sx,f[1]]);route.push(S);USE={it,t:0,ph:'in',route,pos:f.slice(),wp:route.slice(1)}}
 function useOut(){if(!USE||USE.ph=='out')return;USE.ph='out';hero.hidden=false;const R=USE.route;USE.wp=(USE.ph0=='lie'?R.slice(0,-1):R.slice(0,1)).reverse()}
-function endUse(force){if(!USE)return;if(!force&&USE.ph!='out'){USE.ph0=USE.ph;useOut();return}if(force){hero.hidden=false;hero.gx=hero.ti+.5;hero.gy=hero.tj+.5;USE=null}}
-function useStep(dt){if(!USE)return;const u=USE;if(u.ph=='lie'){u.t+=dt;if(u.t>=BT.end){u.ph0='lie';useOut()}return}
+function endUse(force){if(!USE)return;if(USE.kind=='rack'){if(force)USE=null;else if(USE.ph!='put'){USE.ph='put';USE.t=0;hero.face=rackDir(USE.it)}return}if(!force&&USE.ph!='out'){USE.ph0=USE.ph;useOut();return}if(force){hero.hidden=false;hero.gx=hero.ti+.5;hero.gy=hero.tj+.5;USE=null}}
+function useStep(dt){if(!USE)return;if(USE.kind=='rack')return rackStep(dt);const u=USE;if(u.ph=='lie'){u.t+=dt;if(u.t>=BT.end){u.ph0='lie';useOut()}return}
  const T=tf(u.it.type,u.it.r,u.it.i,u.it.j),tg=u.wp[0];
  if(tg){const dx=tg[0]-u.pos[0],dy=tg[1]-u.pos[1],dist=Math.hypot(dx,dy),sp=2*dt;if(dist<=sp){u.pos=tg.slice();u.wp.shift()}else{u.pos[0]+=dx/dist*sp;u.pos[1]+=dy/dist*sp}
   const a=T(u.pos[0],u.pos[1]),pw=[hero.gx,hero.gy];hero.gx=a[0];hero.gy=a[1];const ex=hero.gx-pw[0],ey=hero.gy-pw[1];if(Math.abs(ex)>.001||Math.abs(ey)>.001)hero.face=Math.abs(ex)>Math.abs(ey)?[Math.sign(ex),0]:[0,Math.sign(ey)];hero.anim=(hero.anim||0)+dt;return}
@@ -1418,7 +1430,8 @@ function isoSort(L){const n=L.length,E=1e-4,beh=(A,B)=>{const a=A.b,c=B.b,sa=a[0
  const st=new Array(n).fill(0),out=[];const vis=k=>{if(st[k])return;st[k]=1;for(let m=0;m<n;m++)if(m!==k&&!st[m]&&ov(m,k)&&beh(L[m],L[k]))vis(m);out.push(L[k])};
  L.map((o,k)=>[k,o.b[0]+o.b[1]+o.b[2]+o.b[3]]).sort((p,q)=>p[1]-q[1]).forEach(([k])=>vis(k));return out}
 function drawItem(it,alpha){const Tf=tf(it.type,it.r,it.i,it.j),L=[],c=CAT[it.type];let parts=c.parts;
- if(USE&&USE.it===it&&!alpha){if(USE.ph=='lie'){const[dy,dz]=benchPose(USE.t);parts=parts.map((p,k)=>k>=c.bar?(p=p.slice(),p[2]+=dy,p[3]+=dz,p):p).concat(lifter(dy,dz,it))}else{const[px,py]=USE.pos;parts=parts.concat([['s',px-.25,px+.25,py-.25,py+.25,0,28,()=>drawActor(hero)]])}}
+ if(USE&&USE.it===it&&!alpha&&USE.kind=='rack'){if(USE.ph=='curl')parts=parts.filter((p,k)=>k<c.top[0]||k>=c.top[1])}
+ else if(USE&&USE.it===it&&!alpha){if(USE.ph=='lie'){const[dy,dz]=benchPose(USE.t);parts=parts.map((p,k)=>k>=c.bar?(p=p.slice(),p[2]+=dy,p[3]+=dz,p):p).concat(lifter(dy,dz,it))}else{const[px,py]=USE.pos;parts=parts.concat([['s',px-.25,px+.25,py-.25,py+.25,0,28,()=>drawActor(hero)]])}}
  parts.forEach(p=>{if(p[0]=='b'){const[,px,py,z,w,d,h,col]=p,a=Tf(px,py),e=Tf(px+w,py+d),X0=Math.min(a[0],e[0]),Y0=Math.min(a[1],e[1]),W=Math.abs(e[0]-a[0]),Dd=Math.abs(e[1]-a[1]);L.push({b:[X0,X0+W,Y0,Y0+Dd,z,z+h],f:()=>box(X0,Y0,z,W,Dd,h,tri(skinCol(it,col)),p[8]?null:undefined)})}
   else if(p[0]=='p'){const[,px,py,z,rr,rz,c1,c2]=p,ring=(ox,R,RZ)=>{const o=[];for(let k=0;k<12;k++){const th=k/12*Math.PI*2,q=Tf(px+ox,py+Math.cos(th)*R);o.push(P(q[0],q[1],z+Math.sin(th)*RZ))}return o};
    const A=Tf(px-.035,py),B=Tf(px+.035,py),fr=(B[0]+B[1])>(A[0]+A[1])?.035:-.035,q0=Tf(px-.035,py-rr),q1=Tf(px+.035,py+rr),bx=[Math.min(q0[0],q1[0]),Math.max(q0[0],q1[0]),Math.min(q0[1],q1[1]),Math.max(q0[1],q1[1])];
@@ -1527,7 +1540,7 @@ function step(a,dt){if(!a.path.length){a.anim=0;return false}const[ni,nj]=a.path
  if(Math.abs(dx)>.01||Math.abs(dy)>.01)a.face=[Math.sign(Math.round(dx*100)),Math.sign(Math.round(dy*100))];
  if(dist<=sp){a.gx=tx;a.gy=ty;a.ti=ni;a.tj=nj;a.path.shift();if(!a.path.length)return true}else{a.gx+=dx/dist*sp;a.gy+=dy/dist*sp}a.anim+=dt;return false}
 function drawActor(a){if(a.hidden)return;const s=P(a.gx,a.gy);x.fillStyle='#0a070e66';x.fillRect(Math.round(s[0])-5,Math.round(s[1])-1,11,2);x.fillRect(Math.round(s[0])-4,Math.round(s[1])-2,9,4);
- const[fx,fy]=a.face,back=fx<0||fy<0,flip=back?fx<0:fy>0,fr=a.path.length?[1,0,2,0][Math.floor(a.anim*8)%4]:0,img=sprites()[a.kind][back?'b':'f'][fr];
+ const[fx,fy]=a.face,back=fx<0||fy<0,flip=back?fx<0:fy>0,fr=a.path.length?[1,0,2,0][Math.floor(a.anim*8)%4]:0,cu=a===hero&&USE&&USE.kind=='rack'&&USE.ph=='curl',img=cu?sprites().hero.c[curlPose(USE.t)]:sprites()[a.kind][back?'b':'f'][fr];
  const px=Math.round(s[0]),py=Math.round(s[1])-img.height+1;
  if(flip){x.save();x.translate(px+7,py);x.scale(-1,1);x.drawImage(img,0,0);x.restore()}else x.drawImage(img,px-6,py)}
 function follow(dt){if(SC||performance.now()-manualT<1200)return;if(!hero.path.length&&!followOn)return;const p=P(hero.gx,hero.gy,14),tx=p[0]-LW/2,ty=p[1]-LH/2;
@@ -1539,7 +1552,7 @@ function tags(){const tg=document.getElementById('gytag'),ct=document.getElement
  if(tg){if(USE&&USE.ph=='lie'){const[w,d]=dims(USE.it.type,USE.it.r);put(tg,USE.it.i+w/2,USE.it.j+d/2,26)}else put(tg,hero.gx,hero.gy,25)}
  if(ct){const[sx,sy]=put(ct,coach.gx,coach.gy,25);if(coach.hidden)ct.style.visibility='hidden';
   if(GC.pop&&pp){const w=pp.offsetWidth,h=pp.offsetHeight,l=Math.max(4,Math.min(CW-w-4,sx-w/2));let t=sy-ct.offsetHeight-10-h;if(t<4)t=Math.min(CH-h-4,sy+8);pp.style.transform='translate('+Math.round(l)+'px,'+Math.round(Math.max(4,t))+'px)'}}
- const st=document.getElementById('gyst');if(st){const tx=USE?'Fait du développé couché':hero.path.length?'Se promène dans sa salle':'Se repose un instant';if(tx!=stTxt||st.textContent!=tx){stTxt=tx;st.textContent=tx}}}
+ const st=document.getElementById('gyst');if(st){const tx=USE?(USE.kind=='rack'?'Fait des curls marteau':'Fait du développé couché'):hero.path.length?'Se promène dans sa salle':'Se repose un instant';if(tx!=stTxt||st.textContent!=tx){stTxt=tx;st.textContent=tx}}}
 function frame(now){if(!cv||!cv.isConnected){raf=0;return}const dt=Math.min(.05,(now-(last||now))/1000);last=now;
  if(G!==S.iso){load();size(false);center(hero);ui()}
  if(G.intro=='todo'&&!SC&&!blocked()){if(!(S.me&&S.me.name))heroCreate();else startIntro()}if(SC)introStep(dt);
@@ -1548,7 +1561,7 @@ function frame(now){if(!cv||!cv.isConnected){raf=0;return}const dt=Math.min(.05,
  const arr=step(hero,dt);useStep(dt);
  if(hero.goal&&hero.goal.wall&&(arr||!hero.path.length)){const wi=hero.goal.wall;hero.goal=null;hero.face=wi.side=='L'?[-1,0]:[0,-1]}
  if(arr&&hero.goal){const it=hero.goal;hero.goal=null;const[w,d]=dims(it.type,it.r),cx=it.i+w/2,cy=it.j+d/2,ddx=cx-hero.gx,ddy=cy-hero.gy;hero.face=Math.abs(ddx)>Math.abs(ddy)?[Math.sign(ddx),0]:[0,Math.sign(ddy)];
-  if(it.type=='bench')startUse(it);target=null}
+  if(CAT[it.type].use)startUse(it);target=null}
  if(!hero.path.length&&target&&!hero.goal)target=null;
  if(GC.pop){coach.path=[];coach.face=[0,1]}
  else if(SC)step(coach,dt);
@@ -1563,7 +1576,7 @@ function frame(now){if(!cv||!cv.isConnected){raf=0;return}const dt=Math.min(.05,
  if(BM.place&&!BM.place.wall){const nx=NX(),ny=NY();x.globalAlpha=.35;for(let i=0;i<=nx;i++)line(P(i,0),P(i,ny),'#f4ecd8');for(let j=0;j<=ny;j++)line(P(0,j),P(nx,j),'#f4ecd8');x.globalAlpha=1}
  if(target&&!BM.place){const[i,j]=target;outline([[i,j]],'#ffb02e')}
  if(BM.sel&&!BM.sel.wall)outline(tilesOf(BM.sel.type,BM.sel.r,BM.sel.i,BM.sel.j),'#ffb02e');
- const L=[...G.items.map(it=>{const[w,d]=dims(it.type,it.r);return{b:[it.i,it.i+w,it.j,it.j+d,0,16],f:()=>drawItem(it)}}),...[hero,coach].filter(a=>!(a===hero&&USE)).map(a=>({b:[a.gx-.3,a.gx+.3,a.gy-.3,a.gy+.3,0,28],f:()=>drawActor(a)}))];
+ const L=[...G.items.map(it=>{const[w,d]=dims(it.type,it.r);return{b:[it.i,it.i+w,it.j,it.j+d,0,16],f:()=>drawItem(it)}}),...[hero,coach].filter(a=>!(a===hero&&USE&&USE.kind!='rack')).map(a=>({b:[a.gx-.3,a.gx+.3,a.gy-.3,a.gy+.3,0,28],f:()=>drawActor(a)}))];
  if(BM.place&&!BM.place.wall){const p=BM.place,[w,d]=dims(p.type,p.r),ok=!check(p.type,p.r,p.i,p.j);L.push({b:[p.i,p.i+w,p.j,p.j+d,0,16],f:()=>{outline(tilesOf(p.type,p.r,p.i,p.j),ok?'#7cff6a':'#ff4d5a');drawItem(p,.7)}})}
  isoSort(L).forEach(o=>o.f());
  if(CLEAN){const it=CLEAN.it,p=P(it.i+.5,it.j+.5,17),k=Math.min(1,CLEAN.t/HOLD);dot(x,[p[0]-9,p[1]-3],18,5,'#0a070e');dot(x,[p[0]-8,p[1]-2],16,3,'#3a2d49');dot(x,[p[0]-8,p[1]-2],Math.round(16*k),3,'#5fd35f')}
@@ -1624,7 +1637,7 @@ function mount(el,h){root=el;stage=el.querySelector('.stage');cv=stage.querySele
  if(!Z)Z=Math.min(zMax(),zMin()*1.25);size(false);if(fresh){center(hero);fresh=false}else clampCam();
  bind();ui();if(!raf){last=0;raf=requestAnimationFrame(frame)}}
 function grow(){if(!G||G.size>=SIZES.length-1)return false;G.size++;keep();paintRoom();size(true);return true}
-return{heroImg:()=>sprites().hero.f[0],skipIntro(){if(SC){SC=null;DOOR=0;bubOff();coach.hidden=false;hero.path=[];coach.path=[]}if(G&&G.intro=='todo'){G.intro='clean';save()}},get cleaning(){return CLEAN?[CLEAN.it.i,CLEAN.it.j,+CLEAN.t.toFixed(2)]:null},look:(i,j)=>{followOn=false;manualT=performance.now();center({gx:i,gy:j})},pick:(sx,sy)=>{const[ti,tj,lx,ly]=tileAt(sx,sy),it=itemAt(lx,ly,ti,tj);return it?[it.type,it.i,it.j]:null},scr:(gx,gy,z)=>toScreen(gx,gy,z||0),get intro(){return SC?SC.ph+(SC.i??''):G&&G.intro},get introBusy(){return!!SC||!!(G&&G===S.iso&&G.intro=='todo'&&cv&&cv.isConnected)},get busy(){return!!USE},get target(){return target},get heroAt(){return[hero.ti,hero.tj,hero.path.length,!!hero.goal]},mount,tags:()=>{if(cv&&cv.isConnected&&G)tags()},center:()=>{followOn=false;manualT=0;center(hero)},grow,sizes:SIZES,get size(){return G?G.size:0}}})();
+return{heroImg:()=>sprites().hero.f[0],spr:()=>sprites(),skipIntro(){if(SC){SC=null;DOOR=0;bubOff();coach.hidden=false;hero.path=[];coach.path=[]}if(G&&G.intro=='todo'){G.intro='clean';save()}},get cleaning(){return CLEAN?[CLEAN.it.i,CLEAN.it.j,+CLEAN.t.toFixed(2)]:null},look:(i,j)=>{followOn=false;manualT=performance.now();center({gx:i,gy:j})},pick:(sx,sy)=>{const[ti,tj,lx,ly]=tileAt(sx,sy),it=itemAt(lx,ly,ti,tj);return it?[it.type,it.i,it.j]:null},scr:(gx,gy,z)=>toScreen(gx,gy,z||0),get intro(){return SC?SC.ph+(SC.i??''):G&&G.intro},get introBusy(){return!!SC||!!(G&&G===S.iso&&G.intro=='todo'&&cv&&cv.isConnected)},get busy(){return!!USE},get target(){return target},get heroAt(){return[hero.ti,hero.tj,hero.path.length,!!hero.goal]},mount,tags:()=>{if(cv&&cv.isConnected&&G)tags()},center:()=>{followOn=false;manualT=0;center(hero)},grow,sizes:SIZES,get size(){return G?G.size:0}}})();
 function gCamCenter(){ISO.center()}
 /* ===== Création du héros : prénom, héros ou héroïne, couleur de la tenue (= couleur du thème) ===== */
 const HCOL=['#f2b84b','#ff7a59','#7aa2ff','#c58bff','#6ccf7f'];
