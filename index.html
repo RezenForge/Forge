@@ -1336,6 +1336,7 @@ const CAT={
   ['p',.27,.445,15.1,.34,4.6,'$plate','$plate2'],['p',1.73,.445,15.1,.34,4.6,'$plate','$plate2'],
   ['b',.06,.415,14.3,.175,.06,1.6,'$bar'],['b',1.765,.415,14.3,.175,.06,1.6,'$bar']],bar:10,use:1},
  rack:{n:"Rack d'haltères rouillés",w:2,d:1,price:30,top:[6,12],use:1,parts:[['b',0.4,.3,0,.1,.1,8,'$frame'],['b',1.50,.3,0,.1,.1,8,'$frame'],['b',0.4,.68,0,.1,.1,4.5,'$frame'],['b',1.50,.68,0,.1,.1,4.5,'$frame'],['b',0.4,.28,7.2,1.20,.26,1,'$rail'],['b',0.4,.54,3.8,1.20,.26,1,'$rail'],['b',0.5,0.31,8.2,.15,.2,2.2,'$db'],['b',0.65,0.38,8.9,.17,.06,.8,'$grip',1],['b',0.82,0.31,8.2,.15,.2,2.2,'$db'],['b',1.03,0.31,8.2,.15,.2,2.2,'$db2'],['b',1.18,0.38,8.9,.17,.06,.8,'$grip',1],['b',1.35,0.31,8.2,.15,.2,2.2,'$db2'],['b',0.5,0.57,4.8,.15,.2,2.2,'$db2'],['b',0.65,0.64,5.5,.17,.06,.8,'$grip',1],['b',0.82,0.57,4.8,.15,.2,2.2,'$db2'],['b',1.03,0.57,4.8,.15,.2,2.2,'$db'],['b',1.18,0.64,5.5,.17,.06,.8,'$grip',1],['b',1.35,0.57,4.8,.15,.2,2.2,'$db']]},
+ fridge:{n:'Vieux frigo',w:1,d:1,go:'health',parts:[['b',.15,.2,0,.7,.62,17,'#c4bba3'],['b',.15,.8,11.5,.7,.02,.4,'#8a877c',1],['b',.72,.82,13,.06,.03,3,'#8a877c',1],['b',.72,.82,6,.06,.03,3,'#8a877c',1],['b',.2,.82,1.5,.12,.01,1.2,'#6e4a33',1]]},
  /* déchets du vieux garage : on reste appuyé dessus pour les jeter */
  box1:{n:'Carton',w:1,d:1,junk:1,parts:[['b',.2,.2,0,.6,.55,7,'#a87c48'],['b',.46,.2,7,.08,.55,.02,'#e0cc9c',1],['b',.46,.75,2,.08,.01,5,'#e0cc9c',1],['b',.2,.47,7,.6,.01,.02,'#7a5530',1]]},
  box2:{n:'Cartons',w:1,d:1,junk:1,parts:[['b',.15,.15,0,.7,.65,6,'#9a7040'],['b',.46,.8,1.5,.08,.01,4.5,'#e0cc9c',1],['b',.25,.25,6,.5,.45,5,'#b48a52'],['b',.46,.25,11,.08,.45,.02,'#e0cc9c',1],['b',.75,.46,7,.01,.08,4,'#e0cc9c',1]]},
@@ -1450,6 +1451,10 @@ const free=(i,j)=>i>=0&&j>=0&&i<NX()&&j<NY()&&!OCC.has(i+','+j);
 /* ---------- décorations murales : sur le mur de gauche (L) ou de droite (R), sans se chevaucher ---------- */
 const WPt=(side,t,z)=>side=='L'?P(0,t,z):P(t,0,z),wlen=side=>side=='L'?NY():NX();
 const WCAT={
+ cal:{n:'Calendrier des séances',w:1,z:[17,39],go:'train',draw(q){poly([q(.14,17),q(.86,17),q(.86,38),q(.14,38)],'#0a070e');poly([q(.2,18),q(.8,18),q(.8,37),q(.2,37)],'#e8e2d4');poly([q(.2,32),q(.8,32),q(.8,37),q(.2,37)],'#a3202a');
+  for(let r=0;r<3;r++)for(let c=0;c<3;c++)dot(x,q(.3+c*.2,21+r*3.6),2,1,(r*3+c)%4==1?'#2f8f3f':'#6c7a8f')}},
+ recs:{n:'Tableau des records',w:1,z:[15,41],go:'stats',draw(q){poly([q(.08,15),q(.92,15),q(.92,40),q(.08,40)],'#0a070e');poly([q(.13,16),q(.87,16),q(.87,39),q(.13,39)],'#6b4a2a');poly([q(.18,17.5),q(.82,17.5),q(.82,37.5),q(.18,37.5)],'#22222b');
+  dot(x,q(.5,34),3,2,'#ffd166');for(let k=0;k<4;k++)line(q(.26,30-k*3.3),q(.74-(k%2)*.14,30-k*3.3),k==0?'#ffd166':'#aab4c4')}},
  banner:{n:'Bannière',w:1,z:[16,42],draw(q){poly([q(.1,40),q(.9,40),q(.9,20),q(.5,16),q(.1,20)],'#ffb02e');poly([q(.25,36),q(.75,36),q(.75,30),q(.25,30)],'#b06f12');line(q(0,41),q(1,41),'#0a070e')}},
  door:{n:'Porte d\'entrée',w:1,z:[0,31],draw(q){poly([q(0,0),q(1,0),q(1,31),q(0,31)],'#0a070e');if(DOOR){poly([q(.08,0),q(.92,0),q(.92,30),q(.08,30)],'#05030a');return}poly([q(.08,0),q(.92,0),q(.92,30),q(.08,30)],'#5a3d24');poly([q(.16,0),q(.84,0),q(.84,28),q(.16,28)],'#6e4b2c');
   poly([q(.24,16),q(.76,16),q(.76,26),q(.24,26)],'#5a3d24');poly([q(.24,3),q(.76,3),q(.76,13),q(.24,13)],'#5a3d24');line(q(.16,28),q(.84,28),'#82593a');dot(x,q(.74,15),2,2,'#c9a227');dot(x,q(.3,9),1,1,'#4a3220')}}};
@@ -1478,7 +1483,8 @@ function check(t,r,i,j,ign){const Tl=tilesOf(t,r,i,j),nx=NX(),ny=NY();
 
 /* ---------- chargement de l'état du profil (nouvelle salle si besoin, objets qui ne rentrent plus = retour au coffre) ---------- */
 const JUNK=[[1,1,'box1'],[1,2,'bag'],[2,0,'box2'],[3,0,'box1'],[4,1,'box2'],[4,2,'box1'],[2,3,'bag'],[3,3,'box2'],[5,0,'box1'],[5,4,'bag']];
-function load(){if(!S.iso||!Array.isArray(S.iso.items)){S.iso=JSON.parse(JSON.stringify(DEF));S.iso.intro='todo';JUNK.forEach(([i,j,t])=>S.iso.items.push({id:S.iso.next++,type:t,i,j,r:(i+j)%2}));save()}G=S.iso;
+function load(){if(!S.iso||!Array.isArray(S.iso.items)){S.iso=JSON.parse(JSON.stringify(DEF));S.iso.intro='todo';JUNK.forEach(([i,j,t])=>S.iso.items.push({id:S.iso.next++,type:t,i,j,r:(i+j)%2}));save()}G=S.iso;if(!G.menuObj){G.menuObj=1;const wl=[['cal','R'],['recs','R']];for(const[t,sd]of wl){for(let k=0;k<=wlen(sd);k++)if(!wcheck(t,sd,k)){G.walls.push({id:G.next++,wall:1,type:t,side:sd,t:k});break}}
+  OCC=occ();outer:for(let i=NX()-1;i>=0;i--)for(let j=NY()-1;j>=0;j--)if(!check('fridge',0,i,j)){G.items.push({id:G.next++,type:'fridge',i,j,r:0});break outer}save()}
  if(!Array.isArray(G.walls))G.walls=[];G.inv=G.inv||{};for(const k in DEF.inv)if(G.inv[k]==null)G.inv[k]=DEF.inv[k];if(!(G.size>=0&&G.size<SIZES.length))G.size=0;
  const ok=[],m=new Set();G.items.forEach(it=>{if(!CAT[it.type])return;const Tl=tilesOf(it.type,it.r,it.i,it.j);if(Tl.some(([a,c])=>a<0||c<0||a>=NX()||c>=NY()||m.has(a+','+c)))G.inv[it.type]=(G.inv[it.type]||0)+1;else{Tl.forEach(([a,c])=>m.add(a+','+c));ok.push(it)}});G.items=ok;
  G.walls=G.walls.filter(o=>WCAT[o.type]);
@@ -1564,9 +1570,9 @@ function frame(now){if(!cv||!cv.isConnected){raf=0;return}const dt=Math.min(.05,
  if(CLEAN){CLEAN.t+=dt;if(CLEAN.t>=HOLD)finishClean()}
  if(USE&&!G.items.includes(USE.it))endUse(true);
  const arr=step(hero,dt);useStep(dt);
- if(hero.goal&&hero.goal.wall&&(arr||!hero.path.length)){const wi=hero.goal.wall;hero.goal=null;hero.face=wi.side=='L'?[-1,0]:[0,-1]}
+ if(hero.goal&&hero.goal.wall&&(arr||!hero.path.length)){const wi=hero.goal.wall;hero.goal=null;hero.face=wi.side=='L'?[-1,0]:[0,-1];const g=WCAT[wi.type].go;if(g)setTimeout(()=>go(g),350)}
  if(arr&&hero.goal){const it=hero.goal;hero.goal=null;const[w,d]=dims(it.type,it.r),cx=it.i+w/2,cy=it.j+d/2,ddx=cx-hero.gx,ddy=cy-hero.gy;hero.face=Math.abs(ddx)>Math.abs(ddy)?[Math.sign(ddx),0]:[0,Math.sign(ddy)];
-  if(CAT[it.type].use)startUse(it);target=null}
+  if(CAT[it.type].use)startUse(it);else if(CAT[it.type].go){const g=CAT[it.type].go;setTimeout(()=>go(g),350)}target=null}
  if(!hero.path.length&&target&&!hero.goal)target=null;
  if(GC.pop){coach.path=[];coach.face=[0,1]}
  else if(SC)step(coach,dt);
