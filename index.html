@@ -1371,8 +1371,17 @@ function lifter(dy,dz,it){const by=.445+dy,bz=14.3+dz;
  return[['s',.8,1.2,.24,1.62,7.05,10.5,Tf=>{const sp=lyingSprite(it.r),hp=Tf(1,.33),H=P(hp[0],hp[1],8.6);x.drawImage(sp.cv,Math.round(H[0]+sp.ox),Math.round(H[1]+sp.oy));
   for(const[sx,gx]of[[.86,.8],[1.14,1.2]]){const a=Tf(sx,.5),e=Tf(gx,by),A=P(a[0],a[1],9.2),B=P(e[0],e[1],bz+.4),n=Math.max(2,Math.ceil(Math.hypot(B[0]-A[0],B[1]-A[1])));
    for(let q=0;q<=n;q++)dot(x,[A[0]+(B[0]-A[0])*q/n-2,A[1]+(B[1]-A[1])*q/n-2],4,4,'#0a070e');for(let q=0;q<=n;q++)dot(x,[A[0]+(B[0]-A[0])*q/n-1,A[1]+(B[1]-A[1])*q/n-1],2,2,sprites().hero.pal.s)}}]]}
-function startUse(it){USE={it,t:0};hero.hidden=true;hero.path=[];target=null}
-function endUse(){if(!USE)return;hero.hidden=false;USE=null}
+/* le héros marche jusqu'au côté du banc, s'allonge, puis se relève et revient à sa case (repère local du banc) */
+function toLoc(it,wx,wy){const c=CAT[it.type],w=c.w,d=c.d,u=wx-it.i,v=wy-it.j;return it.r==0?[u,v]:it.r==1?[v,d-u]:it.r==2?[w-u,d-v]:[w-v,u]}
+function startUse(it){hero.path=[];target=null;const f=toLoc(it,hero.ti+.5,hero.tj+.5),c=CAT[it.type],sx=f[0]<c.w/2?.3:c.w-.3,S=[sx,c.d/2],route=[f];
+ if(f[1]<0||f[1]>c.d)route.push([sx,f[1]]);route.push(S);USE={it,t:0,ph:'in',route,pos:f.slice(),wp:route.slice(1)}}
+function useOut(){if(!USE||USE.ph=='out')return;USE.ph='out';hero.hidden=false;const R=USE.route;USE.wp=(USE.ph0=='lie'?R.slice(0,-1):R.slice(0,1)).reverse()}
+function endUse(force){if(!USE)return;if(!force&&USE.ph!='out'){USE.ph0=USE.ph;useOut();return}if(force){hero.hidden=false;hero.gx=hero.ti+.5;hero.gy=hero.tj+.5;USE=null}}
+function useStep(dt){if(!USE)return;const u=USE;if(u.ph=='lie'){u.t+=dt;if(u.t>=BT.end){u.ph0='lie';useOut()}return}
+ const T=tf(u.it.type,u.it.r,u.it.i,u.it.j),tg=u.wp[0];
+ if(tg){const dx=tg[0]-u.pos[0],dy=tg[1]-u.pos[1],dist=Math.hypot(dx,dy),sp=2*dt;if(dist<=sp){u.pos=tg.slice();u.wp.shift()}else{u.pos[0]+=dx/dist*sp;u.pos[1]+=dy/dist*sp}
+  const a=T(u.pos[0],u.pos[1]),pw=[hero.gx,hero.gy];hero.gx=a[0];hero.gy=a[1];const ex=hero.gx-pw[0],ey=hero.gy-pw[1];if(Math.abs(ex)>.001||Math.abs(ey)>.001)hero.face=Math.abs(ex)>Math.abs(ey)?[Math.sign(ex),0]:[0,Math.sign(ey)];hero.anim=(hero.anim||0)+dt;return}
+ hero.anim=0;if(u.ph=='in'){u.ph='lie';u.t=0;hero.hidden=true}else{const it=u.it;USE=null;hero.gx=hero.ti+.5;hero.gy=hero.tj+.5;const[w,d]=dims(it.type,it.r),ddx=it.i+w/2-hero.gx,ddy=it.j+d/2-hero.gy;hero.face=Math.abs(ddx)>Math.abs(ddy)?[Math.sign(ddx),0]:[0,Math.sign(ddy)];const nx=u.next;if(nx&&free(nx[0],nx[1])&&!(nx[0]==hero.ti&&nx[1]==hero.tj)){const p=bfs(hero,(i,j)=>i==nx[0]&&j==nx[1]);if(p){hero.path=p;target=nx;manualT=0}}}}
 
 /* ---------- bulles du Coach, arrivée par la porte et grand ménage (rester appuyé sur un carton) ---------- */
 let SC=null,CLEAN=null,DOOR=0,FX=[],BUB=null;const HOLD=1;
@@ -1387,7 +1396,7 @@ function giveXP(n){const a=lvl().L;S.xp=(S.xp||0)+n;save();try{updBar()}catch(e)
 const BENCH=["Regarde ! Il y a même un vieux <b>banc de développé couché</b> !","… un peu rouillé, mais il fera l'affaire.","Viens, je te fais faire le <b>tour du propriétaire</b> !"];
 const LINES=["Bienvenue dans ta salle ! Bon… pour l'instant, c'est surtout un <b>vieux garage</b>.","Plus tu t'entraîneras, plus tu pourras l'<b>améliorer</b> : machines, déco… et même pousser les murs !","Mais d'abord, un peu de ménage : <b>reste appuyé</b> sur un carton pour le jeter."];
 const blocked=()=>!!document.querySelector('.ov,#chest,#splash,#tour,#obg,#lvup,#obh');
-function startIntro(){SC={ph:'enter',t:0};DOOR=1;BM.sel=null;BM.place=null;BM.inv=false;BM.shop=false;ui();endUse();if(GC.pop)coachClose();
+function startIntro(){SC={ph:'enter',t:0};DOOR=1;BM.sel=null;BM.place=null;BM.inv=false;BM.shop=false;ui();endUse(true);if(GC.pop)coachClose();
  Object.assign(hero,{gx:.5,gy:3.5,ti:0,tj:3,path:[[1,3]],goal:null,hidden:false,face:[1,0]});Object.assign(coach,{gx:.5,gy:3.5,ti:0,tj:3,path:[],goal:null,hidden:true,face:[1,0]});Z=zMin();size(false);center({gx:NX()/2,gy:NY()/2});followOn=false}
 function introStep(dt){SC.t+=dt;if(SC.ph!='enter')return;
  if(SC.t>1.1&&coach.hidden){coach.hidden=false;coach.path=[[0,4]]}
@@ -1409,7 +1418,7 @@ function isoSort(L){const n=L.length,E=1e-4,beh=(A,B)=>{const a=A.b,c=B.b,sa=a[0
  const st=new Array(n).fill(0),out=[];const vis=k=>{if(st[k])return;st[k]=1;for(let m=0;m<n;m++)if(m!==k&&!st[m]&&ov(m,k)&&beh(L[m],L[k]))vis(m);out.push(L[k])};
  L.map((o,k)=>[k,o.b[0]+o.b[1]+o.b[2]+o.b[3]]).sort((p,q)=>p[1]-q[1]).forEach(([k])=>vis(k));return out}
 function drawItem(it,alpha){const Tf=tf(it.type,it.r,it.i,it.j),L=[],c=CAT[it.type];let parts=c.parts;
- if(USE&&USE.it===it&&!alpha){const[dy,dz]=benchPose(USE.t);parts=parts.map((p,k)=>k>=c.bar?(p=p.slice(),p[2]+=dy,p[3]+=dz,p):p).concat(lifter(dy,dz,it))}
+ if(USE&&USE.it===it&&!alpha){if(USE.ph=='lie'){const[dy,dz]=benchPose(USE.t);parts=parts.map((p,k)=>k>=c.bar?(p=p.slice(),p[2]+=dy,p[3]+=dz,p):p).concat(lifter(dy,dz,it))}else{const[px,py]=USE.pos;parts=parts.concat([['s',px-.25,px+.25,py-.25,py+.25,0,28,()=>drawActor(hero)]])}}
  parts.forEach(p=>{if(p[0]=='b'){const[,px,py,z,w,d,h,col]=p,a=Tf(px,py),e=Tf(px+w,py+d),X0=Math.min(a[0],e[0]),Y0=Math.min(a[1],e[1]),W=Math.abs(e[0]-a[0]),Dd=Math.abs(e[1]-a[1]);L.push({b:[X0,X0+W,Y0,Y0+Dd,z,z+h],f:()=>box(X0,Y0,z,W,Dd,h,tri(skinCol(it,col)),p[8]?null:undefined)})}
   else if(p[0]=='p'){const[,px,py,z,rr,rz,c1,c2]=p,ring=(ox,R,RZ)=>{const o=[];for(let k=0;k<12;k++){const th=k/12*Math.PI*2,q=Tf(px+ox,py+Math.cos(th)*R);o.push(P(q[0],q[1],z+Math.sin(th)*RZ))}return o};
    const A=Tf(px-.035,py),B=Tf(px+.035,py),fr=(B[0]+B[1])>(A[0]+A[1])?.035:-.035,q0=Tf(px-.035,py-rr),q1=Tf(px+.035,py+rr),bx=[Math.min(q0[0],q1[0]),Math.max(q0[0],q1[0]),Math.min(q0[1],q1[1]),Math.max(q0[1],q1[1])];
@@ -1527,7 +1536,7 @@ function outline(Tl,c){Tl.forEach(([i,j])=>{[[P(i,j),P(i+1,j)],[P(i+1,j),P(i+1,j
 /* étiquettes « Niv. » (héros) et « Coach », et le menu du Coach, qui suivent les personnages */
 function tags(){const tg=document.getElementById('gytag'),ct=document.getElementById('gctag'),pp=document.getElementById('gcpop');
  const put=(el,gx,gy,z)=>{const[sx,sy]=toScreen(gx,gy,z),w=el.offsetWidth,vis=sx>-20&&sx<CW+20&&sy>0&&sy<CH+30;el.style.visibility=vis?'':'hidden';el.style.transform='translate('+Math.round(Math.max(w/2+2,Math.min(CW-w/2-2,sx)))+'px,'+Math.round(sy-3)+'px) translate(-50%,-100%)';return[sx,sy]};
- if(tg){if(USE){const[w,d]=dims(USE.it.type,USE.it.r);put(tg,USE.it.i+w/2,USE.it.j+d/2,26)}else put(tg,hero.gx,hero.gy,25)}
+ if(tg){if(USE&&USE.ph=='lie'){const[w,d]=dims(USE.it.type,USE.it.r);put(tg,USE.it.i+w/2,USE.it.j+d/2,26)}else put(tg,hero.gx,hero.gy,25)}
  if(ct){const[sx,sy]=put(ct,coach.gx,coach.gy,25);if(coach.hidden)ct.style.visibility='hidden';
   if(GC.pop&&pp){const w=pp.offsetWidth,h=pp.offsetHeight,l=Math.max(4,Math.min(CW-w-4,sx-w/2));let t=sy-ct.offsetHeight-10-h;if(t<4)t=Math.min(CH-h-4,sy+8);pp.style.transform='translate('+Math.round(l)+'px,'+Math.round(Math.max(4,t))+'px)'}}
  const st=document.getElementById('gyst');if(st){const tx=USE?'Fait du développé couché':hero.path.length?'Se promène dans sa salle':'Se repose un instant';if(tx!=stTxt||st.textContent!=tx){stTxt=tx;st.textContent=tx}}}
@@ -1535,8 +1544,8 @@ function frame(now){if(!cv||!cv.isConnected){raf=0;return}const dt=Math.min(.05,
  if(G!==S.iso){load();size(false);center(hero);ui()}
  if(G.intro=='todo'&&!SC&&!blocked()){if(!(S.me&&S.me.name))heroCreate();else startIntro()}if(SC)introStep(dt);
  if(CLEAN){CLEAN.t+=dt;if(CLEAN.t>=HOLD)finishClean()}
- if(USE){USE.t+=dt;if(!G.items.includes(USE.it))endUse();else if(USE.t>=BT.end)endUse()}
- const arr=step(hero,dt);
+ if(USE&&!G.items.includes(USE.it))endUse(true);
+ const arr=step(hero,dt);useStep(dt);
  if(hero.goal&&hero.goal.wall&&(arr||!hero.path.length)){const wi=hero.goal.wall;hero.goal=null;hero.face=wi.side=='L'?[-1,0]:[0,-1]}
  if(arr&&hero.goal){const it=hero.goal;hero.goal=null;const[w,d]=dims(it.type,it.r),cx=it.i+w/2,cy=it.j+d/2,ddx=cx-hero.gx,ddy=cy-hero.gy;hero.face=Math.abs(ddx)>Math.abs(ddy)?[Math.sign(ddx),0]:[0,Math.sign(ddy)];
   if(it.type=='bench')startUse(it);target=null}
@@ -1554,7 +1563,7 @@ function frame(now){if(!cv||!cv.isConnected){raf=0;return}const dt=Math.min(.05,
  if(BM.place&&!BM.place.wall){const nx=NX(),ny=NY();x.globalAlpha=.35;for(let i=0;i<=nx;i++)line(P(i,0),P(i,ny),'#f4ecd8');for(let j=0;j<=ny;j++)line(P(0,j),P(nx,j),'#f4ecd8');x.globalAlpha=1}
  if(target&&!BM.place){const[i,j]=target;outline([[i,j]],'#ffb02e')}
  if(BM.sel&&!BM.sel.wall)outline(tilesOf(BM.sel.type,BM.sel.r,BM.sel.i,BM.sel.j),'#ffb02e');
- const L=[...G.items.map(it=>{const[w,d]=dims(it.type,it.r);return{b:[it.i,it.i+w,it.j,it.j+d,0,16],f:()=>drawItem(it)}}),...[hero,coach].map(a=>({b:[a.gx-.3,a.gx+.3,a.gy-.3,a.gy+.3,0,28],f:()=>drawActor(a)}))];
+ const L=[...G.items.map(it=>{const[w,d]=dims(it.type,it.r);return{b:[it.i,it.i+w,it.j,it.j+d,0,16],f:()=>drawItem(it)}}),...[hero,coach].filter(a=>!(a===hero&&USE)).map(a=>({b:[a.gx-.3,a.gx+.3,a.gy-.3,a.gy+.3,0,28],f:()=>drawActor(a)}))];
  if(BM.place&&!BM.place.wall){const p=BM.place,[w,d]=dims(p.type,p.r),ok=!check(p.type,p.r,p.i,p.j);L.push({b:[p.i,p.i+w,p.j,p.j+d,0,16],f:()=>{outline(tilesOf(p.type,p.r,p.i,p.j),ok?'#7cff6a':'#ff4d5a');drawItem(p,.7)}})}
  isoSort(L).forEach(o=>o.f());
  if(CLEAN){const it=CLEAN.it,p=P(it.i+.5,it.j+.5,17),k=Math.min(1,CLEAN.t/HOLD);dot(x,[p[0]-9,p[1]-3],18,5,'#0a070e');dot(x,[p[0]-8,p[1]-2],16,3,'#3a2d49');dot(x,[p[0]-8,p[1]-2],Math.round(16*k),3,'#5fd35f')}
@@ -1580,7 +1589,7 @@ function tap(sx,sy){const[ti,tj,lx,ly]=tileAt(sx,sy);
  if(BM.inv){BM.inv=false;ui()}
  if(SC){if(SC.ph=='talk')introNext();return}
  const onC=!coach.hidden&&coachHit(lx,ly);if(GC.pop&&!onC){coachClose();return}if(onC){coachOpen();return}
- if(USE)endUse();
+ if(USE){endUse();if(USE)USE.next=[ti,tj];return}
  const it=itemAt(lx,ly,ti,tj),wi=it?null:wallAt(lx,ly);
  if(it&&CAT[it.type].junk){say('Reste <b>appuyé</b> dessus pour le jeter !',coach,2400);return}
  if(wi){const[fi,fj]=wfront(wi),p=hero.ti==fi&&hero.tj==fj?[]:bfs(hero,free(fi,fj)?(i,j)=>i==fi&&j==fj:(i,j)=>Math.abs(i-fi)+Math.abs(j-fj)<=1);if(p){hero.path=p.length?p:[[hero.ti,hero.tj]];hero.goal={wall:wi};target=null;manualT=0}return}
@@ -1591,7 +1600,7 @@ function bind(){const pts=new Map();let drag=null,pinch=null,lpT=0;
   if(pts.size==1){const r=stage.getBoundingClientRect(),[ti,tj,lx,ly]=tileAt(e.clientX-r.left,e.clientY-r.top);
    drag={x:e.clientX,y:e.clientY,cx:cam.x,cy:cam.y,moved:false,piece:onPlace(ti,tj,lx,ly),lp:false};
    if(SC)return;
-   if(!BM.place){const it=itemAt(lx,ly,ti,tj)||wallAt(lx,ly);if(it&&!it.wall&&CAT[it.type].junk){lpT=setTimeout(()=>{if(drag&&!drag.moved&&pts.size==1){drag.lp=true;CLEAN={it,t:0}}},120);return}if(it)lpT=setTimeout(()=>{if(drag&&!drag.moved&&pts.size==1){drag.lp=true;endUse();if(GC.pop)coachClose();BM.sel=it;BM.inv=false;target=null;try{navigator.vibrate&&navigator.vibrate(25)}catch(_){}ui()}},450)}}
+   if(!BM.place){const it=itemAt(lx,ly,ti,tj)||wallAt(lx,ly);if(it&&!it.wall&&CAT[it.type].junk){lpT=setTimeout(()=>{if(drag&&!drag.moved&&pts.size==1){drag.lp=true;CLEAN={it,t:0}}},120);return}if(it)lpT=setTimeout(()=>{if(drag&&!drag.moved&&pts.size==1){drag.lp=true;endUse(true);if(GC.pop)coachClose();BM.sel=it;BM.inv=false;target=null;try{navigator.vibrate&&navigator.vibrate(25)}catch(_){}ui()}},450)}}
   else if(pts.size==2){clearTimeout(lpT);const[a,c]=[...pts.values()];pinch={d:Math.hypot(a[0]-c[0],a[1]-c[1]),z:Z};drag=null}});
  stage.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId))return;pts.set(e.pointerId,[e.clientX,e.clientY]);
   if(pinch&&pts.size==2){const[a,c]=[...pts.values()],r=stage.getBoundingClientRect(),d=Math.hypot(a[0]-c[0],a[1]-c[1]);zoom(pinch.z*d/pinch.d/Z,(a[0]+c[0])/2-r.left,(a[1]+c[1])/2-r.top);return}
