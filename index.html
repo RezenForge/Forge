@@ -1392,8 +1392,8 @@ function introStep(dt){SC.t+=dt;if(SC.ph!='enter')return;
 function talk(lines,done){SC={ph:'talk',lines,i:0,t:0,done};hero.path=[];coach.path=[];coach.face=[1,0];say(lines[0]+' <span class="nx">▸</span>',coach)}
 function introNext(){if(!SC||SC.ph!='talk')return;const L=SC.lines;SC.i++;if(SC.i<L.length){say(L[SC.i]+(SC.i<L.length-1||SC.done?' <span class="nx">▸</span>':''),coach);return}
  const d=SC.done;SC=null;bubOff();if(d)d()}
-function finishClean(){const it=CLEAN.it;CLEAN=null;G.items=G.items.filter(o=>o!==it);OCC=occ();FX.push({gx:it.i+.5,gy:it.j+.5,t:0});floatXP(it.i+.5,it.j+.5,'+5 XP');giveXP(5);try{navigator.vibrate&&navigator.vibrate(30)}catch(_){}
- if(!G.items.some(o=>CAT[o.type].junk)&&G.intro!='done'){G.intro='done';talk(BENCH,()=>{try{tourStart('home')}catch(e){}})}
+function finishClean(){const it=CLEAN.it;CLEAN=null;G.items=G.items.filter(o=>o!==it);OCC=occ();FX.push({gx:it.i+.5,gy:it.j+.5,t:0});floatXP(it.i+.5,it.j+.5,'+25 XP');giveXP(25);try{navigator.vibrate&&navigator.vibrate(30)}catch(_){}
+ if(!G.items.some(o=>CAT[o.type].junk)&&G.intro!='done'){G.intro='done';const go=()=>talk(BENCH,()=>{try{tourStart('home')}catch(e){}});if(document.getElementById('lvup')){const w=setInterval(()=>{if(!document.getElementById('lvup')){clearInterval(w);setTimeout(go,500)}},300)}else go()}
  keep()}
 
 /* ---------- ordre d'affichage : chaque élément a une boîte au sol ; on ne compare que ceux qui se chevauchent à l'écran ---------- */
