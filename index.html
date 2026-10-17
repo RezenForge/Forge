@@ -2532,7 +2532,10 @@ const OBS=[
   x:"Touche <b>Générer</b> : je te propose des exercices selon la zone, ton matériel et ton niveau. Tu peux aussi les <b>ajouter un par un</b>."},
  {id:'go',n:3,go:'train2',pre:1,fin:1,t:'Le jour J',done:()=>v.n=='run',sel:()=>tq('#app .exb'),
   x:"Ta séance est prête ! À la salle, touche un exercice pour lancer son <b>minuteur</b> : je t'expliquerai chaque étape au bon moment. Ta quête <b>Premiers pas</b> t'attend dans Quêtes."}];
-function obOffer(){obInit();if(S.ob.st=='run'&&!OB)S.ob.st='';if(OB||TR||S.ob.st!==''||(S.cur&&S.cur.started)||obBusy()||(typeof ISO!='undefined'&&ISO.introBusy))return;
+/* guide de démarrage en pause : plus proposé automatiquement (il reste lançable depuis Options) ; on débloque juste les conseils */
+const OB_PAUSE=true;
+function obOffer(){obInit();if(S.ob.st=='run'&&!OB)S.ob.st='';
+ if(OB_PAUSE){if(S.ob.st===''&&!(typeof ISO!='undefined'&&ISO.introBusy)&&!window.tdemo){S.ob.st='skip';save()}return}if(OB||TR||S.ob.st!==''||(S.cur&&S.cur.started)||obBusy()||(typeof ISO!='undefined'&&ISO.introBusy))return;
  const o=document.createElement('div');o.className='ov';o.id='tov';o.innerHTML=`<div class="sheet"><div class="obh">${obFace()}<h2>Bienvenue, aventurier !</h2></div><p style="font-size:21px;line-height:1.15">Je suis le <b style="color:var(--ac);font-weight:400">Coach</b>. Ici, chaque séance de muscu te rapporte de l'XP et des Prot's pour faire grandir ton héros et ta salle.</p><p style="font-size:21px;line-height:1.15">On prépare ta première séance ensemble ? Ça prend 30 secondes.</p><button class="btn p" id="tgo">C'est parti !</button><button class="btn s" id="tlt">Plus tard</button></div>`;
  document.body.append(o);o.querySelector('#tgo').onclick=()=>{o.remove();obStart()};o.querySelector('#tlt').onclick=()=>{o.remove();S.ob.st='skip';save();toast('Tu me retrouves dans Options → Guide de démarrage')}}
 function obStart(manual){if(OB||TR)return;if(S.cur&&!S.cur.demo){toast('Termine ta séance en cours avant le guide');return}obInit();
